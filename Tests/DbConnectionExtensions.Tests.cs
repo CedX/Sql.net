@@ -21,7 +21,7 @@ public sealed partial class DbConnectionExtensionsTests(TestContext testContext)
 	public void TestInitialize() {
 		connection.Open();
 		using var command = connection.CreateCommand();
-		command.CommandText = File.ReadAllText(Path.Join(AppContext.BaseDirectory, "../res/Schema.sql"));
+		command.CommandText = File.ReadAllText(Path.Join(AppContext.BaseDirectory, "../Resources/Schema.sql"));
 		command.ExecuteNonQuery();
 	}
 

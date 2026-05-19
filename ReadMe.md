@@ -6,8 +6,8 @@ If you like [SQL](https://en.wikipedia.org/wiki/SQL) but dislike the boilerplate
 > Think of [Dapper](https://www.learndapper.com) and its alternatives, but less advanced/powerful.
 
 ## Documentation
-- [User guide](https://github.com/CedX/Sql.net/tree/main/docs)
-- [Examples](https://github.com/CedX/Sql.net/tree/main/example)
+- [User guide](https://github.com/CedX/Sql.net/tree/main/Documentation)
+- [Examples](https://github.com/CedX/Sql.net/tree/main/Examples)
 
 ## Development
 - [Git repository](https://github.com/CedX/Sql.net)
