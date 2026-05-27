@@ -1,5 +1,8 @@
 # Changelog
 
+## Version [4.2.0](https://github.com/CedX/Sql.net/compare/v4.1.0...v4.2.0)
+- Added the `builder` parameter to the `Delete()`, `Exists()`, `Find()`, `Insert()` and `Update()` methods of the `ConnectionExtensions` class.
+
 ## Version [4.1.0](https://github.com/CedX/Sql.net/compare/v4.0.0...v4.1.0)
 - Added the `SqlOrderHint` and `SqlOrderHintCollection` classes.
 - Added the `FindAll()` and `FindAllAsync()` methods to the `DbConnectionExtensions` class.
