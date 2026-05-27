@@ -95,7 +95,7 @@ public class SqlCommandBuilder {
 	/// </summary>
 	/// <typeparam name="T">The entity type.</typeparam>
 	/// <param name="entity">The entity to delete.</param>
-	/// <returns>The generated command to delete an entity.</returns>
+	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
 	public (SqlCommand Command, SqlParameterCollection Parameters) GetDeleteCommand<T>(T entity) where T: new() {
 		var table = SqlMapper.Instance.GetTable<T>();
@@ -115,7 +115,7 @@ public class SqlCommandBuilder {
 	/// </summary>
 	/// <typeparam name="T">The entity type.</typeparam>
 	/// <param name="id">The value of the entity's primary key.</param>
-	/// <returns>The generated command to check the existence of an entity.</returns>
+	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
 	public (SqlCommand Command, SqlParameterCollection Parameters) GetExistsCommand<T>(object id) where T: new() {
 		var table = SqlMapper.Instance.GetTable<T>();
@@ -137,7 +137,7 @@ public class SqlCommandBuilder {
 	/// <typeparam name="T">The entity type.</typeparam>
 	/// <param name="id">The value of the entity's primary key.</param>
 	/// <param name="columns">The list of columns to select. By default, all columns.</param>
-	/// <returns>The generated command to find an entity.</returns>
+	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
 	public (SqlCommand Command, SqlParameterCollection Parameters) GetFindCommand<T>(object id, params string[] columns) where T: new() {
 		var table = SqlMapper.Instance.GetTable<T>();
@@ -166,7 +166,7 @@ public class SqlCommandBuilder {
 	/// <typeparam name="T">The entity type.</typeparam>
 	/// <param name="orderHints">The hints describing the sort order of columns.</param>
 	/// <param name="columns">The list of columns to select. By default, all columns.</param>
-	/// <returns>The generated command to find all entities.</returns>
+	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
 	public (SqlCommand Command, SqlParameterCollection Parameters) GetFindAllCommand<T>(SqlOrderHintCollection? orderHints = null, params string[] columns) where T: new() {
 		var table = SqlMapper.Instance.GetTable<T>();
@@ -191,7 +191,7 @@ public class SqlCommandBuilder {
 	/// </summary>
 	/// <typeparam name="T">The entity type.</typeparam>
 	/// <param name="entity">The entity to insert.</param>
-	/// <returns>The generated command to insert an entity.</returns>
+	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
 	public (SqlCommand Command, SqlParameterCollection Parameters) GetInsertCommand<T>(T entity) where T: new() {
 		var table = SqlMapper.Instance.GetTable<T>();
@@ -213,7 +213,7 @@ public class SqlCommandBuilder {
 	/// <typeparam name="T">The entity type.</typeparam>
 	/// <param name="entity">The entity to update.</param>
 	/// <param name="columns">The list of columns to update. By default, all columns.</param>
-	/// <returns>The generated command to update an entity.</returns>
+	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
 	public (SqlCommand Command, SqlParameterCollection Parameters) GetUpdateCommand<T>(T entity, params string[] columns) where T: new() {
 		var table = SqlMapper.Instance.GetTable<T>();
