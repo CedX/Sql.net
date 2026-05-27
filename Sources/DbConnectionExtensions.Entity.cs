@@ -15,9 +15,10 @@ public static partial class DbConnectionExtensions {
 	/// <param name="entity">The entity to delete.</param>
 	/// <param name="timeout">The wait time, in seconds, before terminating the attempt to execute the command and generating an error.</param>
 	/// <param name="transaction">The transaction within which the command executes.</param>
+	/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 	/// <returns><see langword="true"/> if the specified entity has been deleted, otherwise <see langword="false"/>.</returns>
-	public static bool Delete<T>(this IDbConnection connection, T entity, int timeout = 30, IDbTransaction? transaction = null) where T: new() {
-		var (command, parameters) = new SqlCommandBuilder(connection).GetDeleteCommand(entity);
+	public static bool Delete<T>(this IDbConnection connection, T entity, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null) where T: new() {
+		var (command, parameters) = (builder ?? new SqlCommandBuilder(connection)).GetDeleteCommand(entity);
 		command.Timeout = timeout;
 		command.Transaction = transaction;
 		return Execute(connection, command, parameters) > 0;
@@ -31,10 +32,11 @@ public static partial class DbConnectionExtensions {
 	/// <param name="entity">The entity to delete.</param>
 	/// <param name="timeout">The wait time, in seconds, before terminating the attempt to execute the command and generating an error.</param>
 	/// <param name="transaction">The transaction within which the command executes.</param>
+	/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 	/// <param name="cancellationToken">The token to cancel the operation.</param>
 	/// <returns><see langword="true"/> if the specified entity has been deleted, otherwise <see langword="false"/>.</returns>
-	public static async Task<bool> DeleteAsync<T>(this IDbConnection connection, T entity, int timeout = 30, IDbTransaction? transaction = null, CancellationToken cancellationToken = default) where T: new() {
-		var (command, parameters) = new SqlCommandBuilder(connection).GetDeleteCommand(entity);
+	public static async Task<bool> DeleteAsync<T>(this IDbConnection connection, T entity, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null, CancellationToken cancellationToken = default) where T: new() {
+		var (command, parameters) = (builder ?? new SqlCommandBuilder(connection)).GetDeleteCommand(entity);
 		command.Timeout = timeout;
 		command.Transaction = transaction;
 		return await ExecuteAsync(connection, command, parameters, cancellationToken) > 0;
@@ -48,9 +50,10 @@ public static partial class DbConnectionExtensions {
 	/// <param name="id">The primary key value.</param>
 	/// <param name="timeout">The wait time, in seconds, before terminating the attempt to execute the command and generating an error.</param>
 	/// <param name="transaction">The transaction within which the command executes.</param>
+	/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 	/// <returns><see langword="true"/> if an entity with the specified primary key exists, otherwise <see langword="false"/>.</returns>
-	public static bool Exists<T>(this IDbConnection connection, object id, int timeout = 30, IDbTransaction? transaction = null) where T: new() {
-		var (command, parameters) = new SqlCommandBuilder(connection).GetExistsCommand<T>(id);
+	public static bool Exists<T>(this IDbConnection connection, object id, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null) where T: new() {
+		var (command, parameters) = (builder ?? new SqlCommandBuilder(connection)).GetExistsCommand<T>(id);
 		command.Timeout = timeout;
 		command.Transaction = transaction;
 		return ExecuteScalar<bool>(connection, command, parameters);
@@ -64,10 +67,11 @@ public static partial class DbConnectionExtensions {
 	/// <param name="id">The primary key value.</param>
 	/// <param name="timeout">The wait time, in seconds, before terminating the attempt to execute the command and generating an error.</param>
 	/// <param name="transaction">The transaction within which the command executes.</param>
+	/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 	/// <param name="cancellationToken">The token to cancel the operation.</param>
 	/// <returns><see langword="true"/> if an entity with the specified primary key exists, otherwise <see langword="false"/>.</returns>
-	public static async Task<bool> ExistsAsync<T>(this IDbConnection connection, object id, int timeout = 30, IDbTransaction? transaction = null, CancellationToken cancellationToken = default) where T: new() {
-		var (command, parameters) = new SqlCommandBuilder(connection).GetExistsCommand<T>(id);
+	public static async Task<bool> ExistsAsync<T>(this IDbConnection connection, object id, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null, CancellationToken cancellationToken = default) where T: new() {
+		var (command, parameters) = (builder ?? new SqlCommandBuilder(connection)).GetExistsCommand<T>(id);
 		command.Timeout = timeout;
 		command.Transaction = transaction;
 		return await ExecuteScalarAsync<bool>(connection, command, parameters, cancellationToken);
@@ -82,9 +86,10 @@ public static partial class DbConnectionExtensions {
 	/// <param name="columns">The list of columns to select. By default, all columns.</param>
 	/// <param name="timeout">The wait time, in seconds, before terminating the attempt to execute the command and generating an error.</param>
 	/// <param name="transaction">The transaction within which the command executes.</param>
+	/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 	/// <returns>The entity with the specified primary key, or <see langword="null"/> if not found.</returns>
-	public static T? Find<T>(this IDbConnection connection, object id, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null) where T: new() {
-		var (command, parameters) = new SqlCommandBuilder(connection).GetFindCommand<T>(id, columns ?? []);
+	public static T? Find<T>(this IDbConnection connection, object id, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null) where T: new() {
+		var (command, parameters) = (builder ?? new SqlCommandBuilder(connection)).GetFindCommand<T>(id, columns ?? []);
 		command.Timeout = timeout;
 		command.Transaction = transaction;
 		return QuerySingleOrDefault<T>(connection, command, parameters);
@@ -99,10 +104,11 @@ public static partial class DbConnectionExtensions {
 	/// <param name="columns">The list of columns to select. By default, all columns.</param>
 	/// <param name="timeout">The wait time, in seconds, before terminating the attempt to execute the command and generating an error.</param>
 	/// <param name="transaction">The transaction within which the command executes.</param>
+	/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 	/// <param name="cancellationToken">The token to cancel the operation.</param>
 	/// <returns>The entity with the specified primary key, or <see langword="null"/> if not found.</returns>
-	public static async Task<T?> FindAsync<T>(this IDbConnection connection, object id, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, CancellationToken cancellationToken = default) where T: new() {
-		var (command, parameters) = new SqlCommandBuilder(connection).GetFindCommand<T>(id, columns ?? []);
+	public static async Task<T?> FindAsync<T>(this IDbConnection connection, object id, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null, CancellationToken cancellationToken = default) where T: new() {
+		var (command, parameters) = (builder ?? new SqlCommandBuilder(connection)).GetFindCommand<T>(id, columns ?? []);
 		command.Timeout = timeout;
 		command.Transaction = transaction;
 		return await QuerySingleOrDefaultAsync<T>(connection, command, parameters, cancellationToken);
@@ -117,9 +123,10 @@ public static partial class DbConnectionExtensions {
 	/// <param name="columns">The list of columns to select. By default, all columns.</param>
 	/// <param name="timeout">The wait time, in seconds, before terminating the attempt to execute the command and generating an error.</param>
 	/// <param name="transaction">The transaction within which the command executes.</param>
+	/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 	/// <returns>The list of all entities of the specified type.</returns>
-	public static IList<T> FindAll<T>(this IDbConnection connection, SqlOrderHintCollection? orderHints = null, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null) where T: new() {
-		var (command, parameters) = new SqlCommandBuilder(connection).GetFindAllCommand<T>(orderHints, columns ?? []);
+	public static IList<T> FindAll<T>(this IDbConnection connection, SqlOrderHintCollection? orderHints = null, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null) where T: new() {
+		var (command, parameters) = (builder ?? new SqlCommandBuilder(connection)).GetFindAllCommand<T>(orderHints, columns ?? []);
 		command.Timeout = timeout;
 		command.Transaction = transaction;
 		return Query<T>(connection, command, parameters).AsList();
@@ -134,9 +141,11 @@ public static partial class DbConnectionExtensions {
 	/// <param name="columns">The list of columns to select. By default, all columns.</param>
 	/// <param name="timeout">The wait time, in seconds, before terminating the attempt to execute the command and generating an error.</param>
 	/// <param name="transaction">The transaction within which the command executes.</param>
+	/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
+	/// <param name="cancellationToken">The token to cancel the operation.</param>
 	/// <returns>The list of all entities of the specified type.</returns>
-	public static async Task<IList<T>> FindAllAsync<T>(this IDbConnection connection, SqlOrderHintCollection? orderHints = null, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, CancellationToken cancellationToken = default) where T: new() {
-		var (command, parameters) = new SqlCommandBuilder(connection).GetFindAllCommand<T>(orderHints, columns ?? []);
+	public static async Task<IList<T>> FindAllAsync<T>(this IDbConnection connection, SqlOrderHintCollection? orderHints = null, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null, CancellationToken cancellationToken = default) where T: new() {
+		var (command, parameters) = (builder ?? new SqlCommandBuilder(connection)).GetFindAllCommand<T>(orderHints, columns ?? []);
 		command.Timeout = timeout;
 		command.Transaction = transaction;
 		return (await QueryAsync<T>(connection, command, parameters, cancellationToken)).AsList();
@@ -150,9 +159,10 @@ public static partial class DbConnectionExtensions {
 	/// <param name="entity">The entity to insert.</param>
 	/// <param name="timeout">The wait time, in seconds, before terminating the attempt to execute the command and generating an error.</param>
 	/// <param name="transaction">The transaction within which the command executes.</param>
+	/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 	/// <returns>The generated primary key value.</returns>
-	public static long Insert<T>(this IDbConnection connection, T entity, int timeout = 30, IDbTransaction? transaction = null) where T: new() {
-		var (command, parameters) = new SqlCommandBuilder(connection).GetInsertCommand(entity);
+	public static long Insert<T>(this IDbConnection connection, T entity, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null) where T: new() {
+		var (command, parameters) = (builder ?? new SqlCommandBuilder(connection)).GetInsertCommand(entity);
 		command.Timeout = timeout;
 		command.Transaction = transaction;
 
@@ -169,10 +179,11 @@ public static partial class DbConnectionExtensions {
 	/// <param name="entity">The entity to insert.</param>
 	/// <param name="timeout">The wait time, in seconds, before terminating the attempt to execute the command and generating an error.</param>
 	/// <param name="transaction">The transaction within which the command executes.</param>
+	/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 	/// <param name="cancellationToken">The token to cancel the operation.</param>
 	/// <returns>The generated primary key value.</returns>
-	public static async Task<long> InsertAsync<T>(this IDbConnection connection, T entity, int timeout = 30, IDbTransaction? transaction = null, CancellationToken cancellationToken = default) where T: new() {
-		var (command, parameters) = new SqlCommandBuilder(connection).GetInsertCommand(entity);
+	public static async Task<long> InsertAsync<T>(this IDbConnection connection, T entity, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null, CancellationToken cancellationToken = default) where T: new() {
+		var (command, parameters) = (builder ?? new SqlCommandBuilder(connection)).GetInsertCommand(entity);
 		command.Timeout = timeout;
 		command.Transaction = transaction;
 
@@ -190,9 +201,10 @@ public static partial class DbConnectionExtensions {
 	/// <param name="columns">The list of columns to update. By default, all columns.</param>
 	/// <param name="timeout">The wait time, in seconds, before terminating the attempt to execute the command and generating an error.</param>
 	/// <param name="transaction">The transaction within which the command executes.</param>
+	/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 	/// <returns>The number of rows affected.</returns>
-	public static int Update<T>(this IDbConnection connection, T entity, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null) where T: new() {
-		var (command, parameters) = new SqlCommandBuilder(connection).GetUpdateCommand(entity, columns ?? []);
+	public static int Update<T>(this IDbConnection connection, T entity, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null) where T: new() {
+		var (command, parameters) = (builder ?? new SqlCommandBuilder(connection)).GetUpdateCommand(entity, columns ?? []);
 		command.Timeout = timeout;
 		command.Transaction = transaction;
 		return Execute(connection, command, parameters);
@@ -207,10 +219,11 @@ public static partial class DbConnectionExtensions {
 	/// <param name="columns">The list of columns to update. By default, all columns.</param>
 	/// <param name="timeout">The wait time, in seconds, before terminating the attempt to execute the command and generating an error.</param>
 	/// <param name="transaction">The transaction within which the command executes.</param>
+	/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 	/// <param name="cancellationToken">The token to cancel the operation.</param>
 	/// <returns>The number of rows affected.</returns>
-	public static async Task<int> UpdateAsync<T>(this IDbConnection connection, T entity, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, CancellationToken cancellationToken = default) where T: new() {
-		var (command, parameters) = new SqlCommandBuilder(connection).GetUpdateCommand(entity, columns ?? []);
+	public static async Task<int> UpdateAsync<T>(this IDbConnection connection, T entity, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null, CancellationToken cancellationToken = default) where T: new() {
+		var (command, parameters) = (builder ?? new SqlCommandBuilder(connection)).GetUpdateCommand(entity, columns ?? []);
 		command.Timeout = timeout;
 		command.Transaction = transaction;
 		return await ExecuteAsync(connection, command, parameters, cancellationToken);
