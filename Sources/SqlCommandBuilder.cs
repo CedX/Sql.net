@@ -81,7 +81,7 @@ public class SqlCommandBuilder {
 			case "System.Data.SQLite.SQLiteConnection":
 				QuotePrefix = QuoteSuffix = "\"";
 				SupportsReturningClause = true;
-				SupportsTruncateTable = !typeName.Contains("sqlite", StringComparison.OrdinalIgnoreCase);
+				SupportsTruncateTable = !typeName.Contains(".sqlite.", StringComparison.OrdinalIgnoreCase);
 				break;
 			case "Oracle.ManagedDataAccess.Client.OracleConnection":
 				CatalogLocation = CatalogLocation.End;
