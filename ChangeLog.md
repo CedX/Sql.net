@@ -1,5 +1,9 @@
 # Changelog
 
+## Version [4.3.0](https://github.com/CedX/Sql.net/compare/v4.2.0...v4.3.0)
+- Added the `DeleteAll()` and `DeleteAllAsync()` methods to the `DbConnectionExtensions` class.
+- Added the `SqlCommandBuilder.GetDeleteAllCommand()` method.
+
 ## Version [4.2.0](https://github.com/CedX/Sql.net/compare/v4.1.0...v4.2.0)
 - Added the `builder` parameter to the `Delete()`, `Exists()`, `Find()`, `Insert()` and `Update()` methods of the `DbConnectionExtensions` class.
 
