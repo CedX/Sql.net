@@ -43,6 +43,41 @@ public static partial class DbConnectionExtensions {
 	}
 
 	/// <summary>
+	/// Deletes all entities.
+	/// </summary>
+	/// <typeparam name="T">The entity type.</typeparam>
+	/// <param name="connection">The connection to the data source.</param>
+	/// <param name="truncate">Value indicating whether to truncate the underlying table.</param>
+	/// <param name="timeout">The wait time, in seconds, before terminating the attempt to execute the command and generating an error.</param>
+	/// <param name="transaction">The transaction within which the command executes.</param>
+	/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
+	/// <returns><see langword="true"/> if the specified entity has been deleted, otherwise <see langword="false"/>.</returns>
+	public static void DeleteAll<T>(this IDbConnection connection, bool truncate = false, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null) where T: new() {
+		var (command, parameters) = (builder ?? new SqlCommandBuilder(connection)).GetDeleteAllCommand<T>(truncate);
+		command.Timeout = timeout;
+		command.Transaction = transaction;
+		Execute(connection, command, parameters);
+	}
+
+	/// <summary>
+	/// Deletes all entities.
+	/// </summary>
+	/// <typeparam name="T">The entity type.</typeparam>
+	/// <param name="connection">The connection to the data source.</param>
+	/// <param name="truncate">Value indicating whether to truncate the underlying table.</param>
+	/// <param name="timeout">The wait time, in seconds, before terminating the attempt to execute the command and generating an error.</param>
+	/// <param name="transaction">The transaction within which the command executes.</param>
+	/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
+	/// <param name="cancellationToken">The token to cancel the operation.</param>
+	/// <returns><see langword="true"/> if the specified entity has been deleted, otherwise <see langword="false"/>.</returns>
+	public static async Task DeleteAllAsync<T>(this IDbConnection connection, bool truncate = false, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null, CancellationToken cancellationToken = default) where T: new() {
+		var (command, parameters) = (builder ?? new SqlCommandBuilder(connection)).GetDeleteAllCommand<T>(truncate);
+		command.Timeout = timeout;
+		command.Transaction = transaction;
+		await ExecuteAsync(connection, command, parameters, cancellationToken);
+	}
+
+	/// <summary>
 	/// Checks whether an entity with the specified primary key exists.
 	/// </summary>
 	/// <typeparam name="T">The entity type.</typeparam>

@@ -54,6 +54,11 @@ public class SqlCommandBuilder {
 	public bool SupportsReturningClause { get; set; }
 
 	/// <summary>
+	/// Value indicating whether the ADO.NET provider supports the <c>TRUNCATE TABLE</c> statement.
+	/// </summary>
+	public bool SupportsTruncateTable { get; set; } = true;
+
+	/// <summary>
 	/// Value indicating whether the ADO.NET provider uses positional parameters.
 	/// </summary>
 	public bool UsePositionalParameters { get; set; }
@@ -75,6 +80,7 @@ public class SqlCommandBuilder {
 			case "System.Data.SQLite.SQLiteConnection":
 				QuotePrefix = QuoteSuffix = "\"";
 				SupportsReturningClause = true;
+				SupportsTruncateTable = false;
 				break;
 			case "Oracle.ManagedDataAccess.Client.OracleConnection":
 				CatalogLocation = CatalogLocation.End;
@@ -108,6 +114,17 @@ public class SqlCommandBuilder {
 			""";
 
 		return (text, [parameter]);
+	}
+
+	/// <summary>
+	/// Gets the generated command to delete all entities.
+	/// </summary>
+	/// <typeparam name="T">The entity type.</typeparam>
+	/// <param name="truncate">Value indicating whether to truncate the underlying table.</param>
+	/// <returns>A tuple providing the generated command and its parameters.</returns>
+	public (SqlCommand Command, SqlParameterCollection Parameters) GetDeleteAllCommand<T>(bool truncate = false) where T: new() {
+		var tableName = GetTableName(SqlMapper.Instance.GetTable<T>());
+		return (truncate && SupportsTruncateTable ? $"TRUNCATE TABLE {tableName}" : $"DELETE FROM {tableName}", []);
 	}
 
 	/// <summary>

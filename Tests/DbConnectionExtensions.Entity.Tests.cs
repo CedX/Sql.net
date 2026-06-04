@@ -26,6 +26,22 @@ public sealed partial class DbConnectionExtensionsTests {
 	}
 
 	[TestMethod]
+	public void DeleteAll() {
+		var sql = "SELECT COUNT(*) FROM Characters";
+		IsGreaterThan(0, connection.ExecuteScalar<int>(sql));
+		connection.DeleteAll<Character>(truncate: true);
+		AreEqual(0, connection.ExecuteScalar<int>(sql));
+	}
+
+	[TestMethod]
+	public async Task DeleteAllAsync() {
+		var sql = "SELECT COUNT(*) FROM Characters";
+		IsGreaterThan(0, await connection.ExecuteScalarAsync<int>(sql, cancellationToken: testContext.CancellationToken));
+		await connection.DeleteAllAsync<Character>(truncate: true, cancellationToken: testContext.CancellationToken);
+		AreEqual(0, await connection.ExecuteScalarAsync<int>(sql, cancellationToken: testContext.CancellationToken));
+	}
+
+	[TestMethod]
 	public void Exists() {
 		IsTrue(connection.Exists<Character>(1));
 		IsFalse(connection.Exists<Character>(666));
