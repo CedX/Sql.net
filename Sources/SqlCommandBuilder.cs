@@ -56,7 +56,7 @@ public class SqlCommandBuilder {
 	/// <summary>
 	/// Value indicating whether the ADO.NET provider supports the <c>TRUNCATE TABLE</c> statement.
 	/// </summary>
-	public bool SupportsTruncateTable { get; set; } = true;
+	public bool SupportsTruncateTable { get; set; }
 
 	/// <summary>
 	/// Value indicating whether the ADO.NET provider uses positional parameters.
@@ -68,7 +68,8 @@ public class SqlCommandBuilder {
 	/// </summary>
 	/// <param name="connection">The connection to the data source.</param>
 	public SqlCommandBuilder(IDbConnection connection) {
-		switch (connection.GetType().FullName) {
+		var typeName = connection.GetType().FullName;
+		switch (typeName) {
 			case "MySql.Data.MySqlClient.MySqlConnection":
 			case "MySqlConnector.MySqlConnection":
 				QuotePrefix = QuoteSuffix = "`";
@@ -80,7 +81,7 @@ public class SqlCommandBuilder {
 			case "System.Data.SQLite.SQLiteConnection":
 				QuotePrefix = QuoteSuffix = "\"";
 				SupportsReturningClause = true;
-				SupportsTruncateTable = false;
+				SupportsTruncateTable = !typeName.Contains("sqlite", StringComparison.OrdinalIgnoreCase);
 				break;
 			case "Oracle.ManagedDataAccess.Client.OracleConnection":
 				CatalogLocation = CatalogLocation.End;
