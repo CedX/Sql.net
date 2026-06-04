@@ -33,6 +33,16 @@ public sealed class SqlCommandBuilderTests {
 	}
 
 	[TestMethod]
+	public void GetDeleteAllCommand() {
+		// It should return the SQL command to delete all entities.
+		var (command, parameters) = new SqlCommandBuilder(connection).GetDeleteAllCommand<Character>();
+		AreEqual(@"DELETE FROM ""main"".""Characters""", command.Text);
+
+		// It should also return an empty parameter collection.
+		IsEmpty(parameters);
+	}
+
+	[TestMethod]
 	public void GetExistsCommand() {
 		// It should return the SQL command to check the existence of an entity.
 		var (command, parameters) = new SqlCommandBuilder(connection).GetExistsCommand<Character>(character.Id);
