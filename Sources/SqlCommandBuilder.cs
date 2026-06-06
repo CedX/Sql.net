@@ -56,7 +56,7 @@ public class SqlCommandBuilder {
 	/// <summary>
 	/// Value indicating whether the ADO.NET provider supports the <c>TRUNCATE TABLE</c> statement.
 	/// </summary>
-	public bool SupportsTruncateTable { get; set; }
+	public bool SupportsTruncateTable { get; set; } = true;
 
 	/// <summary>
 	/// Value indicating whether the ADO.NET provider uses positional parameters.
@@ -68,21 +68,26 @@ public class SqlCommandBuilder {
 	/// </summary>
 	/// <param name="connection">The connection to the data source.</param>
 	public SqlCommandBuilder(IDbConnection connection) {
-		var typeName = connection.GetType().FullName;
-		switch (typeName) {
-			case "MySql.Data.MySqlClient.MySqlConnection":
-			case "MySqlConnector.MySqlConnection":
-				QuotePrefix = QuoteSuffix = "`";
-				LastInsertIdFunction = "LAST_INSERT_ID()";
-				SupportsTruncateTable = true;
-				break;
+		switch (connection.GetType().FullName) {
 			case "FirebirdSql.Data.FirebirdClient.FbConnection":
+				QuotePrefix = QuoteSuffix = "\"";
+				SupportsReturningClause = true;
+				SupportsTruncateTable = false;
+				break;
 			case "Microsoft.Data.Sqlite.SqliteConnection":
-			case "Npgsql.NpgsqlConnection":
 			case "System.Data.SQLite.SQLiteConnection":
 				QuotePrefix = QuoteSuffix = "\"";
 				SupportsReturningClause = true;
-				SupportsTruncateTable = !typeName.Contains(".sqlite.", StringComparison.OrdinalIgnoreCase);
+				SupportsTruncateTable = false;
+				break;
+			case "MySql.Data.MySqlClient.MySqlConnection":
+			case "MySqlConnector.MySqlConnection":
+				LastInsertIdFunction = "LAST_INSERT_ID()";
+				QuotePrefix = QuoteSuffix = "`";
+				break;
+			case "Npgsql.NpgsqlConnection":
+				QuotePrefix = QuoteSuffix = "\"";
+				SupportsReturningClause = true;
 				break;
 			case "Oracle.ManagedDataAccess.Client.OracleConnection":
 				CatalogLocation = CatalogLocation.End;
@@ -94,7 +99,6 @@ public class SqlCommandBuilder {
 				break;
 			case "System.Data.Odbc.OdbcConnection":
 			case "System.Data.OleDb.OleDbConnection":
-				SupportsTruncateTable = true;
 				UsePositionalParameters = true;
 				break;
 		}
