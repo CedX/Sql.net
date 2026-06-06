@@ -1,5 +1,8 @@
 # Changelog
 
+## Version [4.3.1](https://github.com/CedX/Sql.net/compare/v4.3.0...v4.3.1)
+- Fixed the default value of the `SqlCommandBuilder.SupportsTruncateTable` property.
+
 ## Version [4.3.0](https://github.com/CedX/Sql.net/compare/v4.2.0...v4.3.0)
 - Added the `DeleteAll()` and `DeleteAllAsync()` methods to the `DbConnectionExtensions` class.
 - Added the `SqlCommandBuilder.GetDeleteAllCommand()` method.
