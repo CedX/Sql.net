@@ -74,6 +74,7 @@ public class SqlCommandBuilder {
 			case "MySqlConnector.MySqlConnection":
 				QuotePrefix = QuoteSuffix = "`";
 				LastInsertIdFunction = "LAST_INSERT_ID()";
+				SupportsTruncateTable = true;
 				break;
 			case "FirebirdSql.Data.FirebirdClient.FbConnection":
 			case "Microsoft.Data.Sqlite.SqliteConnection":
@@ -89,9 +90,11 @@ public class SqlCommandBuilder {
 				ParameterPrefix = ":";
 				QuotePrefix = QuoteSuffix = "\"";
 				SupportsReturningClause = true;
+				SupportsTruncateTable = true;
 				break;
 			case "System.Data.Odbc.OdbcConnection":
 			case "System.Data.OleDb.OleDbConnection":
+				SupportsTruncateTable = true;
 				UsePositionalParameters = true;
 				break;
 		}
