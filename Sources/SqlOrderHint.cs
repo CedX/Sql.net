@@ -18,9 +18,27 @@ public sealed class SqlOrderHint(string column, SortOrder sortOrder = SortOrder.
 	public SortOrder SortOrder { get; set; } = sortOrder;
 
 	/// <summary>
+	/// Creates a new order hint from the specified column name.
+	/// </summary>
+	/// <param name="column">The column name.</param>
+	/// <returns>The command corresponding to the specified column name.</returns>
+	public static implicit operator SqlOrderHint(string column) => new(column);
+
+	/// <summary>
 	/// Creates a new order hint from the specified tuple.
 	/// </summary>
-	/// <param name="parameter">The tuple providing the column name and its sort order.</param>
+	/// <param name="orderHint">The tuple providing the column name and its sort order.</param>
+	/// <returns>The order hint corresponding to the specified tuple.</returns>
+	/// <exception cref="ArgumentException">The specified array does not contain a column name and a sort order.</param>
+	public static implicit operator SqlOrderHint(object?[] orderHint) {
+		if (orderHint.Length != 2) throw new ArgumentException("The specified array must contain a column name and a sort order.", nameof(orderHint));
+		return new(orderHint[0]?.ToString() ?? "", orderHint[1] is SortOrder sortOrder ? sortOrder : Enum.Parse<SortOrder>(orderHint[1]?.ToString() ?? "", ignoreCase: true));
+	}
+
+	/// <summary>
+	/// Creates a new order hint from the specified tuple.
+	/// </summary>
+	/// <param name="orderHint">The tuple providing the column name and its sort order.</param>
 	/// <returns>The order hint corresponding to the specified tuple.</returns>
 	public static implicit operator SqlOrderHint((string Column, SortOrder SortOrder) orderHint) => new(orderHint.Column, orderHint.SortOrder);
 

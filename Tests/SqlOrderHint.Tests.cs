@@ -8,8 +8,17 @@ public sealed class SqlOrderHintTests {
 
 	[TestMethod]
 	public void ImplicitConversion() {
+		// It should create an order hint from the specified column name.
+		SqlOrderHint orderHint = "ID";
+		AreEqual("ID", orderHint.Column);
+		AreEqual(SortOrder.Ascending, orderHint.SortOrder);
+
 		// It should create an order hint from the specified tuple.
-		SqlOrderHint orderHint = ("ID", SortOrder.Descending);
+		orderHint = new object[] { "ID", "descending" };
+		AreEqual("ID", orderHint.Column);
+		AreEqual(SortOrder.Descending, orderHint.SortOrder);
+
+		orderHint = ("ID", SortOrder.Descending);
 		AreEqual("ID", orderHint.Column);
 		AreEqual(SortOrder.Descending, orderHint.SortOrder);
 
