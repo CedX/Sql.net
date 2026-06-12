@@ -41,16 +41,27 @@ public static partial class DbConnectionExtensions {
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The single row.</returns>
 		/// <exception cref="InvalidOperationException">The result set is empty or contains more than one record.</exception>
-		public T QuerySingle<T>(SqlCommand command, SqlParameterCollection? parameters = null) where T: new() {
+		public T QuerySingle<T>(SqlCommand command, SqlParameterCollection? parameters = null) where T: new() =>
+			(T) connection.QuerySingle(typeof(T), command, parameters);
+
+		/// <summary>
+		/// Executes a parameterized SQL query and returns the single row.
+		/// </summary>
+		/// <typeparam name="T">The type of objects to return.</typeparam>
+		/// <param name="command">The command to be executed.</param>
+		/// <param name="parameters">The parameters of the SQL statement.</param>
+		/// <returns>The single row.</returns>
+		/// <exception cref="InvalidOperationException">The result set is empty or contains more than one record.</exception>
+		public object QuerySingle(Type type, SqlCommand command, SqlParameterCollection? parameters = null) {
 			if (connection.State == ConnectionState.Closed) connection.Open();
 			using var dbCommand = command.ToDbCommand(connection, parameters);
 			using var reader = dbCommand.ExecuteReader();
 
-			T? record = default;
+			object? record = null;
 			var rowCount = 0;
 			while (reader.Read()) {
 				if (++rowCount > 1) break;
-				record = SqlMapper.Instance.CreateInstance<T>(reader);
+				record = SqlMapper.Instance.CreateInstance(type, reader);
 			}
 
 			return rowCount == 1 ? record! : throw new InvalidOperationException("The result set is empty or contains more than one record.");
@@ -108,20 +119,31 @@ public static partial class DbConnectionExtensions {
 		/// <param name="command">The command to be executed.</param>
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The single row, or <see langword="null"/> if not found.</returns>
-		public T? QuerySingleOrDefault<T>(SqlCommand command, SqlParameterCollection? parameters = null) where T: new() {
+		public T? QuerySingleOrDefault<T>(SqlCommand command, SqlParameterCollection? parameters = null) where T: new() =>
+			(T?) connection.QuerySingleOrDefault(typeof(T), command, parameters);
+
+		/// <summary>
+		/// Executes a parameterized SQL query and returns the single row.
+		/// </summary>
+		/// <typeparam name="T">The type of objects to return.</typeparam>
+		/// <param name="command">The command to be executed.</param>
+		/// <param name="parameters">The parameters of the SQL statement.</param>
+		/// <returns>The single row, or <see langword="null"/> if not found.</returns>
+		public object? QuerySingleOrDefault(Type type, SqlCommand command, SqlParameterCollection? parameters = null) {
 			if (connection.State == ConnectionState.Closed) connection.Open();
 			using var dbCommand = command.ToDbCommand(connection, parameters);
 			using var reader = dbCommand.ExecuteReader();
 
-			T? record = default;
+			object? record = null;
 			var rowCount = 0;
 			while (reader.Read()) {
 				if (++rowCount > 1) break;
-				record = SqlMapper.Instance.CreateInstance<T>(reader);
+				record = SqlMapper.Instance.CreateInstance(type, reader);
 			}
 
-			return rowCount == 1 ? record : default;
+			return rowCount == 1 ? record : null;
 		}
+
 
 		/// <summary>
 		/// Executes a parameterized SQL query and returns the single row.

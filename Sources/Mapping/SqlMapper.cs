@@ -83,6 +83,14 @@ public sealed class SqlMapper {
 	public T CreateInstance<T>(IDataRecord record) where T: new() => CreateInstance<T>(SplitOn(record).First());
 
 	/// <summary>
+	/// Creates a new object of the given type from the specified data record.
+	/// </summary>
+	/// <typeparam name="T">The object type.</typeparam>
+	/// <param name="record">A data record providing the properties to be set on the created object.</param>
+	/// <returns>The newly created object.</returns>
+	public object CreateInstance(Type type, IDataRecord record) => CreateInstance(type, SplitOn(record).First());
+
+	/// <summary>
 	/// Creates a new object pair of the given types from the specified data record.
 	/// </summary>
 	/// <typeparam name="TItem1">The type of the first object.</typeparam>

@@ -41,11 +41,22 @@ public static partial class DbConnectionExtensions {
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The first row.</returns>
 		/// <exception cref="InvalidOperationException">The result set is empty.</exception>
-		public T QueryFirst<T>(SqlCommand command, SqlParameterCollection? parameters = null) where T: new() {
+		public T QueryFirst<T>(SqlCommand command, SqlParameterCollection? parameters = null) where T: new() =>
+			(T) connection.QueryFirst(typeof(T), command, parameters);
+
+		/// <summary>
+		/// Executes a parameterized SQL query and returns the first row.
+		/// </summary>
+		/// <typeparam name="T">The type of objects to return.</typeparam>
+		/// <param name="command">The command to be executed.</param>
+		/// <param name="parameters">The parameters of the SQL statement.</param>
+		/// <returns>The first row.</returns>
+		/// <exception cref="InvalidOperationException">The result set is empty.</exception>
+		public object QueryFirst(Type type, SqlCommand command, SqlParameterCollection? parameters = null) {
 			if (connection.State == ConnectionState.Closed) connection.Open();
 			using var dbCommand = command.ToDbCommand(connection, parameters);
 			using var reader = dbCommand.ExecuteReader();
-			return reader.Read() ? SqlMapper.Instance.CreateInstance<T>(reader) : throw new InvalidOperationException("The result set is empty.");
+			return reader.Read() ? SqlMapper.Instance.CreateInstance(type, reader) : throw new InvalidOperationException("The result set is empty.");
 		}
 
 		/// <summary>
@@ -92,11 +103,21 @@ public static partial class DbConnectionExtensions {
 		/// <param name="command">The command to be executed.</param>
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The first row, or <see langword="null"/> if not found.</returns>
-		public T? QueryFirstOrDefault<T>(SqlCommand command, SqlParameterCollection? parameters = null) where T: new() {
+		public T? QueryFirstOrDefault<T>(SqlCommand command, SqlParameterCollection? parameters = null) where T: new() =>
+			(T?) connection.QueryFirstOrDefault(typeof(T), command, parameters);
+
+		/// <summary>
+		/// Executes a parameterized SQL query and returns the first row.
+		/// </summary>
+		/// <typeparam name="T">The type of objects to return.</typeparam>
+		/// <param name="command">The command to be executed.</param>
+		/// <param name="parameters">The parameters of the SQL statement.</param>
+		/// <returns>The first row, or <see langword="null"/> if not found.</returns>
+		public object? QueryFirstOrDefault(Type type, SqlCommand command, SqlParameterCollection? parameters = null) {
 			if (connection.State == ConnectionState.Closed) connection.Open();
 			using var dbCommand = command.ToDbCommand(connection, parameters);
 			using var reader = dbCommand.ExecuteReader();
-			return reader.Read() ? SqlMapper.Instance.CreateInstance<T>(reader) : default;
+			return reader.Read() ? SqlMapper.Instance.CreateInstance(type, reader) : default;
 		}
 
 		/// <summary>
