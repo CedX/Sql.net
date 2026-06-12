@@ -119,7 +119,7 @@ public class SqlCommandBuilder {
 	/// <summary>
 	/// Gets the generated command to count all entities.
 	/// </summary>
-	/// <typeparam name="T">The entity type.</typeparam>
+	/// <param name="type">The entity type.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	public (SqlCommand Command, SqlParameterCollection Parameters) GetCountAllCommand(Type type) {
 		var tableName = GetTableName(SqlMapper.Instance.GetTable(type));
@@ -139,7 +139,7 @@ public class SqlCommandBuilder {
 	/// <summary>
 	/// Gets the generated command to delete an entity.
 	/// </summary>
-	/// <typeparam name="T">The entity type.</typeparam>
+	/// <param name="type">The entity type.</param>
 	/// <param name="entity">The entity to delete.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
@@ -168,7 +168,7 @@ public class SqlCommandBuilder {
 	/// <summary>
 	/// Gets the generated command to delete all entities.
 	/// </summary>
-	/// <typeparam name="T">The entity type.</typeparam>
+	/// <param name="type">The entity type.</param>
 	/// <param name="truncate">Value indicating whether to truncate the underlying table.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	public (SqlCommand Command, SqlParameterCollection Parameters) GetDeleteAllCommand(Type type, bool truncate = false) {
@@ -189,7 +189,7 @@ public class SqlCommandBuilder {
 	/// <summary>
 	/// Gets the generated command to check the existence of an entity.
 	/// </summary>
-	/// <typeparam name="T">The entity type.</typeparam>
+	/// <param name="type">The entity type.</param>
 	/// <param name="id">The value of the entity's primary key.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
@@ -221,7 +221,7 @@ public class SqlCommandBuilder {
 	/// <summary>
 	/// Gets the generated command to find an entity.
 	/// </summary>
-	/// <typeparam name="T">The entity type.</typeparam>
+	/// <param name="type">The entity type.</param>
 	/// <param name="id">The value of the entity's primary key.</param>
 	/// <param name="columns">The list of columns to select. By default, all columns.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
@@ -261,7 +261,7 @@ public class SqlCommandBuilder {
 	/// <summary>
 	/// Gets the generated command to find all entities.
 	/// </summary>
-	/// <typeparam name="T">The entity type.</typeparam>
+	/// <param name="type">The entity type.</param>
 	/// <param name="orderHints">The hints describing the sort order of columns.</param>
 	/// <param name="columns">The list of columns to select. By default, all columns.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
@@ -297,7 +297,7 @@ public class SqlCommandBuilder {
 	/// <summary>
 	/// Gets the generated command to insert an entity.
 	/// </summary>
-	/// <typeparam name="T">The entity type.</typeparam>
+	/// <param name="type">The entity type.</param>
 	/// <param name="entity">The entity to insert.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
@@ -329,7 +329,7 @@ public class SqlCommandBuilder {
 	/// <summary>
 	/// Gets the generated command to update an entity.
 	/// </summary>
-	/// <typeparam name="T">The entity type.</typeparam>
+	/// <param name="type">The entity type.</param>
 	/// <param name="entity">The entity to update.</param>
 	/// <param name="columns">The list of columns to update. By default, all columns.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
@@ -383,11 +383,10 @@ public class SqlCommandBuilder {
 	/// <summary>
 	/// Returns the parameter value corresponding to the specified column.
 	/// </summary>
-	/// <typeparam name="T">The entity type.</typeparam>
 	/// <param name="column">The column providing the parameter data type.</param>
 	/// <param name="entity">The entity providing the parameter value.</param>
 	/// <returns>The parameter value corresponding to the specified column.</returns>
-	private object? GetParameterValue<T>(DbColumnInfo column, T entity) where T: new() {
+	private object? GetParameterValue(DbColumnInfo column, object entity) {
 		var value = column.GetValue(entity);
 		return column.PropertyType.IsEnum && stringTypes.Contains(column.DbType) ? value?.ToString() : value;
 	}
