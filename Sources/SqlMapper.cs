@@ -175,7 +175,7 @@ public sealed class SqlMapper {
 	/// <summary>
 	/// Creates a new object of a given type from the specified hash table.
 	/// </summary>
-	/// <typeparam name="T">The object type.</typeparam>
+	/// <param name="type">The object type.</param>
 	/// <param name="properties">A hash table providing the properties to be set on the created object.</param>
 	/// <returns>The newly created object.</returns>
 	public object CreateInstance(Type type, Hashtable properties) =>
@@ -184,7 +184,7 @@ public sealed class SqlMapper {
 	/// <summary>
 	/// Creates a new object of a given type from the specified dictionary.
 	/// </summary>
-	/// <typeparam name="T">The object type.</typeparam>
+	/// <param name="type">The object type.</param>
 	/// <param name="properties">A dictionary providing the properties to be set on the created object.</param>
 	/// <returns>The newly created object.</returns>
 	public object CreateInstance(Type type, IDictionary<string, object?> properties) {
