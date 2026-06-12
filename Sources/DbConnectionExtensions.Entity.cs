@@ -194,7 +194,7 @@ public static partial class DbConnectionExtensions {
 	/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 	/// <returns>The list of all entities of the specified type.</returns>
 	public static IList<T> FindAll<T>(this IDbConnection connection, SqlOrderHintCollection? orderHints = null, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null) where T: new() {
-		var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetFindAllCommand<T>(orderHints, columns ?? []);
+		var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetFindAllCommand<T>(orderHints ?? new(), columns ?? []);
 		command.Timeout = timeout;
 		command.Transaction = transaction;
 		return Query<T>(connection, command, parameters).AsList();
@@ -213,7 +213,7 @@ public static partial class DbConnectionExtensions {
 	/// <param name="cancellationToken">The token to cancel the operation.</param>
 	/// <returns>The list of all entities of the specified type.</returns>
 	public static async Task<IList<T>> FindAllAsync<T>(this IDbConnection connection, SqlOrderHintCollection? orderHints = null, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null, CancellationToken cancellationToken = default) where T: new() {
-		var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetFindAllCommand<T>(orderHints, columns ?? []);
+		var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetFindAllCommand<T>(orderHints ?? new(), columns ?? []);
 		command.Timeout = timeout;
 		command.Transaction = transaction;
 		return (await QueryAsync<T>(connection, command, parameters, cancellationToken)).AsList();

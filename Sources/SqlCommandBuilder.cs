@@ -251,12 +251,32 @@ public class SqlCommandBuilder {
 	/// Gets the generated command to find all entities.
 	/// </summary>
 	/// <typeparam name="T">The entity type.</typeparam>
+	/// <param name="columns">The list of columns to select. By default, all columns.</param>
+	/// <returns>A tuple providing the generated command and its parameters.</returns>
+	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
+	public (SqlCommand Command, SqlParameterCollection Parameters) GetFindAllCommand<T>(params string[] columns) where T: new() =>
+		GetFindAllCommand<T>(new(), columns);
+
+	/// <summary>
+	/// Gets the generated command to find all entities.
+	/// </summary>
+	/// <typeparam name="T">The entity type.</typeparam>
 	/// <param name="orderHints">The hints describing the sort order of columns.</param>
 	/// <param name="columns">The list of columns to select. By default, all columns.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
-	public (SqlCommand Command, SqlParameterCollection Parameters) GetFindAllCommand<T>(SqlOrderHintCollection? orderHints = null, params string[] columns) where T: new() =>
+	public (SqlCommand Command, SqlParameterCollection Parameters) GetFindAllCommand<T>(SqlOrderHintCollection orderHints, params string[] columns) where T: new() =>
 		GetFindAllCommand(typeof(T), orderHints, columns);
+
+	/// <summary>
+	/// Gets the generated command to find all entities.
+	/// </summary>
+	/// <param name="type">The entity type.</param>
+	/// <param name="columns">The list of columns to select. By default, all columns.</param>
+	/// <returns>A tuple providing the generated command and its parameters.</returns>
+	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
+	public (SqlCommand Command, SqlParameterCollection Parameters) GetFindAllCommand(Type type, params string[] columns) =>
+		GetFindAllCommand(type, new(), columns);
 
 	/// <summary>
 	/// Gets the generated command to find all entities.
@@ -266,7 +286,7 @@ public class SqlCommandBuilder {
 	/// <param name="columns">The list of columns to select. By default, all columns.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
-	public (SqlCommand Command, SqlParameterCollection Parameters) GetFindAllCommand(Type type, SqlOrderHintCollection? orderHints = null, params string[] columns) {
+	public (SqlCommand Command, SqlParameterCollection Parameters) GetFindAllCommand(Type type, SqlOrderHintCollection orderHints, params string[] columns) {
 		var table = SqlMapper.Instance.GetTable(type);
 		var idColumn = table.IdentityColumn ?? throw new InvalidOperationException("The identity column could not be found.");
 
@@ -277,7 +297,7 @@ public class SqlCommandBuilder {
 
 		if (!fields.Contains(idColumn.Name)) fields.Add(idColumn.Name);
 
-		var orderBy = orderHints is null || orderHints.Count == 0
+		var orderBy = orderHints.Count == 0
 			? $"{QuoteIdentifier(idColumn.Name)} ASC"
 			: string.Join(", ", orderHints.Select(orderHint => $"{QuoteIdentifier(orderHint.Column)} {(orderHint.SortOrder == SortOrder.Descending ? "DESC" : "ASC")}"));
 
