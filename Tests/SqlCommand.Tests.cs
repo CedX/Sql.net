@@ -8,7 +8,7 @@ public sealed class SqlCommandTests {
 
 	[TestMethod]
 	public void ImplicitConversion() {
-		var sql = "SELECT * FROM Characters";
-		AreEqual(sql, ((SqlCommand) sql).Text);
+		SqlCommand command = "SELECT * FROM Characters";
+		AreEqual("SELECT * FROM Characters", command.Text);
 	}
 }

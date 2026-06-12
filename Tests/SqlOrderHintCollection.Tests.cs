@@ -56,7 +56,7 @@ public sealed class SqlOrderHintCollectionTests {
 		CollectionAssert.AreEqual(new[] { SortOrder.Ascending, SortOrder.Ascending }, collection.Select(parameter => parameter.SortOrder).ToArray());
 
 		// It should create a collection from the specified dictionary of column names and sort orders.
-		collection = new OrderedDictionary { ["ID"] = "descending", ["Name"] = "ascending" };
+		collection = new OrderedDictionary { ["ID"] = "Descending", ["Name"] = "Ascending" };
 		CollectionAssert.AreEqual(new[] { "ID", "Name" }, collection.Select(parameter => parameter.Column).ToArray());
 		CollectionAssert.AreEqual(new[] { SortOrder.Descending, SortOrder.Ascending }, collection.Select(parameter => parameter.SortOrder).ToArray());
 
