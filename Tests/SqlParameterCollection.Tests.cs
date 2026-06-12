@@ -1,5 +1,6 @@
 namespace Belin.Sql;
 
+using System.Collections;
 using System.Data;
 
 /// <summary>
@@ -72,6 +73,11 @@ public sealed class SqlParameterCollectionTests {
 
 		// It should create a collection from the specified dictionary of named parameters.
 		collection = new Dictionary<string, object?> { ["foo"] = "bar", ["baz"] = "qux" };
+		CollectionAssert.AreEquivalent(new[] { "@foo", "@baz" }, collection.Select(parameter => parameter.Name).ToArray());
+		CollectionAssert.AreEquivalent(new[] { "bar", "qux" }, collection.Select(parameter => parameter.Value).ToArray());
+
+		// It should create a collection from the specified hash table of named parameters.
+		collection = new Hashtable { ["foo"] = "bar", ["baz"] = "qux" };
 		CollectionAssert.AreEquivalent(new[] { "@foo", "@baz" }, collection.Select(parameter => parameter.Name).ToArray());
 		CollectionAssert.AreEquivalent(new[] { "bar", "qux" }, collection.Select(parameter => parameter.Value).ToArray());
 	}
