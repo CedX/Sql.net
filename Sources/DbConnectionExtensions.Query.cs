@@ -45,7 +45,7 @@ public static partial class DbConnectionExtensions {
 		using var dbCommand = command.ToDbCommand(connection, parameters);
 		using var reader = dbCommand.ExecuteReader();
 		var records = SqlMapper.Instance.CreateInstances<T>(reader);
-		return command.NoEnumerate ? records : Enumerable.ToList(records);
+		return command.NoEnumerate ? records : records.AsList();
 	}
 
 	/// <summary>
@@ -62,7 +62,7 @@ public static partial class DbConnectionExtensions {
 		using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
 		using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
 		var records = SqlMapper.Instance.CreateInstances<T>(reader);
-		return command.NoEnumerate ? records : Enumerable.ToList(records);
+		return command.NoEnumerate ? records : records.AsList();
 	}
 
 	/// <summary>
@@ -80,7 +80,7 @@ public static partial class DbConnectionExtensions {
 		using var dbCommand = command.ToDbCommand(connection, parameters);
 		using var reader = dbCommand.ExecuteReader();
 		var records = SqlMapper.Instance.CreateInstances<TItem1, TItem2>(reader, splitOn);
-		return command.NoEnumerate ? records : Enumerable.ToList(records);
+		return command.NoEnumerate ? records : records.AsList();
 	}
 
 	/// <summary>
@@ -99,7 +99,7 @@ public static partial class DbConnectionExtensions {
 		using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
 		using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
 		var records = SqlMapper.Instance.CreateInstances<TItem1, TItem2>(reader, splitOn);
-		return command.NoEnumerate ? records : Enumerable.ToList(records);
+		return command.NoEnumerate ? records : records.AsList();
 	}
 
 	/// <summary>
@@ -118,7 +118,7 @@ public static partial class DbConnectionExtensions {
 		using var dbCommand = command.ToDbCommand(connection, parameters);
 		using var reader = dbCommand.ExecuteReader();
 		var records = SqlMapper.Instance.CreateInstances<TItem1, TItem2, TItem3>(reader, splitOn);
-		return command.NoEnumerate ? records : Enumerable.ToList(records);
+		return command.NoEnumerate ? records : records.AsList();
 	}
 
 	/// <summary>
@@ -138,7 +138,7 @@ public static partial class DbConnectionExtensions {
 		using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
 		using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
 		var records = SqlMapper.Instance.CreateInstances<TItem1, TItem2, TItem3>(reader, splitOn);
-		return command.NoEnumerate ? records : Enumerable.ToList(records);
+		return command.NoEnumerate ? records : records.AsList();
 	}
 
 	/// <summary>
@@ -158,7 +158,7 @@ public static partial class DbConnectionExtensions {
 		using var dbCommand = command.ToDbCommand(connection, parameters);
 		using var reader = dbCommand.ExecuteReader();
 		var records = SqlMapper.Instance.CreateInstances<TItem1, TItem2, TItem3, TItem4>(reader, splitOn);
-		return command.NoEnumerate ? records : Enumerable.ToList(records);
+		return command.NoEnumerate ? records : records.AsList();
 	}
 
 	/// <summary>
@@ -179,7 +179,7 @@ public static partial class DbConnectionExtensions {
 		using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
 		using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
 		var records = SqlMapper.Instance.CreateInstances<TItem1, TItem2, TItem3, TItem4>(reader, splitOn);
-		return command.NoEnumerate ? records : Enumerable.ToList(records);
+		return command.NoEnumerate ? records : records.AsList();
 	}
 
 	/// <summary>
