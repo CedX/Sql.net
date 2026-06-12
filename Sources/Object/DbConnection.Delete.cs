@@ -21,7 +21,7 @@ public static partial class DbConnectionExtensions {
 			var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetDeleteCommand(entity);
 			command.Timeout = timeout;
 			command.Transaction = transaction;
-			return Execute(connection, command, parameters) > 0;
+			return connection.Execute(command, parameters) > 0;
 		}
 
 		/// <summary>
@@ -38,7 +38,7 @@ public static partial class DbConnectionExtensions {
 			var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetDeleteCommand(entity);
 			command.Timeout = timeout;
 			command.Transaction = transaction;
-			return await ExecuteAsync(connection, command, parameters, cancellationToken) > 0;
+			return await connection.ExecuteAsync(command, parameters, cancellationToken) > 0;
 		}
 
 		/// <summary>
@@ -54,7 +54,7 @@ public static partial class DbConnectionExtensions {
 			var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetDeleteAllCommand<T>(truncate);
 			command.Timeout = timeout;
 			command.Transaction = transaction;
-			Execute(connection, command, parameters);
+			connection.Execute(command, parameters);
 		}
 
 		/// <summary>
@@ -71,7 +71,7 @@ public static partial class DbConnectionExtensions {
 			var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetDeleteAllCommand<T>(truncate);
 			command.Timeout = timeout;
 			command.Transaction = transaction;
-			await ExecuteAsync(connection, command, parameters, cancellationToken);
+			await connection.ExecuteAsync(command, parameters, cancellationToken);
 		}
 	}
 }

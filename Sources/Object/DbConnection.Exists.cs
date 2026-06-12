@@ -21,7 +21,7 @@ public static partial class DbConnectionExtensions {
 			var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetExistsCommand<T>(id);
 			command.Timeout = timeout;
 			command.Transaction = transaction;
-			return ExecuteScalar<bool>(connection, command, parameters);
+			return connection.ExecuteScalar<bool>(command, parameters);
 		}
 
 		/// <summary>
@@ -38,7 +38,7 @@ public static partial class DbConnectionExtensions {
 			var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetExistsCommand<T>(id);
 			command.Timeout = timeout;
 			command.Transaction = transaction;
-			return await ExecuteScalarAsync<bool>(connection, command, parameters, cancellationToken);
+			return await connection.ExecuteScalarAsync<bool>(command, parameters, cancellationToken);
 		}
 	}
 }

@@ -19,7 +19,7 @@ public static partial class DbConnectionExtensions {
 		/// <exception cref="InvalidOperationException">The result set is empty or contains more than one record.</exception>
 		/// <remarks>The row values can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{string, object?}"/>.</remarks>
 		public ExpandoObject QuerySingle(SqlCommand command, SqlParameterCollection? parameters = null) =>
-			QuerySingle<ExpandoObject>(connection, command, parameters);
+			connection.QuerySingle<ExpandoObject>(command, parameters);
 
 		/// <summary>
 		/// Executes a parameterized SQL query and returns the single row.
@@ -31,7 +31,7 @@ public static partial class DbConnectionExtensions {
 		/// <exception cref="InvalidOperationException">The result set is empty or contains more than one record.</exception>
 		/// <remarks>The row values can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{string, object?}"/>.</remarks>
 		public async Task<ExpandoObject> QuerySingleAsync(SqlCommand command, SqlParameterCollection? parameters = null, CancellationToken cancellationToken = default) =>
-			await QuerySingleAsync<ExpandoObject>(connection, command, parameters, cancellationToken);
+			await connection.QuerySingleAsync<ExpandoObject>(command, parameters, cancellationToken);
 
 		/// <summary>
 		/// Executes a parameterized SQL query and returns the single row.
@@ -88,7 +88,7 @@ public static partial class DbConnectionExtensions {
 		/// <returns>The single row, or <see langword="null"/> if not found.</returns>
 		/// <remarks>The row values can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{string, object?}"/>.</remarks>
 		public ExpandoObject? QuerySingleOrDefault(SqlCommand command, SqlParameterCollection? parameters = null) =>
-			QuerySingleOrDefault<ExpandoObject>(connection, command, parameters);
+			connection.QuerySingleOrDefault<ExpandoObject>(command, parameters);
 
 		/// <summary>
 		/// Executes a parameterized SQL query and returns the single row.
@@ -99,7 +99,7 @@ public static partial class DbConnectionExtensions {
 		/// <returns>The single row, or <see langword="null"/> if not found.</returns>
 		/// <remarks>The row values can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{string, object?}"/>.</remarks>
 		public async Task<ExpandoObject?> QuerySingleOrDefaultAsync(SqlCommand command, SqlParameterCollection? parameters = null, CancellationToken cancellationToken = default) =>
-			await QuerySingleOrDefaultAsync<ExpandoObject>(connection, command, parameters, cancellationToken);
+			await connection.QuerySingleOrDefaultAsync<ExpandoObject>(command, parameters, cancellationToken);
 
 		/// <summary>
 		/// Executes a parameterized SQL query and returns the single row.

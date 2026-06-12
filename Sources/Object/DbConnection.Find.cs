@@ -22,7 +22,7 @@ public static partial class DbConnectionExtensions {
 			var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetFindCommand<T>(id, columns ?? []);
 			command.Timeout = timeout;
 			command.Transaction = transaction;
-			return QuerySingleOrDefault<T>(connection, command, parameters);
+			return connection.QuerySingleOrDefault<T>(command, parameters);
 		}
 
 		/// <summary>
@@ -40,7 +40,7 @@ public static partial class DbConnectionExtensions {
 			var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetFindCommand<T>(id, columns ?? []);
 			command.Timeout = timeout;
 			command.Transaction = transaction;
-			return await QuerySingleOrDefaultAsync<T>(connection, command, parameters, cancellationToken);
+			return await connection.QuerySingleOrDefaultAsync<T>(command, parameters, cancellationToken);
 		}
 
 		/// <summary>
@@ -57,7 +57,7 @@ public static partial class DbConnectionExtensions {
 			var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetFindAllCommand<T>(orderHints ?? new(), columns ?? []);
 			command.Timeout = timeout;
 			command.Transaction = transaction;
-			return Query<T>(connection, command, parameters).AsList();
+			return connection.Query<T>(command, parameters).AsList();
 		}
 
 		/// <summary>
@@ -75,7 +75,7 @@ public static partial class DbConnectionExtensions {
 			var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetFindAllCommand<T>(orderHints ?? new(), columns ?? []);
 			command.Timeout = timeout;
 			command.Transaction = transaction;
-			return (await QueryAsync<T>(connection, command, parameters, cancellationToken)).AsList();
+			return (await connection.QueryAsync<T>(command, parameters, cancellationToken)).AsList();
 		}
 	}
 }

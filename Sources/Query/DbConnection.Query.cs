@@ -18,7 +18,7 @@ public static partial class DbConnectionExtensions {
 		/// <returns>The sequence of objects whose properties correspond to the columns.</returns>
 		/// <remarks>Each row can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{string, object?}"/>.</remarks>
 		public IEnumerable<ExpandoObject> Query(SqlCommand command, SqlParameterCollection? parameters = null) =>
-			Query<ExpandoObject>(connection, command, parameters);
+			connection.Query<ExpandoObject>(command, parameters);
 
 		/// <summary>
 		/// Executes a parameterized SQL query and returns a sequence of objects whose properties correspond to the columns.
@@ -29,7 +29,7 @@ public static partial class DbConnectionExtensions {
 		/// <returns>The sequence of objects whose properties correspond to the columns.</returns>
 		/// <remarks>Each row can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{string, object?}"/>.</remarks>
 		public async Task<IEnumerable<ExpandoObject>> QueryAsync(SqlCommand command, SqlParameterCollection? parameters = null, CancellationToken cancellationToken = default) =>
-			await QueryAsync<ExpandoObject>(connection, command, parameters, cancellationToken);
+			await connection.QueryAsync<ExpandoObject>(command, parameters, cancellationToken);
 
 		/// <summary>
 		/// Executes a parameterized SQL query and returns a sequence of objects whose properties correspond to the columns.

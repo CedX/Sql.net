@@ -19,7 +19,7 @@ public static partial class DbConnectionExtensions {
 		/// <exception cref="InvalidOperationException">The result set is empty.</exception>
 		/// <remarks>The row values can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{string, object?}"/>.</remarks>
 		public ExpandoObject QueryFirst(SqlCommand command, SqlParameterCollection? parameters = null) =>
-			QueryFirst<ExpandoObject>(connection, command, parameters);
+			connection.QueryFirst<ExpandoObject>(command, parameters);
 
 		/// <summary>
 		/// Executes a parameterized SQL query and returns the first row.
@@ -31,7 +31,7 @@ public static partial class DbConnectionExtensions {
 		/// <exception cref="InvalidOperationException">The result set is empty.</exception>
 		/// <remarks>The row values can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{string, object?}"/>.</remarks>
 		public async Task<ExpandoObject> QueryFirstAsync(SqlCommand command, SqlParameterCollection? parameters = null, CancellationToken cancellationToken = default) =>
-			await QueryFirstAsync<ExpandoObject>(connection, command, parameters, cancellationToken);
+			await connection.QueryFirstAsync<ExpandoObject>(command, parameters, cancellationToken);
 
 		/// <summary>
 		/// Executes a parameterized SQL query and returns the first row.
@@ -72,7 +72,7 @@ public static partial class DbConnectionExtensions {
 		/// <returns>The first row, or <see langword="null"/> if not found.</returns>
 		/// <remarks>The row values can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{string, object?}"/>.</remarks>
 		public ExpandoObject? QueryFirstOrDefault(SqlCommand command, SqlParameterCollection? parameters = null) =>
-			QueryFirstOrDefault<ExpandoObject>(connection, command, parameters);
+			connection.QueryFirstOrDefault<ExpandoObject>(command, parameters);
 
 		/// <summary>
 		/// Executes a parameterized SQL query and returns the first row.
@@ -83,7 +83,7 @@ public static partial class DbConnectionExtensions {
 		/// <returns>The first row, or <see langword="null"/> if not found.</returns>
 		/// <remarks>The row values can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{string, object?}"/>.</remarks>
 		public async Task<ExpandoObject?> QueryFirstOrDefaultAsync(SqlCommand command, SqlParameterCollection? parameters = null, CancellationToken cancellationToken = default) =>
-			await QueryFirstOrDefaultAsync<ExpandoObject>(connection, command, parameters, cancellationToken);
+			await connection.QueryFirstOrDefaultAsync<ExpandoObject>(command, parameters, cancellationToken);
 
 		/// <summary>
 		/// Executes a parameterized SQL query and returns the first row.

@@ -22,7 +22,7 @@ public static partial class DbConnectionExtensions {
 			var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetUpdateCommand(entity, columns ?? []);
 			command.Timeout = timeout;
 			command.Transaction = transaction;
-			return Execute(connection, command, parameters);
+			return connection.Execute(command, parameters);
 		}
 
 		/// <summary>
@@ -40,7 +40,7 @@ public static partial class DbConnectionExtensions {
 			var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetUpdateCommand(entity, columns ?? []);
 			command.Timeout = timeout;
 			command.Transaction = transaction;
-			return await ExecuteAsync(connection, command, parameters, cancellationToken);
+			return await connection.ExecuteAsync(command, parameters, cancellationToken);
 		}
 	}
 }

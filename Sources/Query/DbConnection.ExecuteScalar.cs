@@ -16,7 +16,7 @@ public static partial class DbConnectionExtensions {
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The first column of the first row.</returns>
 		public object? ExecuteScalar(SqlCommand command, SqlParameterCollection? parameters = null) =>
-			ExecuteScalar<object>(connection, command, parameters);
+			connection.ExecuteScalar<object>(command, parameters);
 
 		/// <summary>
 		/// Executes a parameterized SQL query that selects a single value.
@@ -26,7 +26,7 @@ public static partial class DbConnectionExtensions {
 		/// <param name="cancellationToken">The token to cancel the operation.</param>
 		/// <returns>The first column of the first row.</returns>
 		public async Task<object?> ExecuteScalarAsync(SqlCommand command, SqlParameterCollection? parameters = null, CancellationToken cancellationToken = default) =>
-			await ExecuteScalarAsync<object>(connection, command, parameters, cancellationToken);
+			await connection.ExecuteScalarAsync<object>(command, parameters, cancellationToken);
 
 		/// <summary>
 		/// Executes a parameterized SQL query that selects a single value.
@@ -36,10 +36,26 @@ public static partial class DbConnectionExtensions {
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The first column of the first row.</returns>
 		public T? ExecuteScalar<T>(SqlCommand command, SqlParameterCollection? parameters = null) {
+			// TODO return (T?) connection.ExecuteScalar(typeof(T), command, parameters);
+
 			if (connection.State == ConnectionState.Closed) connection.Open();
 			using var dbCommand = command.ToDbCommand(connection, parameters);
 			var value = dbCommand.ExecuteScalar();
 			return value is null || value is DBNull ? default : (T?) SqlMapper.Instance.ChangeType(value, typeof(T));
+		}
+
+		/// <summary>
+		/// Executes a parameterized SQL query that selects a single value.
+		/// </summary>
+		/// <typeparam name="T">The type of object to return.</typeparam>
+		/// <param name="command">The command to be executed.</param>
+		/// <param name="parameters">The parameters of the SQL statement.</param>
+		/// <returns>The first column of the first row.</returns>
+		public object? ExecuteScalar(Type type, SqlCommand command, SqlParameterCollection? parameters = null) {
+			if (connection.State == ConnectionState.Closed) connection.Open();
+			using var dbCommand = command.ToDbCommand(connection, parameters);
+			var value = dbCommand.ExecuteScalar();
+			return value is null || value is DBNull ? null : SqlMapper.Instance.ChangeType(value, type);
 		}
 
 		/// <summary>
