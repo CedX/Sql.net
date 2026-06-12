@@ -15,6 +15,13 @@ public sealed class DbColumnInfo {
 	private static readonly ThreadLocal<NullabilityInfoContext> nullabilityContext = new(() => new NullabilityInfoContext());
 
 	/// <summary>
+	/// The type of the <c>[ValidateNotNull]</c> attribute.
+	/// </summary>
+	private static readonly Type? validateNotNullAttribute = AppDomain.CurrentDomain.GetAssemblies()
+		.Select(assembly => assembly.GetType("System.Management.Automation.ValidateNotNullAttribute"))
+		.SingleOrDefault(type => type is not null);
+
+	/// <summary>
 	/// The mapping between common .NET types and data types.
 	/// </summary>
 	private static readonly Dictionary<Type, DataType> typeMap = new() {
@@ -121,7 +128,8 @@ public sealed class DbColumnInfo {
 		var databaseGeneratedOption = property.GetCustomAttribute<DatabaseGeneratedAttribute>()?.DatabaseGeneratedOption ?? DatabaseGeneratedOption.None;
 		IsComputed = databaseGeneratedOption != DatabaseGeneratedOption.None;
 		IsIdentity = databaseGeneratedOption == DatabaseGeneratedOption.Identity;
-		IsNullable = Nullable.GetUnderlyingType(property.PropertyType) is not null || nullabilityContext.Value!.Create(property).WriteState != NullabilityState.NotNull;
+		IsNullable = (validateNotNullAttribute is null || !property.IsDefined(validateNotNullAttribute))
+			&& (Nullable.GetUnderlyingType(property.PropertyType) is not null || nullabilityContext.Value!.Create(property).WriteState != NullabilityState.NotNull);
 	}
 
 	/// <summary>
