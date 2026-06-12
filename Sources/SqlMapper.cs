@@ -192,7 +192,14 @@ public sealed class SqlMapper {
 	/// </summary>
 	/// <typeparam name="T">The type to inspect.</typeparam>
 	/// <returns>The table information associated with the specified type.</returns>
-	public DbTableInfo GetTable<T>() where T: new() => mapping.GetOrAdd(typeof(T), type => new DbTableInfo(type));
+	public DbTableInfo GetTable<T>() where T: new() => GetTable(typeof(T));
+
+	/// <summary>
+	/// Gets the table information associated with the specified type.
+	/// </summary>
+	/// <param name="type">The type to inspect.</param>
+	/// <returns>The table information associated with the specified type.</returns>
+	public DbTableInfo GetTable(Type type) => mapping.GetOrAdd(type, type => new DbTableInfo(type));
 
 	/// <summary>
 	/// Converts the specified object into an equivalent value of the specified type.
