@@ -1,6 +1,7 @@
 namespace Belin.Sql;
 
 using System.Dynamic;
+using System.Management.Automation;
 
 /// <summary>
 /// Tests the features of the <see cref="SqlMapper"/> class.
@@ -81,19 +82,27 @@ public sealed class SqlMapperTests {
 		};
 
 		// It should create an `ExpandoObject` by default.
-		dynamic instance = SqlMapper.Instance.CreateInstance(properties);
-		IsInstanceOfType<ExpandoObject>(instance);
-		AreEqual("Bard/minstrel", instance.CLASS);
-		AreEqual("Cédric", instance.firstName);
-		AreEqual(CharacterGender.Balrog.ToString(), instance.gender);
-		IsNull(instance.lastName);
+		dynamic expandoObject = SqlMapper.Instance.CreateInstance(properties);
+		IsInstanceOfType<ExpandoObject>(expandoObject);
+		AreEqual("Bard/minstrel", expandoObject.CLASS);
+		AreEqual("Cédric", expandoObject.firstName);
+		AreEqual(CharacterGender.Balrog.ToString(), expandoObject.gender);
+		IsNull(expandoObject.lastName);
+
+		// It should support creating an object of type `PSObject`.
+		dynamic psObject = SqlMapper.Instance.CreateInstance<PSObject>(properties);
+		IsInstanceOfType<PSObject>(psObject);
+		AreEqual("Bard/minstrel", psObject.CLASS);
+		AreEqual("Cédric", psObject.firstName);
+		AreEqual(CharacterGender.Balrog.ToString(), psObject.gender);
+		IsNull(psObject.lastName);
 
 		// It should create an object of the specified type.
-		var record = SqlMapper.Instance.CreateInstance<Character>(properties);
-		IsInstanceOfType<Character>(record);
-		AreEqual("Cédric", record.FirstName);
-		AreEqual(CharacterGender.Balrog, record.Gender);
-		AreEqual("", record.LastName);
+		var character = SqlMapper.Instance.CreateInstance<Character>(properties);
+		IsInstanceOfType<Character>(character);
+		AreEqual("Cédric", character.FirstName);
+		AreEqual(CharacterGender.Balrog, character.Gender);
+		AreEqual("", character.LastName);
 	}
 
 	[TestMethod]

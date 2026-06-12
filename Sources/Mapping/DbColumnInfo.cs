@@ -17,9 +17,7 @@ public sealed class DbColumnInfo {
 	/// <summary>
 	/// The type of the <c>[ValidateNotNull]</c> attribute.
 	/// </summary>
-	private static readonly Type? validateNotNullAttribute = AppDomain.CurrentDomain.GetAssemblies()
-		.Select(assembly => assembly.GetType("System.Management.Automation.ValidateNotNullAttribute"))
-		.SingleOrDefault(type => type is not null);
+	private static readonly Type? validateNotNullAttribute = Type.GetType("System.Management.Automation.ValidateNotNullAttribute, System.Management.Automation");
 
 	/// <summary>
 	/// The mapping between common .NET types and data types.

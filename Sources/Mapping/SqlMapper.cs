@@ -23,11 +23,14 @@ public sealed class SqlMapper {
 	private static readonly ConcurrentDictionary<Type, DbTableInfo> mapping = [];
 
 	/// <summary>
+	/// The type of the <c>PSNoteProperty</c> class.
+	/// </summary>
+	private static readonly Type? psNoteProperty = Type.GetType("System.Management.Automation.PSNoteProperty, System.Management.Automation");
+
+	/// <summary>
 	/// The type of the <c>PSObject</c> class.
 	/// </summary>
-	private static readonly Type? psObject = AppDomain.CurrentDomain.GetAssemblies()
-		.Select(assembly => assembly.GetType("System.Management.Automation.PSObject"))
-		.SingleOrDefault(type => type is not null);
+	private static readonly Type? psObject = Type.GetType("System.Management.Automation.PSObject, System.Management.Automation");
 
 	/// <summary>
 	/// Creates a new data mapper.
@@ -196,10 +199,17 @@ public sealed class SqlMapper {
 	/// <param name="properties">A dictionary providing the properties to be set on the created object.</param>
 	/// <returns>The newly created object.</returns>
 	public object CreateInstance(Type type, IDictionary<string, object?> properties) {
-		if (type == typeof(ExpandoObject) || (psObject is not null && type == psObject)) {
+		if (type == typeof(ExpandoObject)) {
 			var expandoObject = (IDictionary<string, object?>) new ExpandoObject();
 			foreach (var (key, value) in properties) expandoObject.Add(key, value);
-			return type == psObject ? Activator.CreateInstance(type, [expandoObject])! : expandoObject;
+			return expandoObject;
+		}
+
+		if (psObject is not null && psNoteProperty is not null && type == psObject) {
+			var psCustomObject = Activator.CreateInstance(psObject)!;
+			dynamic psProperties = psObject.GetProperty("Properties")!.GetValue(psCustomObject)!;
+			foreach (var (key, value) in properties) psProperties.Add((dynamic) Activator.CreateInstance(psNoteProperty, [key, value])!);
+			return psCustomObject;
 		}
 
 		var instance = Activator.CreateInstance(type)!;
