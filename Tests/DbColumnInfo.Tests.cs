@@ -1,6 +1,5 @@
 namespace Belin.Sql;
 
-using Belin.Sql.Fixtures;
 using DataType = System.Data.DbType;
 
 /// <summary>

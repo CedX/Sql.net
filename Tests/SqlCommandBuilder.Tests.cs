@@ -1,6 +1,5 @@
 namespace Belin.Sql;
 
-using Belin.Sql.Fixtures;
 using Microsoft.Data.Sqlite;
 
 /// <summary>

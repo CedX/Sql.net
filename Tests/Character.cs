@@ -1,4 +1,4 @@
-namespace Belin.Sql.Fixtures;
+namespace Belin.Sql;
 
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;

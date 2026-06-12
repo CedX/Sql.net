@@ -1,6 +1,5 @@
 namespace Belin.Sql;
 
-using Belin.Sql.Fixtures;
 
 /// <summary>
 /// Tests the features of the <see cref="DbConnectionExtensions"/> class.
