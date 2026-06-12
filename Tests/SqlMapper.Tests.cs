@@ -69,7 +69,7 @@ public sealed class SqlMapperTests {
 
 	[TestMethod, DynamicData(nameof(ChangeTypeData))]
 	public void ChangeType(object? value, Type conversionType, bool isNullable, object? expected) =>
-		AreEqual(expected, SqlMapper.ChangeType(value, conversionType, isNullable));
+		AreEqual(expected, SqlMapper.Instance.ChangeType(value, conversionType, isNullable));
 
 	[TestMethod]
 	public void CreateInstance() {

@@ -235,7 +235,7 @@ public static partial class DbConnectionExtensions {
 		command.Transaction = transaction;
 
 		var id = ExecuteScalar<long>(connection, command, parameters);
-		if (SqlMapper.Instance.GetTable<T>().IdentityColumn is DbColumnInfo column) column.SetValue(entity, SqlMapper.ChangeType(id, column));
+		if (SqlMapper.Instance.GetTable<T>().IdentityColumn is DbColumnInfo column) column.SetValue(entity, SqlMapper.Instance.ChangeType(id, column));
 		return id;
 	}
 
@@ -256,7 +256,7 @@ public static partial class DbConnectionExtensions {
 		command.Transaction = transaction;
 
 		var id = await ExecuteScalarAsync<long>(connection, command, parameters, cancellationToken);
-		if (SqlMapper.Instance.GetTable<T>().IdentityColumn is DbColumnInfo column) column.SetValue(entity, SqlMapper.ChangeType(id, column));
+		if (SqlMapper.Instance.GetTable<T>().IdentityColumn is DbColumnInfo column) column.SetValue(entity, SqlMapper.Instance.ChangeType(id, column));
 		return id;
 	}
 

@@ -68,7 +68,7 @@ public static partial class DbConnectionExtensions {
 		if (connection.State == ConnectionState.Closed) connection.Open();
 		using var dbCommand = command.ToDbCommand(connection, parameters);
 		var value = dbCommand.ExecuteScalar();
-		return value is null || value is DBNull ? default : (T?) SqlMapper.ChangeType(value, typeof(T));
+		return value is null || value is DBNull ? default : (T?) SqlMapper.Instance.ChangeType(value, typeof(T));
 	}
 
 	/// <summary>
@@ -84,6 +84,6 @@ public static partial class DbConnectionExtensions {
 		if (connection.State == ConnectionState.Closed) await ((DbConnection) connection).OpenAsync(cancellationToken);
 		using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
 		var value = await dbCommand.ExecuteScalarAsync(cancellationToken);
-		return value is null || value is DBNull ? default : (T?) SqlMapper.ChangeType(value, typeof(T));
+		return value is null || value is DBNull ? default : (T?) SqlMapper.Instance.ChangeType(value, typeof(T));
 	}
 }

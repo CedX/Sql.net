@@ -35,6 +35,39 @@ public sealed class SqlMapper {
 	private SqlMapper() {}
 
 	/// <summary>
+	/// Converts the specified object into an equivalent value of the specified type.
+	/// </summary>
+	/// <param name="value">The object to convert.</param>
+	/// <param name="column">The column providing the type of object to return.</param>
+	/// <returns>The value of the given type corresponding to the specified object.</returns>
+	public object? ChangeType(object? value, DbColumnInfo column) => ChangeType(value, column.PropertyType, column.IsNullable);
+
+	/// <summary>
+	/// Converts the specified object into an equivalent value of the specified type.
+	/// </summary>
+	/// <param name="value">The object to convert.</param>
+	/// <param name="conversionType">The type of object to return.</param>
+	/// <param name="isNullable">Value indicating whether the specified conversion type is nullable.</param>
+	/// <returns>The value of the given type corresponding to the specified object.</returns>
+	public object? ChangeType(object? value, Type conversionType, bool isNullable = false) {
+		var nullableType = Nullable.GetUnderlyingType(conversionType);
+		var targetType = nullableType ?? conversionType;
+
+		if (value is not null) return true switch {
+			true when targetType.IsEnum && value is string stringValue => Enum.Parse(targetType, stringValue, ignoreCase: true),
+			true when targetType.IsEnum => Enum.ToObject(targetType, Convert.ChangeType(value, Enum.GetUnderlyingType(targetType), CultureInfo.InvariantCulture)),
+			_ => targetType.IsInstanceOfType(value) ? value : Convert.ChangeType(value, targetType, CultureInfo.InvariantCulture),
+		};
+
+		return true switch {
+			true when nullableType is not null => default,
+			true when targetType.IsValueType => RuntimeHelpers.GetUninitializedObject(targetType),
+			true when targetType == typeof(string) => isNullable ? default : string.Empty,
+			_ => isNullable ? default : Activator.CreateInstance(targetType)
+		};
+	}
+
+	/// <summary>
 	/// Creates a new dyamic object from the specified data record.
 	/// </summary>
 	/// <param name="record">A data record providing the properties to be set on the created object.</param>
@@ -244,39 +277,6 @@ public sealed class SqlMapper {
 	/// <param name="type">The type to inspect.</param>
 	/// <returns>The table information associated with the specified type.</returns>
 	public DbTableInfo GetTable(Type type) => mapping.GetOrAdd(type, type => new DbTableInfo(type));
-
-	/// <summary>
-	/// Converts the specified object into an equivalent value of the specified type.
-	/// </summary>
-	/// <param name="value">The object to convert.</param>
-	/// <param name="column">The column providing the type of object to return.</param>
-	/// <returns>The value of the given type corresponding to the specified object.</returns>
-	internal static object? ChangeType(object? value, DbColumnInfo column) => ChangeType(value, column.PropertyType, column.IsNullable);
-
-	/// <summary>
-	/// Converts the specified object into an equivalent value of the specified type.
-	/// </summary>
-	/// <param name="value">The object to convert.</param>
-	/// <param name="conversionType">The type of object to return.</param>
-	/// <param name="isNullable">Value indicating whether the specified conversion type is nullable.</param>
-	/// <returns>The value of the given type corresponding to the specified object.</returns>
-	internal static object? ChangeType(object? value, Type conversionType, bool isNullable = false) {
-		var nullableType = Nullable.GetUnderlyingType(conversionType);
-		var targetType = nullableType ?? conversionType;
-
-		if (value is not null) return true switch {
-			true when targetType.IsEnum && value is string stringValue => Enum.Parse(targetType, stringValue, ignoreCase: true),
-			true when targetType.IsEnum => Enum.ToObject(targetType, Convert.ChangeType(value, Enum.GetUnderlyingType(targetType), CultureInfo.InvariantCulture)),
-			_ => targetType.IsInstanceOfType(value) ? value : Convert.ChangeType(value, targetType, CultureInfo.InvariantCulture),
-		};
-
-		return true switch {
-			true when nullableType is not null => default,
-			true when targetType.IsValueType => RuntimeHelpers.GetUninitializedObject(targetType),
-			true when targetType == typeof(string) => isNullable ? default : string.Empty,
-			_ => isNullable ? default : Activator.CreateInstance(targetType)
-		};
-	}
 
 	/// <summary>
 	/// Returns a value indicating whether all values of the specified dictionary are <see langword="null"/>.
