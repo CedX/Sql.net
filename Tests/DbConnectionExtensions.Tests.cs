@@ -29,5 +29,8 @@ public sealed partial class DbConnectionExtensionsTests(TestContext testContext)
 	/// Closes the connection to the data source.
 	/// </summary>
 	[TestCleanup]
-	public void TestCleanup() => connection.Close();
+	public void TestCleanup() {
+		connection.Close();
+		connection.Dispose();
+	}
 }
