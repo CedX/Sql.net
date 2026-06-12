@@ -54,6 +54,16 @@ public sealed class SqlParameter(string name = "?", object? value = null) {
 	/// </summary>
 	/// <param name="parameter">The tuple providing the parameter name and value.</param>
 	/// <returns>The parameter corresponding to the specified tuple.</returns>
+	/// <exception cref="ArgumentException">The specified array does not contain a parameter name and a value.</param>
+	public static implicit operator SqlParameter(object?[] parameter) => parameter.Length == 2
+		? new(parameter[0]?.ToString() ?? "", parameter[1])
+		: throw new ArgumentException("The specified array must contain a parameter name and a value.", nameof(parameter));
+
+	/// <summary>
+	/// Creates a new parameter from the specified tuple.
+	/// </summary>
+	/// <param name="parameter">The tuple providing the parameter name and value.</param>
+	/// <returns>The parameter corresponding to the specified tuple.</returns>
 	public static implicit operator SqlParameter((string Name, object? Value) parameter) => new(parameter.Name, parameter.Value);
 
 	/// <summary>

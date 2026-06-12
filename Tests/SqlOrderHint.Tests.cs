@@ -13,11 +13,12 @@ public sealed class SqlOrderHintTests {
 		AreEqual("Name", orderHint.Column);
 		AreEqual(SortOrder.Ascending, orderHint.SortOrder);
 
-		// It should create an order hint from the specified tuple.
+		// It should create an order hint from the specified array.
 		orderHint = new object[] { "ID", "Descending" };
 		AreEqual("ID", orderHint.Column);
 		AreEqual(SortOrder.Descending, orderHint.SortOrder);
 
+		// It should create an order hint from the specified tuple.
 		orderHint = ("ID", SortOrder.Descending);
 		AreEqual("ID", orderHint.Column);
 		AreEqual(SortOrder.Descending, orderHint.SortOrder);

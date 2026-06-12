@@ -8,8 +8,21 @@ public sealed class SqlParameterTests {
 
 	[TestMethod]
 	public void ImplicitConversion() {
+		// It should create a parameter from the specified array.
+		SqlParameter parameter = new object?[] { "", null };
+		AreEqual("?", parameter.Name);
+		AreEqual(DBNull.Value, parameter.Value);
+
+		parameter = new object[] { ":foo", "bar" };
+		AreEqual(":foo", parameter.Name);
+		AreEqual("bar", parameter.Value);
+
+		parameter = new object[] { "baz", 123 };
+		AreEqual("@baz", parameter.Name);
+		AreEqual(123, parameter.Value);
+
 		// It should create a parameter from the specified tuple.
-		SqlParameter parameter = ("", null);
+		parameter = ("", null);
 		AreEqual("?", parameter.Name);
 		AreEqual(DBNull.Value, parameter.Value);
 
