@@ -1,7 +1,5 @@
 namespace Belin.Sql;
 
-using System.Dynamic;
-
 /// <summary>
 /// Tests the features of the <see cref="DbConnectionExtensions"/> class.
 /// </summary>
