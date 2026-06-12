@@ -1,5 +1,7 @@
 namespace Belin.Sql;
 
+using System.Collections.Specialized;
+
 /// <summary>
 /// Tests the features of the <see cref="SqlOrderHintCollection"/> class.
 /// </summary>
@@ -40,7 +42,11 @@ public sealed class SqlOrderHintCollectionTests {
 	[TestMethod]
 	public void ImplicitConversion() {
 		// It should create a collection from the specified array of column names.
-		SqlOrderHintCollection collection = new[] { "ID", "Name" };
+		SqlOrderHintCollection collection = new object[] { "ID", "Name" };
+		CollectionAssert.AreEqual(new[] { "ID", "Name" }, collection.Select(parameter => parameter.Column).ToArray());
+		CollectionAssert.AreEqual(new[] { SortOrder.Ascending, SortOrder.Ascending }, collection.Select(parameter => parameter.SortOrder).ToArray());
+
+		collection = new string[] { "ID", "Name" };
 		CollectionAssert.AreEqual(new[] { "ID", "Name" }, collection.Select(parameter => parameter.Column).ToArray());
 		CollectionAssert.AreEqual(new[] { SortOrder.Ascending, SortOrder.Ascending }, collection.Select(parameter => parameter.SortOrder).ToArray());
 
@@ -50,6 +56,10 @@ public sealed class SqlOrderHintCollectionTests {
 		CollectionAssert.AreEqual(new[] { SortOrder.Ascending, SortOrder.Ascending }, collection.Select(parameter => parameter.SortOrder).ToArray());
 
 		// It should create a collection from the specified dictionary of column names and sort orders.
+		collection = new OrderedDictionary{ ["ID"] = "descending", ["Name"] = "ascending" };
+		CollectionAssert.AreEqual(new[] { "ID", "Name" }, collection.Select(parameter => parameter.Column).ToArray());
+		CollectionAssert.AreEqual(new[] { SortOrder.Descending, SortOrder.Ascending }, collection.Select(parameter => parameter.SortOrder).ToArray());
+
 		collection = new OrderedDictionary<string, SortOrder>{ ["ID"] = SortOrder.Descending, ["Name"] = SortOrder.Ascending };
 		CollectionAssert.AreEqual(new[] { "ID", "Name" }, collection.Select(parameter => parameter.Column).ToArray());
 		CollectionAssert.AreEqual(new[] { SortOrder.Descending, SortOrder.Ascending }, collection.Select(parameter => parameter.SortOrder).ToArray());

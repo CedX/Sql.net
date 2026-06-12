@@ -1,5 +1,8 @@
 namespace Belin.Sql;
 
+using System.Collections;
+using System.Collections.Specialized;
+
 /// <summary>
 /// A collection of hints describing the sort order of columns.
 /// </summary>
@@ -20,6 +23,14 @@ public class SqlOrderHintCollection(params IEnumerable<SqlOrderHint> orderHints)
 	/// </summary>
 	/// <param name="columns">The array whose elements are copied to the order hint collection.</param>
 	/// <returns>The order hint collection corresponding to the specified array of column names.</returns>
+	public static implicit operator SqlOrderHintCollection(object?[] columns) =>
+		[.. columns.Select(value => new SqlOrderHint(value?.ToString() ?? "", SortOrder.Ascending))];
+
+	/// <summary>
+	/// Creates a new order hint collection from the specified array of column names.
+	/// </summary>
+	/// <param name="columns">The array whose elements are copied to the order hint collection.</param>
+	/// <returns>The order hint collection corresponding to the specified array of column names.</returns>
 	public static implicit operator SqlOrderHintCollection(string[] columns) =>
 		[.. columns.Select(value => new SqlOrderHint(value, SortOrder.Ascending))];
 
@@ -30,6 +41,16 @@ public class SqlOrderHintCollection(params IEnumerable<SqlOrderHint> orderHints)
 	/// <returns>The order hint collection corresponding to the specified array of column names.</returns>
 	public static implicit operator SqlOrderHintCollection(List<string> columns) =>
 		[.. columns.Select(value => new SqlOrderHint(value, SortOrder.Ascending))];
+
+	/// <summary>
+	/// Creates a new order hint collection from the specified dictionary of column names and sort orders.
+	/// </summary>
+	/// <param name="orderHints">The dictionary whose elements are copied to the order hint collection.</param>
+	/// <returns>The order hint collection corresponding to the specified dictionary of column names and sort orders.</returns>
+	public static implicit operator SqlOrderHintCollection(OrderedDictionary orderHints) => [.. orderHints.Cast<DictionaryEntry>().Select(entry => {
+		var value = entry.Value is SortOrder sortOrder ? sortOrder : Enum.Parse<SortOrder>(entry.Value?.ToString() ?? "", ignoreCase: true);
+		return new SqlOrderHint(entry.Key.ToString() ?? "", value);
+	})];
 
 	/// <summary>
 	/// Creates a new order hint collection from the specified dictionary of column names and sort orders.
