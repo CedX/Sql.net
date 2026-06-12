@@ -23,6 +23,13 @@ public sealed class SqlMapper {
 	private static readonly ConcurrentDictionary<Type, DbTableInfo> mapping = [];
 
 	/// <summary>
+	/// The type of the <c>PSObject</c> class.
+	/// </summary>
+	private static readonly Type? psObject = AppDomain.CurrentDomain.GetAssemblies()
+		.Select(assembly => assembly.GetType("System.Management.Automation.PSObject"))
+		.SingleOrDefault(type => type is not null);
+
+	/// <summary>
 	/// Creates a new data mapper.
 	/// </summary>
 	private SqlMapper() {}
@@ -148,10 +155,10 @@ public sealed class SqlMapper {
 	/// <param name="properties">A dictionary providing the properties to be set on the created object.</param>
 	/// <returns>The newly created object.</returns>
 	public object CreateInstance(Type type, IDictionary<string, object?> properties) {
-		if (type == typeof(ExpandoObject)) {
+		if (type == psObject || type == typeof(ExpandoObject)) {
 			var expandoObject = (IDictionary<string, object?>) new ExpandoObject();
 			foreach (var (key, value) in properties) expandoObject.Add(key, value);
-			return (ExpandoObject) expandoObject;
+			return type == psObject ? Activator.CreateInstance(type, [expandoObject])! : expandoObject;
 		}
 
 		var instance = Activator.CreateInstance(type)!;
