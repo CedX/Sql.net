@@ -2,7 +2,8 @@
 
 ## Version [5.0.0](https://github.com/CedX/Sql.net/compare/v4.3.1...v5.0.0)
 - Breaking change: replaced the parameterized constructor of the `SqlCommandBuilder` class by a parameterless constructor.
-- Added the `SqlCommandBuilder.Create()` method.
+- Added the `CountAll()` and `CountAllAsync()` methods to the `DbConnectionExtensions` class.
+- Added the `Create()` and `GetCountAllCommand()` methods to the `SqlCommandBuilder` class.
 
 ## Version [4.3.1](https://github.com/CedX/Sql.net/compare/v4.3.0...v4.3.1)
 - Fixed the default value of the `SqlCommandBuilder.SupportsTruncateTable` property.
