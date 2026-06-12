@@ -18,7 +18,7 @@ public static partial class DbConnectionExtensions {
 	/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 	/// <returns><see langword="true"/> if the specified entity has been deleted, otherwise <see langword="false"/>.</returns>
 	public static bool Delete<T>(this IDbConnection connection, T entity, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null) where T: new() {
-		var (command, parameters) = (builder ?? new SqlCommandBuilder(connection)).GetDeleteCommand(entity);
+		var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetDeleteCommand(entity);
 		command.Timeout = timeout;
 		command.Transaction = transaction;
 		return Execute(connection, command, parameters) > 0;
@@ -36,7 +36,7 @@ public static partial class DbConnectionExtensions {
 	/// <param name="cancellationToken">The token to cancel the operation.</param>
 	/// <returns><see langword="true"/> if the specified entity has been deleted, otherwise <see langword="false"/>.</returns>
 	public static async Task<bool> DeleteAsync<T>(this IDbConnection connection, T entity, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null, CancellationToken cancellationToken = default) where T: new() {
-		var (command, parameters) = (builder ?? new SqlCommandBuilder(connection)).GetDeleteCommand(entity);
+		var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetDeleteCommand(entity);
 		command.Timeout = timeout;
 		command.Transaction = transaction;
 		return await ExecuteAsync(connection, command, parameters, cancellationToken) > 0;
@@ -53,7 +53,7 @@ public static partial class DbConnectionExtensions {
 	/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 	/// <returns><see langword="true"/> if the specified entity has been deleted, otherwise <see langword="false"/>.</returns>
 	public static void DeleteAll<T>(this IDbConnection connection, bool truncate = false, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null) where T: new() {
-		var (command, parameters) = (builder ?? new SqlCommandBuilder(connection)).GetDeleteAllCommand<T>(truncate);
+		var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetDeleteAllCommand<T>(truncate);
 		command.Timeout = timeout;
 		command.Transaction = transaction;
 		Execute(connection, command, parameters);
@@ -71,7 +71,7 @@ public static partial class DbConnectionExtensions {
 	/// <param name="cancellationToken">The token to cancel the operation.</param>
 	/// <returns><see langword="true"/> if the specified entity has been deleted, otherwise <see langword="false"/>.</returns>
 	public static async Task DeleteAllAsync<T>(this IDbConnection connection, bool truncate = false, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null, CancellationToken cancellationToken = default) where T: new() {
-		var (command, parameters) = (builder ?? new SqlCommandBuilder(connection)).GetDeleteAllCommand<T>(truncate);
+		var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetDeleteAllCommand<T>(truncate);
 		command.Timeout = timeout;
 		command.Transaction = transaction;
 		await ExecuteAsync(connection, command, parameters, cancellationToken);
@@ -88,7 +88,7 @@ public static partial class DbConnectionExtensions {
 	/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 	/// <returns><see langword="true"/> if an entity with the specified primary key exists, otherwise <see langword="false"/>.</returns>
 	public static bool Exists<T>(this IDbConnection connection, object id, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null) where T: new() {
-		var (command, parameters) = (builder ?? new SqlCommandBuilder(connection)).GetExistsCommand<T>(id);
+		var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetExistsCommand<T>(id);
 		command.Timeout = timeout;
 		command.Transaction = transaction;
 		return ExecuteScalar<bool>(connection, command, parameters);
@@ -106,7 +106,7 @@ public static partial class DbConnectionExtensions {
 	/// <param name="cancellationToken">The token to cancel the operation.</param>
 	/// <returns><see langword="true"/> if an entity with the specified primary key exists, otherwise <see langword="false"/>.</returns>
 	public static async Task<bool> ExistsAsync<T>(this IDbConnection connection, object id, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null, CancellationToken cancellationToken = default) where T: new() {
-		var (command, parameters) = (builder ?? new SqlCommandBuilder(connection)).GetExistsCommand<T>(id);
+		var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetExistsCommand<T>(id);
 		command.Timeout = timeout;
 		command.Transaction = transaction;
 		return await ExecuteScalarAsync<bool>(connection, command, parameters, cancellationToken);
@@ -124,7 +124,7 @@ public static partial class DbConnectionExtensions {
 	/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 	/// <returns>The entity with the specified primary key, or <see langword="null"/> if not found.</returns>
 	public static T? Find<T>(this IDbConnection connection, object id, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null) where T: new() {
-		var (command, parameters) = (builder ?? new SqlCommandBuilder(connection)).GetFindCommand<T>(id, columns ?? []);
+		var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetFindCommand<T>(id, columns ?? []);
 		command.Timeout = timeout;
 		command.Transaction = transaction;
 		return QuerySingleOrDefault<T>(connection, command, parameters);
@@ -143,7 +143,7 @@ public static partial class DbConnectionExtensions {
 	/// <param name="cancellationToken">The token to cancel the operation.</param>
 	/// <returns>The entity with the specified primary key, or <see langword="null"/> if not found.</returns>
 	public static async Task<T?> FindAsync<T>(this IDbConnection connection, object id, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null, CancellationToken cancellationToken = default) where T: new() {
-		var (command, parameters) = (builder ?? new SqlCommandBuilder(connection)).GetFindCommand<T>(id, columns ?? []);
+		var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetFindCommand<T>(id, columns ?? []);
 		command.Timeout = timeout;
 		command.Transaction = transaction;
 		return await QuerySingleOrDefaultAsync<T>(connection, command, parameters, cancellationToken);
@@ -161,7 +161,7 @@ public static partial class DbConnectionExtensions {
 	/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 	/// <returns>The list of all entities of the specified type.</returns>
 	public static IList<T> FindAll<T>(this IDbConnection connection, SqlOrderHintCollection? orderHints = null, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null) where T: new() {
-		var (command, parameters) = (builder ?? new SqlCommandBuilder(connection)).GetFindAllCommand<T>(orderHints, columns ?? []);
+		var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetFindAllCommand<T>(orderHints, columns ?? []);
 		command.Timeout = timeout;
 		command.Transaction = transaction;
 		return Query<T>(connection, command, parameters).AsList();
@@ -180,7 +180,7 @@ public static partial class DbConnectionExtensions {
 	/// <param name="cancellationToken">The token to cancel the operation.</param>
 	/// <returns>The list of all entities of the specified type.</returns>
 	public static async Task<IList<T>> FindAllAsync<T>(this IDbConnection connection, SqlOrderHintCollection? orderHints = null, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null, CancellationToken cancellationToken = default) where T: new() {
-		var (command, parameters) = (builder ?? new SqlCommandBuilder(connection)).GetFindAllCommand<T>(orderHints, columns ?? []);
+		var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetFindAllCommand<T>(orderHints, columns ?? []);
 		command.Timeout = timeout;
 		command.Transaction = transaction;
 		return (await QueryAsync<T>(connection, command, parameters, cancellationToken)).AsList();
@@ -197,7 +197,7 @@ public static partial class DbConnectionExtensions {
 	/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 	/// <returns>The generated primary key value.</returns>
 	public static long Insert<T>(this IDbConnection connection, T entity, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null) where T: new() {
-		var (command, parameters) = (builder ?? new SqlCommandBuilder(connection)).GetInsertCommand(entity);
+		var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetInsertCommand(entity);
 		command.Timeout = timeout;
 		command.Transaction = transaction;
 
@@ -218,7 +218,7 @@ public static partial class DbConnectionExtensions {
 	/// <param name="cancellationToken">The token to cancel the operation.</param>
 	/// <returns>The generated primary key value.</returns>
 	public static async Task<long> InsertAsync<T>(this IDbConnection connection, T entity, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null, CancellationToken cancellationToken = default) where T: new() {
-		var (command, parameters) = (builder ?? new SqlCommandBuilder(connection)).GetInsertCommand(entity);
+		var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetInsertCommand(entity);
 		command.Timeout = timeout;
 		command.Transaction = transaction;
 
@@ -239,7 +239,7 @@ public static partial class DbConnectionExtensions {
 	/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 	/// <returns>The number of rows affected.</returns>
 	public static int Update<T>(this IDbConnection connection, T entity, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null) where T: new() {
-		var (command, parameters) = (builder ?? new SqlCommandBuilder(connection)).GetUpdateCommand(entity, columns ?? []);
+		var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetUpdateCommand(entity, columns ?? []);
 		command.Timeout = timeout;
 		command.Transaction = transaction;
 		return Execute(connection, command, parameters);
@@ -258,7 +258,7 @@ public static partial class DbConnectionExtensions {
 	/// <param name="cancellationToken">The token to cancel the operation.</param>
 	/// <returns>The number of rows affected.</returns>
 	public static async Task<int> UpdateAsync<T>(this IDbConnection connection, T entity, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null, CancellationToken cancellationToken = default) where T: new() {
-		var (command, parameters) = (builder ?? new SqlCommandBuilder(connection)).GetUpdateCommand(entity, columns ?? []);
+		var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetUpdateCommand(entity, columns ?? []);
 		command.Timeout = timeout;
 		command.Transaction = transaction;
 		return await ExecuteAsync(connection, command, parameters, cancellationToken);

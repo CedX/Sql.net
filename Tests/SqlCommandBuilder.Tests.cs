@@ -22,7 +22,7 @@ public sealed class SqlCommandBuilderTests {
 	[TestMethod]
 	public void GetDeleteCommand() {
 		// It should return the SQL command to delete an entity.
-		var (command, parameters) = new SqlCommandBuilder(connection).GetDeleteCommand(character);
+		var (command, parameters) = SqlCommandBuilder.Create(connection).GetDeleteCommand(character);
 		StartsWith(@"DELETE FROM ""main"".""Characters""", command.Text);
 		EndsWith(@"WHERE ""ID"" = @ID", command.Text);
 
@@ -35,7 +35,7 @@ public sealed class SqlCommandBuilderTests {
 	[TestMethod]
 	public void GetDeleteAllCommand() {
 		// It should return the SQL command to delete all entities.
-		var (command, parameters) = new SqlCommandBuilder(connection).GetDeleteAllCommand<Character>();
+		var (command, parameters) = SqlCommandBuilder.Create(connection).GetDeleteAllCommand<Character>();
 		AreEqual(@"DELETE FROM ""main"".""Characters""", command.Text);
 
 		// It should also return an empty parameter collection.
@@ -45,7 +45,7 @@ public sealed class SqlCommandBuilderTests {
 	[TestMethod]
 	public void GetExistsCommand() {
 		// It should return the SQL command to check the existence of an entity.
-		var (command, parameters) = new SqlCommandBuilder(connection).GetExistsCommand<Character>(character.Id);
+		var (command, parameters) = SqlCommandBuilder.Create(connection).GetExistsCommand<Character>(character.Id);
 		StartsWith("SELECT 1", command.Text);
 		Contains(@"FROM ""main"".""Characters""", command.Text);
 		EndsWith(@"WHERE ""ID"" = @ID", command.Text);
@@ -58,7 +58,7 @@ public sealed class SqlCommandBuilderTests {
 
 	[TestMethod]
 	public void GetFindCommand() {
-		var builder = new SqlCommandBuilder(connection);
+		var builder = SqlCommandBuilder.Create(connection);
 
 		// It should return the SQL command to find an entity.
 		var (command, parameters) = builder.GetFindCommand<Character>(character.Id);
@@ -82,7 +82,7 @@ public sealed class SqlCommandBuilderTests {
 
 	[TestMethod]
 	public void GetFindAllCommand() {
-		var builder = new SqlCommandBuilder(connection);
+		var builder = SqlCommandBuilder.Create(connection);
 
 		// It should return the SQL command to find all entities.
 		var (command, parameters) = builder.GetFindAllCommand<Character>();
@@ -112,7 +112,7 @@ public sealed class SqlCommandBuilderTests {
 	[TestMethod]
 	public void GetInsertCommand() {
 		// It should return the SQL command to insert an entity.
-		var (command, parameters) = new SqlCommandBuilder(connection).GetInsertCommand(character);
+		var (command, parameters) = SqlCommandBuilder.Create(connection).GetInsertCommand(character);
 		StartsWith(@"INSERT INTO ""main"".""Characters"" (", command.Text);
 		Contains("VALUES (", command.Text);
 
@@ -125,7 +125,7 @@ public sealed class SqlCommandBuilderTests {
 
 	[TestMethod]
 	public void GetUpdateCommand() {
-		var builder = new SqlCommandBuilder(connection);
+		var builder = SqlCommandBuilder.Create(connection);
 
 		// It should return the SQL command to update an entity.
 		var (command, parameters) = builder.GetUpdateCommand(character);

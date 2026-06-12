@@ -64,44 +64,57 @@ public class SqlCommandBuilder {
 	public bool UsePositionalParameters { get; set; }
 
 	/// <summary>
-	/// Creates a new command builder.
+	/// Creates a new command builder and initializes its properties according to the specified database connection.
 	/// </summary>
 	/// <param name="connection">The connection to the data source.</param>
-	public SqlCommandBuilder(IDbConnection connection) {
-		switch (connection.GetType().FullName) {
-			case "FirebirdSql.Data.FirebirdClient.FbConnection":
-				QuotePrefix = QuoteSuffix = "\"";
-				SupportsReturningClause = true;
-				SupportsTruncateTable = false;
-				break;
-			case "Microsoft.Data.Sqlite.SqliteConnection":
-			case "System.Data.SQLite.SQLiteConnection":
-				QuotePrefix = QuoteSuffix = "\"";
-				SupportsReturningClause = true;
-				SupportsTruncateTable = false;
-				break;
-			case "MySql.Data.MySqlClient.MySqlConnection":
-			case "MySqlConnector.MySqlConnection":
-				LastInsertIdFunction = "LAST_INSERT_ID()";
-				QuotePrefix = QuoteSuffix = "`";
-				break;
-			case "Npgsql.NpgsqlConnection":
-				QuotePrefix = QuoteSuffix = "\"";
-				SupportsReturningClause = true;
-				break;
-			case "Oracle.ManagedDataAccess.Client.OracleConnection":
-				CatalogLocation = CatalogLocation.End;
-				CatalogSeparator = "@";
-				ParameterPrefix = ":";
-				QuotePrefix = QuoteSuffix = "\"";
-				SupportsReturningClause = true;
-				SupportsTruncateTable = true;
-				break;
-			case "System.Data.Odbc.OdbcConnection":
-			case "System.Data.OleDb.OleDbConnection":
-				UsePositionalParameters = true;
-				break;
-		}
+	/// <returns>The newly created command builder.</returns>
+	/// <exception cref="NotSupportedException">The specified connection type is not supported.</exception>
+	public static SqlCommandBuilder Create(IDbConnection connection) => connection.GetType().FullName switch {
+		"FirebirdSql.Data.FirebirdClient.FbConnection" => new() {
+			QuotePrefix = "\"",
+			QuoteSuffix = "\"",
+			SupportsReturningClause = true,
+			SupportsTruncateTable = false
+		},
+		"Microsoft.Data.Sqlite.SqliteConnection" or "System.Data.SQLite.SQLiteConnection" => new() {
+			QuotePrefix = "\"",
+			QuoteSuffix = "\"",
+			SupportsReturningClause = true,
+			SupportsTruncateTable = false
+		},
+		"MySql.Data.MySqlClient.MySqlConnection" or "MySqlConnector.MySqlConnection" => new() {
+			LastInsertIdFunction = "LAST_INSERT_ID()",
+			QuotePrefix = "`",
+			QuoteSuffix = "`"
+		},
+		"Npgsql.NpgsqlConnection" => new() {
+			QuotePrefix = "\"",
+			QuoteSuffix = "\"",
+			SupportsReturningClause = true
+		},
+		"Oracle.ManagedDataAccess.Client.OracleConnection" => new() {
+			CatalogLocation = CatalogLocation.End,
+			CatalogSeparator = "@",
+			ParameterPrefix = ":",
+			QuotePrefix = "\"",
+			QuoteSuffix = "\"",
+			SupportsReturningClause = true,
+			SupportsTruncateTable = true
+		},
+		"System.Data.Odbc.OdbcConnection" or "System.Data.OleDb.OleDbConnection" => new() {
+			UsePositionalParameters = true
+		},
+		_ => throw new NotSupportedException("The specified connection type is not supported.")
+	};
+
+	/// <summary>
+	/// Gets the generated command to count all entities.
+	/// </summary>
+	/// <typeparam name="T">The entity type.</typeparam>
+	/// <returns>A tuple providing the generated command and its parameters.</returns>
+	public (SqlCommand Command, SqlParameterCollection Parameters) GetCountAllCommand<T>() where T: new() {
+		var tableName = GetTableName(SqlMapper.Instance.GetTable<T>());
+		return ($"SELECT COUNT(*) FROM {tableName}", []);
 	}
 
 	/// <summary>
