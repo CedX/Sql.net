@@ -155,7 +155,7 @@ public sealed class SqlMapper {
 	/// <param name="properties">A dictionary providing the properties to be set on the created object.</param>
 	/// <returns>The newly created object.</returns>
 	public object CreateInstance(Type type, IDictionary<string, object?> properties) {
-		if (type == psObject || type == typeof(ExpandoObject)) {
+		if (type == typeof(ExpandoObject) || (psObject is not null && type == psObject)) {
 			var expandoObject = (IDictionary<string, object?>) new ExpandoObject();
 			foreach (var (key, value) in properties) expandoObject.Add(key, value);
 			return type == psObject ? Activator.CreateInstance(type, [expandoObject])! : expandoObject;
