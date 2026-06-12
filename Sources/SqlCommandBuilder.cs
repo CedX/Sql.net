@@ -56,7 +56,7 @@ public class SqlCommandBuilder {
 	/// <summary>
 	/// Value indicating whether the ADO.NET provider supports the <c>TRUNCATE TABLE</c> statement.
 	/// </summary>
-	public bool SupportsTruncateTable { get; set; } = true;
+	public bool SupportsTruncateTable { get; set; }
 
 	/// <summary>
 	/// Value indicating whether the ADO.NET provider uses positional parameters.
@@ -73,24 +73,24 @@ public class SqlCommandBuilder {
 		"FirebirdSql.Data.FirebirdClient.FbConnection" => new() {
 			QuotePrefix = "\"",
 			QuoteSuffix = "\"",
-			SupportsReturningClause = true,
-			SupportsTruncateTable = false
+			SupportsReturningClause = true
 		},
 		"Microsoft.Data.Sqlite.SqliteConnection" or "System.Data.SQLite.SQLiteConnection" => new() {
 			QuotePrefix = "\"",
 			QuoteSuffix = "\"",
-			SupportsReturningClause = true,
-			SupportsTruncateTable = false
+			SupportsReturningClause = true
 		},
 		"MySql.Data.MySqlClient.MySqlConnection" or "MySqlConnector.MySqlConnection" => new() {
 			LastInsertIdFunction = "LAST_INSERT_ID()",
 			QuotePrefix = "`",
-			QuoteSuffix = "`"
+			QuoteSuffix = "`",
+			SupportsTruncateTable = true
 		},
 		"Npgsql.NpgsqlConnection" => new() {
 			QuotePrefix = "\"",
 			QuoteSuffix = "\"",
-			SupportsReturningClause = true
+			SupportsReturningClause = true,
+			SupportsTruncateTable = true
 		},
 		"Oracle.ManagedDataAccess.Client.OracleConnection" => new() {
 			CatalogLocation = CatalogLocation.End,
@@ -102,6 +102,7 @@ public class SqlCommandBuilder {
 			SupportsTruncateTable = true
 		},
 		"System.Data.Odbc.OdbcConnection" or "System.Data.OleDb.OleDbConnection" => new() {
+			SupportsTruncateTable = true,
 			UsePositionalParameters = true
 		},
 		_ => throw new NotSupportedException("The specified connection type is not supported.")
