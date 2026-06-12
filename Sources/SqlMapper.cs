@@ -1,5 +1,6 @@
 namespace Belin.Sql;
 
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Data;
 using System.Dynamic;
@@ -98,11 +99,29 @@ public sealed class SqlMapper {
 	}
 
 	/// <summary>
+	/// Creates a new dynamic object from the specified hash table.
+	/// </summary>
+	/// <param name="properties">A hash table providing the properties to be set on the created object.</param>
+	/// <returns>The newly created object.</returns>
+	public ExpandoObject CreateInstance(Hashtable properties) =>
+		CreateInstance<ExpandoObject>(properties.Cast<DictionaryEntry>().ToDictionary(entry => entry.Key.ToString() ?? "", entry => entry.Value));
+
+	/// <summary>
 	/// Creates a new dynamic object from the specified dictionary.
 	/// </summary>
 	/// <param name="properties">A dictionary providing the properties to be set on the created object.</param>
 	/// <returns>The newly created object.</returns>
-	public ExpandoObject CreateInstance(IDictionary<string, object?> properties) => CreateInstance<ExpandoObject>(properties);
+	public ExpandoObject CreateInstance(IDictionary<string, object?> properties) =>
+		CreateInstance<ExpandoObject>(properties);
+
+	/// <summary>
+	/// Creates a new object of a given type from the specified hash table.
+	/// </summary>
+	/// <typeparam name="T">The object type.</typeparam>
+	/// <param name="properties">A hash table providing the properties to be set on the created object.</param>
+	/// <returns>The newly created object.</returns>
+	public T CreateInstance<T>(Hashtable properties) where T: new() =>
+		CreateInstance<T>(properties.Cast<DictionaryEntry>().ToDictionary(entry => entry.Key.ToString() ?? "", entry => entry.Value));
 
 	/// <summary>
 	/// Creates a new object of a given type from the specified dictionary.
@@ -110,15 +129,33 @@ public sealed class SqlMapper {
 	/// <typeparam name="T">The object type.</typeparam>
 	/// <param name="properties">A dictionary providing the properties to be set on the created object.</param>
 	/// <returns>The newly created object.</returns>
-	public T CreateInstance<T>(IDictionary<string, object?> properties) where T: new() {
-		if (typeof(T) == typeof(ExpandoObject)) {
+	public T CreateInstance<T>(IDictionary<string, object?> properties) where T: new() =>
+		(T) CreateInstance(typeof(T), properties);
+
+	/// <summary>
+	/// Creates a new object of a given type from the specified hash table.
+	/// </summary>
+	/// <typeparam name="T">The object type.</typeparam>
+	/// <param name="properties">A hash table providing the properties to be set on the created object.</param>
+	/// <returns>The newly created object.</returns>
+	public object CreateInstance(Type type, Hashtable properties) =>
+		CreateInstance(type, properties.Cast<DictionaryEntry>().ToDictionary(entry => entry.Key.ToString() ?? "", entry => entry.Value));
+
+	/// <summary>
+	/// Creates a new object of a given type from the specified dictionary.
+	/// </summary>
+	/// <typeparam name="T">The object type.</typeparam>
+	/// <param name="properties">A dictionary providing the properties to be set on the created object.</param>
+	/// <returns>The newly created object.</returns>
+	public object CreateInstance(Type type, IDictionary<string, object?> properties) {
+		if (type == typeof(ExpandoObject)) {
 			var expandoObject = (IDictionary<string, object?>) new ExpandoObject();
 			foreach (var (key, value) in properties) expandoObject.Add(key, value);
-			return (T) expandoObject;
+			return (ExpandoObject) expandoObject;
 		}
 
-		var instance = Activator.CreateInstance<T>();
-		var table = GetTable<T>();
+		var instance = Activator.CreateInstance(type)!;
+		var table = GetTable(type);
 		foreach (var name in properties.Keys.Where(table.Columns.ContainsKey)) {
 			var column = table.Columns[name];
 			if (column.CanWrite) column.SetValue(instance, ChangeType(properties[name], column));
