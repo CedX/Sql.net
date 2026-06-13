@@ -3,6 +3,7 @@ namespace Belin.Sql;
 using System.Data;
 using System.Data.Common;
 using System.Dynamic;
+using System.Runtime.CompilerServices;
 
 /// <summary>
 /// Provides extension members for database connections.
@@ -53,6 +54,22 @@ public static partial class DbConnectionExtensions {
 			using var dbCommand = command.ToDbCommand(connection, parameters);
 			using var reader = dbCommand.ExecuteReader();
 			var records = SqlMapper.Instance.CreateInstances(type, reader);
+			return command.NoEnumerate ? records : records.AsList();
+		}
+
+		/// <summary>
+		/// Executes a parameterized SQL query and returns a sequence of objects whose properties correspond to the columns.
+		/// </summary>
+		/// <param name="type">The type of objects to return.</param>
+		/// <param name="command">The command to be executed.</param>
+		/// <param name="parameters">The parameters of the SQL statement.</param>
+		/// <param name="splitOn">The fields from which to split and read the next objects.</param>
+		/// <returns>The sequence of objects whose properties correspond to the columns.</returns>
+		public IEnumerable<ITuple> Query(Type[] types, SqlCommand command, SqlParameterCollection? parameters = null, string[]? splitOn = null) {
+			if (connection.State == ConnectionState.Closed) connection.Open();
+			using var dbCommand = command.ToDbCommand(connection, parameters);
+			using var reader = dbCommand.ExecuteReader();
+			var records = SqlMapper.Instance.CreateInstances(types, reader, splitOn ?? []);
 			return command.NoEnumerate ? records : records.AsList();
 		}
 

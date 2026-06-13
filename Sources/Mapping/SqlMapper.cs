@@ -94,6 +94,33 @@ public sealed class SqlMapper {
 	public object CreateInstance(Type type, IDataRecord record) => CreateInstance(type, SplitOn(record).First());
 
 	/// <summary>
+	/// Creates a new object tuple of the given types from the specified data record.
+	/// </summary>
+	/// <param name="types">The object types.</param>
+	/// <param name="record">A data record providing the properties to be set on the created objects.</param>
+	/// <param name="splitOn">The fields from which to split and read the next objects.</param>
+	/// <returns>The newly created object tuple.</returns>
+	public ITuple CreateInstance(Type[] types, IDataRecord record, params string[] splitOn) {
+		if (types.Length < 2 || types.Length > 7) throw new ArgumentException("The number of object types is invalid.", nameof(types));
+		if (splitOn.Length == 0) splitOn = [.. types.Skip(1).Select(_ => "Id")];
+		else if (splitOn.Length != types.Length - 1) throw new ArgumentException("The number of split fields is invalid.", nameof(splitOn));
+
+		var records = SplitOn(record, splitOn);
+		var objects = new List<object?>(records.Count);
+		for (var index = 0; index < types.Length; index++)
+			objects.Add(records.Count <= index || IsNullObject(records[index]) ? null : CreateInstance(types[index], records[index]));
+
+		return objects.Count switch {
+			2 => (objects[0], objects[1]),
+			3 => (objects[0], objects[1], objects[2]),
+			4 => (objects[0], objects[1], objects[2], objects[3]),
+			5 => (objects[0], objects[1], objects[2], objects[3], objects[4]),
+			6 => (objects[0], objects[1], objects[2], objects[3], objects[4], objects[5]),
+			_ => (objects[0], objects[1], objects[2], objects[3], objects[4], objects[5], objects[6])
+		};
+	}
+
+	/// <summary>
 	/// Creates a new object pair of the given types from the specified data record.
 	/// </summary>
 	/// <typeparam name="TItem1">The type of the first object.</typeparam>
@@ -248,6 +275,18 @@ public sealed class SqlMapper {
 	/// <returns>An enumerable of newly created objects.</returns>
 	public IEnumerable<object> CreateInstances(Type type, IDataReader reader) {
 		while (reader.Read()) yield return CreateInstance(type, reader);
+		reader.Close();
+	}
+
+	/// <summary>
+	/// Creates new object tuples of the given types from the specified data reader.
+	/// </summary>
+	/// <param name="types">The object types.</param>
+	/// <param name="reader">A data reader providing the properties to be set on the created objects.</param>
+	/// <param name="splitOn">The fields from which to split and read the next objects.</param>
+	/// <returns>An enumerable of newly created object tuples.</returns>
+	public IEnumerable<ITuple> CreateInstances(Type[] types, IDataReader reader, params string[] splitOn) {
+		while (reader.Read()) yield return CreateInstance(types, reader, splitOn);
 		reader.Close();
 	}
 
