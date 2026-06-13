@@ -75,7 +75,7 @@ public class SqlCommandBuilder {
 			QuoteSuffix = "\"",
 			SupportsReturningClause = true
 		},
-		"Microsoft.Data.SqlClient" or "System.Data.SqlClient" => new() {
+		"Microsoft.Data.SqlClient.SqlConnection" or "System.Data.SqlClient.SqlConnection" => new() {
 			SupportsTruncateTable = true
 		},
 		"Microsoft.Data.Sqlite.SqliteConnection" or "System.Data.SQLite.SQLiteConnection" => new() {
