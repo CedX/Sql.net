@@ -241,6 +241,17 @@ public sealed class SqlMapper {
 	}
 
 	/// <summary>
+	/// Creates new objects of the given type from the specified data reader.
+	/// </summary>
+	/// <typeparam name="T">The object type.</typeparam>
+	/// <param name="reader">A data reader providing the properties to be set on the created objects.</param>
+	/// <returns>An enumerable of newly created objects.</returns>
+	public IEnumerable<object> CreateInstances(Type type, IDataReader reader) {
+		while (reader.Read()) yield return CreateInstance(type, reader);
+		reader.Close();
+	}
+
+	/// <summary>
 	/// Creates new object pairs of the given types from the specified data reader.
 	/// </summary>
 	/// <typeparam name="TItem1">The type of the first object.</typeparam>

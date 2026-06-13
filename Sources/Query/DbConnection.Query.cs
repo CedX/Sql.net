@@ -38,11 +38,21 @@ public static partial class DbConnectionExtensions {
 		/// <param name="command">The command to be executed.</param>
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The sequence of objects whose properties correspond to the columns.</returns>
-		public IEnumerable<T> Query<T>(SqlCommand command, SqlParameterCollection? parameters = null) where T: new() {
+		public IEnumerable<T> Query<T>(SqlCommand command, SqlParameterCollection? parameters = null) where T: new() =>
+			connection.Query(typeof(T), command, parameters).Cast<T>();
+
+		/// <summary>
+		/// Executes a parameterized SQL query and returns a sequence of objects whose properties correspond to the columns.
+		/// </summary>
+		/// <typeparam name="T">The type of objects to return.</typeparam>
+		/// <param name="command">The command to be executed.</param>
+		/// <param name="parameters">The parameters of the SQL statement.</param>
+		/// <returns>The sequence of objects whose properties correspond to the columns.</returns>
+		public IEnumerable<object> Query(Type type, SqlCommand command, SqlParameterCollection? parameters = null) {
 			if (connection.State == ConnectionState.Closed) connection.Open();
 			using var dbCommand = command.ToDbCommand(connection, parameters);
 			using var reader = dbCommand.ExecuteReader();
-			var records = SqlMapper.Instance.CreateInstances<T>(reader);
+			var records = SqlMapper.Instance.CreateInstances(type, reader);
 			return command.NoEnumerate ? records : records.AsList();
 		}
 
