@@ -1,9 +1,14 @@
 # Changelog
 
 ## Version [5.0.0](https://github.com/CedX/Sql.net/compare/v4.3.1...v5.0.0)
+- Breaking change: changed the return type of all query methods returning an `IEnumerable` to `IList`.
+- Breaking change: removed the `SqlCommand.NoEnumerate` property.
 - Breaking change: replaced the parameterized constructor of the `SqlCommandBuilder` class by a parameterless constructor.
+- Added new implicit conversions to the `SqlOrderHint`, `SqlOrderHintCollection`, `SqlParameter` and `SqlParameterCollection` classes.
+- Added new overloads to most methods of the `DbConnectionExtensions` class.
 - Added the `CountAll()` and `CountAllAsync()` methods to the `DbConnectionExtensions` class.
 - Added the `Create()` and `GetCountAllCommand()` methods to the `SqlCommandBuilder` class.
+- Added support for the `[ValidateNotNull]` attribute and `PSObject` class from [PowerShell](https://learn.microsoft.com/en-us/powershell).
 
 ## Version [4.3.1](https://github.com/CedX/Sql.net/compare/v4.3.0...v4.3.1)
 - Fixed the default value of the `SqlCommandBuilder.SupportsTruncateTable` property.
