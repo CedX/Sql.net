@@ -63,10 +63,10 @@ public sealed class SqlMapper {
 		};
 
 		return true switch {
-			true when nullableType is not null => default,
+			true when nullableType is not null => null,
 			true when targetType.IsValueType => RuntimeHelpers.GetUninitializedObject(targetType),
-			true when targetType == typeof(string) => isNullable ? default : string.Empty,
-			_ => isNullable ? default : Activator.CreateInstance(targetType)
+			true when targetType == typeof(string) => isNullable ? null : string.Empty,
+			_ => isNullable ? null : Activator.CreateInstance(targetType)
 		};
 	}
 

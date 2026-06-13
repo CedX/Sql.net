@@ -2,6 +2,7 @@ namespace Belin.Sql;
 
 using System.Data;
 using System.Data.Common;
+using System.Runtime.CompilerServices;
 
 /// <summary>
 /// Provides extension members for database connections.
@@ -35,14 +36,8 @@ public static partial class DbConnectionExtensions {
 		/// <param name="command">The command to be executed.</param>
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The first column of the first row.</returns>
-		public T? ExecuteScalar<T>(SqlCommand command, SqlParameterCollection? parameters = null) {
-			// TODO return (T?) connection.ExecuteScalar(typeof(T), command, parameters);
-
-			if (connection.State == ConnectionState.Closed) connection.Open();
-			using var dbCommand = command.ToDbCommand(connection, parameters);
-			var value = dbCommand.ExecuteScalar();
-			return value is null || value is DBNull ? default : (T?) SqlMapper.Instance.ChangeType(value, typeof(T));
-		}
+		public T? ExecuteScalar<T>(SqlCommand command, SqlParameterCollection? parameters = null) =>
+			(T?) connection.ExecuteScalar(typeof(T), command, parameters);
 
 		/// <summary>
 		/// Executes a parameterized SQL query that selects a single value.
@@ -55,7 +50,7 @@ public static partial class DbConnectionExtensions {
 			if (connection.State == ConnectionState.Closed) connection.Open();
 			using var dbCommand = command.ToDbCommand(connection, parameters);
 			var value = dbCommand.ExecuteScalar();
-			return value is null || value is DBNull ? null : SqlMapper.Instance.ChangeType(value, type);
+			return value is null || value is DBNull ? RuntimeHelpers.GetUninitializedObject(type) : SqlMapper.Instance.ChangeType(value, type);
 		}
 
 		/// <summary>
