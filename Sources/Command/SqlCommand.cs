@@ -9,11 +9,6 @@ using System.Data;
 public sealed class SqlCommand(string text) {
 
 	/// <summary>
-	/// Value indicating whether to prevent from buffering the rows in memory.
-	/// </summary>
-	public bool NoEnumerate { get; set; }
-
-	/// <summary>
 	/// The text of the SQL statement.
 	/// </summary>
 	public string Text { get; set; } = text;
