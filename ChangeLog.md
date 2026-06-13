@@ -1,5 +1,8 @@
 # Changelog
 
+## Version [5.0.1](https://github.com/CedX/Sql.net/compare/v5.0.0...v5.0.1)
+- Fixed the `SqlCommandBuilder.Create()` method when using the [SQL Server](https://www.microsoft.com/en-us/sql-server) provider.
+
 ## Version [5.0.0](https://github.com/CedX/Sql.net/compare/v4.3.1...v5.0.0)
 - Breaking change: changed the return type of all query methods returning an `IEnumerable` to `IList`.
 - Breaking change: removed the `SqlCommand.NoEnumerate` property.
