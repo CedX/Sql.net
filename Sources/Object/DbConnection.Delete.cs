@@ -56,7 +56,7 @@ public static partial class DbConnectionExtensions {
 		/// <summary>
 		/// Deletes all entities.
 		/// </summary>
-		/// <typeparam name="T">The entity type.</typeparam>
+		/// <param name="type">The entity type.</type>
 		/// <param name="truncate">Value indicating whether to truncate the underlying table.</param>
 		/// <param name="timeout">The wait time, in seconds, before terminating the attempt to execute the command and generating an error.</param>
 		/// <param name="transaction">The transaction within which the command executes.</param>

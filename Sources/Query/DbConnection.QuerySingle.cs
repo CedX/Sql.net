@@ -47,7 +47,7 @@ public static partial class DbConnectionExtensions {
 		/// <summary>
 		/// Executes a parameterized SQL query and returns the single row.
 		/// </summary>
-		/// <typeparam name="T">The type of objects to return.</typeparam>
+		/// <param name="type">The type of objects to return.</param>
 		/// <param name="command">The command to be executed.</param>
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The single row.</returns>
@@ -125,7 +125,7 @@ public static partial class DbConnectionExtensions {
 		/// <summary>
 		/// Executes a parameterized SQL query and returns the single row.
 		/// </summary>
-		/// <typeparam name="T">The type of objects to return.</typeparam>
+		/// <param name="type">The type of objects to return.</param>
 		/// <param name="command">The command to be executed.</param>
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The single row, or <see langword="null"/> if not found.</returns>

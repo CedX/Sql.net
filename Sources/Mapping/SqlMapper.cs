@@ -88,7 +88,7 @@ public sealed class SqlMapper {
 	/// <summary>
 	/// Creates a new object of the given type from the specified data record.
 	/// </summary>
-	/// <typeparam name="T">The object type.</typeparam>
+	/// <param name="type">The object type.</param>
 	/// <param name="record">A data record providing the properties to be set on the created object.</param>
 	/// <returns>The newly created object.</returns>
 	public object CreateInstance(Type type, IDataRecord record) => CreateInstance(type, SplitOn(record).First());
@@ -243,7 +243,7 @@ public sealed class SqlMapper {
 	/// <summary>
 	/// Creates new objects of the given type from the specified data reader.
 	/// </summary>
-	/// <typeparam name="T">The object type.</typeparam>
+	/// <param name="type">The object type.</param>
 	/// <param name="reader">A data reader providing the properties to be set on the created objects.</param>
 	/// <returns>An enumerable of newly created objects.</returns>
 	public IEnumerable<object> CreateInstances(Type type, IDataReader reader) {

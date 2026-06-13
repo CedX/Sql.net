@@ -47,7 +47,7 @@ public static partial class DbConnectionExtensions {
 		/// <summary>
 		/// Executes a parameterized SQL query that selects a single value.
 		/// </summary>
-		/// <typeparam name="T">The type of object to return.</typeparam>
+		/// <param name="type">The type of object to return.</param>
 		/// <param name="command">The command to be executed.</param>
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The first column of the first row.</returns>

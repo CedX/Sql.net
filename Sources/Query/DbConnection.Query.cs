@@ -44,7 +44,7 @@ public static partial class DbConnectionExtensions {
 		/// <summary>
 		/// Executes a parameterized SQL query and returns a sequence of objects whose properties correspond to the columns.
 		/// </summary>
-		/// <typeparam name="T">The type of objects to return.</typeparam>
+		/// <param name="type">The type of objects to return.</param>
 		/// <param name="command">The command to be executed.</param>
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The sequence of objects whose properties correspond to the columns.</returns>
