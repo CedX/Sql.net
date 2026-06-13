@@ -11,7 +11,7 @@ public sealed partial class DbConnectionExtensionsTests {
 	public void Query() {
 		// It should return the records produced by the SQL query.
 		var sql = "SELECT * FROM Characters WHERE gender = @Gender ORDER BY fullName";
-		var records = connection.Query<Character>(sql, [("Gender", CharacterGender.Elf.ToString())]).AsList();
+		var records = connection.Query<Character>(sql, [("Gender", CharacterGender.Elf.ToString())]);
 		HasCount(3, records);
 
 		var elrond = records[0];
@@ -24,7 +24,7 @@ public sealed partial class DbConnectionExtensionsTests {
 
 		// It should allow the data rows to be split into distinct objects.
 		sql = "SELECT ID, firstName, lastName, ID, fullName, gender FROM Characters WHERE firstName = @FirstName";
-		var objects = connection.Query<ExpandoObject, ExpandoObject>(sql, [("FirstName", "Frodo")]).AsList();
+		var objects = connection.Query<ExpandoObject, ExpandoObject>(sql, [("FirstName", "Frodo")]);
 		HasCount(1, objects);
 
 		dynamic left = objects[0].Item1;
@@ -45,7 +45,7 @@ public sealed partial class DbConnectionExtensionsTests {
 		// It should return the records produced by the SQL query.
 		var sql = "SELECT * FROM Characters WHERE gender = @Gender ORDER BY fullName";
 		var parameters = new SqlParameterCollection(("Gender", CharacterGender.Elf.ToString()));
-		var records = (await connection.QueryAsync<Character>(sql, parameters, testContext.CancellationToken)).AsList();
+		var records = (await connection.QueryAsync<Character>(sql, parameters, testContext.CancellationToken));
 		HasCount(3, records);
 
 		var elrond = records[0];
@@ -58,7 +58,7 @@ public sealed partial class DbConnectionExtensionsTests {
 
 		// It should allow the data rows to be split into distinct objects.
 		sql = "SELECT ID, firstName, lastName, ID, fullName, gender FROM Characters WHERE firstName = @FirstName";
-		var objects = (await connection.QueryAsync<ExpandoObject, ExpandoObject>(sql, [("FirstName", "Frodo")], "id", testContext.CancellationToken)).AsList();
+		var objects = (await connection.QueryAsync<ExpandoObject, ExpandoObject>(sql, [("FirstName", "Frodo")], "id", testContext.CancellationToken));
 		HasCount(1, objects);
 
 		dynamic left = objects[0].Item1;

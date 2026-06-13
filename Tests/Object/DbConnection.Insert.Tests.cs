@@ -19,7 +19,7 @@ public sealed partial class DbConnectionExtensionsTests {
 		IsGreaterThan(16, id);
 		AreEqual(id, record.Id);
 
-		var records = connection.Query<Character>(sql).AsList();
+		var records = connection.Query<Character>(sql);
 		HasCount(1, records);
 
 		var cedric = records[0];
@@ -41,7 +41,7 @@ public sealed partial class DbConnectionExtensionsTests {
 		IsGreaterThan(16, id);
 		AreEqual(id, record.Id);
 
-		var records = (await connection.QueryAsync<Character>(sql, cancellationToken: testContext.CancellationToken)).AsList();
+		var records = (await connection.QueryAsync<Character>(sql, cancellationToken: testContext.CancellationToken));
 		HasCount(1, records);
 
 		var cedric = records[0];

@@ -67,7 +67,7 @@ public static partial class DbConnectionExtensions {
 		/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 		/// <returns>The list of all entities of the specified type.</returns>
 		public IList<T> FindAll<T>(SqlOrderHintCollection? orderHints = null, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null) where T: new() =>
-			connection.FindAll(typeof(T), orderHints, columns, timeout, transaction, builder).Cast<T>().AsList();
+			[.. connection.FindAll(typeof(T), orderHints, columns, timeout, transaction, builder).Cast<T>()];
 
 		/// <summary>
 		/// Finds all entities of the specified type.
@@ -83,7 +83,7 @@ public static partial class DbConnectionExtensions {
 			var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetFindAllCommand(type, orderHints ?? [], columns ?? []);
 			command.Timeout = timeout;
 			command.Transaction = transaction;
-			return connection.Query(type, command, parameters).AsList();
+			return connection.Query(type, command, parameters);
 		}
 
 		/// <summary>
@@ -101,7 +101,7 @@ public static partial class DbConnectionExtensions {
 			var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetFindAllCommand<T>(orderHints ?? [], columns ?? []);
 			command.Timeout = timeout;
 			command.Transaction = transaction;
-			return (await connection.QueryAsync<T>(command, parameters, cancellationToken)).AsList();
+			return await connection.QueryAsync<T>(command, parameters, cancellationToken);
 		}
 	}
 }
