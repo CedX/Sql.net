@@ -1,5 +1,8 @@
 # Changelog
 
+## Version [5.0.3](https://github.com/CedX/Sql.net/compare/v5.0.2...v5.0.3)
+- Fixed the `DbConnectionExtensions.ExecuteScalar()` method when using a nullable type as target type.
+
 ## Version [5.0.2](https://github.com/CedX/Sql.net/compare/v5.0.1...v5.0.2)
 - Fixed the `DbConnectionExtensions.ExecuteScalar()` method when using `string` as target type.
 
