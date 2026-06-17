@@ -49,7 +49,7 @@ public static partial class DbConnectionExtensions {
 		public object? ExecuteScalar(Type type, SqlCommand command, SqlParameterCollection? parameters = null) {
 			if (connection.State == ConnectionState.Closed) connection.Open();
 			using var dbCommand = command.ToDbCommand(connection, parameters);
-			return SqlMapper.Instance.ChangeType(dbCommand.ExecuteScalar(), type);
+			return SqlMapper.Instance.ChangeType(dbCommand.ExecuteScalar(), type, isNullable: true);
 		}
 
 		/// <summary>
@@ -63,7 +63,7 @@ public static partial class DbConnectionExtensions {
 		public async Task<T?> ExecuteScalarAsync<T>(SqlCommand command, SqlParameterCollection? parameters = null, CancellationToken cancellationToken = default) {
 			if (connection.State == ConnectionState.Closed) await ((DbConnection) connection).OpenAsync(cancellationToken);
 			using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
-			return (T?) SqlMapper.Instance.ChangeType(await dbCommand.ExecuteScalarAsync(cancellationToken), typeof(T));
+			return (T?) SqlMapper.Instance.ChangeType(await dbCommand.ExecuteScalarAsync(cancellationToken), typeof(T), isNullable: true);
 		}
 	}
 }
