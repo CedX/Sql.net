@@ -1,5 +1,8 @@
 # Changelog
 
+## Version [5.0.2](https://github.com/CedX/Sql.net/compare/v5.0.1...v5.0.2)
+- Fixed the `DbConnectionExtensions.ExecuteScalar()` method when using `string` as target type.
+
 ## Version [5.0.1](https://github.com/CedX/Sql.net/compare/v5.0.0...v5.0.1)
 - Fixed the `SqlCommandBuilder.Create()` method when using the [SQL Server](https://www.microsoft.com/en-us/sql-server) provider.
 
