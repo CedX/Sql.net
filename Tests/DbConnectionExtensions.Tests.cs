@@ -1,6 +1,6 @@
 namespace Belin.Sql;
 
-using Microsoft.Data.Sqlite;
+using System.Data.SQLite;
 
 /// <summary>
 /// Provides the base class for tests requiring a data source.
@@ -12,7 +12,7 @@ public sealed partial class DbConnectionExtensionsTests(TestContext testContext)
 	/// <summary>
 	/// The connection to the data source.
 	/// </summary>
-	private readonly SqliteConnection connection = new("DataSource=:memory:");
+	private readonly SQLiteConnection connection = new("DataSource=:memory:");
 
 	/// <summary>
 	/// Opens a connection to the data source.
