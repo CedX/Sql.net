@@ -1,5 +1,5 @@
 @{
-	ModuleVersion = "5.0.3"
+	ModuleVersion = "5.0.4"
 	PowerShellVersion = "7.6"
 
 	Author = "Cédric Belin <cedx@outlook.com>"
