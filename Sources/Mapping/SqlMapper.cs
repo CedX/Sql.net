@@ -56,7 +56,7 @@ public sealed class SqlMapper {
 		var nullableType = Nullable.GetUnderlyingType(conversionType);
 		var targetType = nullableType ?? conversionType;
 
-		if (value is not null) return true switch {
+		if (value is not null && value is not DBNull) return true switch {
 			true when targetType.IsEnum && value is string stringValue => Enum.Parse(targetType, stringValue, ignoreCase: true),
 			true when targetType.IsEnum => Enum.ToObject(targetType, Convert.ChangeType(value, Enum.GetUnderlyingType(targetType), CultureInfo.InvariantCulture)),
 			_ => targetType.IsInstanceOfType(value) ? value : Convert.ChangeType(value, targetType, CultureInfo.InvariantCulture),

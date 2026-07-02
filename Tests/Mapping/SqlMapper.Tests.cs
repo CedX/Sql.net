@@ -15,6 +15,8 @@ public sealed class SqlMapperTests {
 	private static IEnumerable<object?[]> ChangeTypeData => [
 		[null, typeof(bool), false, false],
 		[null, typeof(bool?), true, null],
+		[DBNull.Value, typeof(bool), false, false],
+		[DBNull.Value, typeof(bool?), true, null],
 		[0, typeof(bool), false, false],
 		[0, typeof(bool?), true, false],
 		[1, typeof(bool), false, true],
@@ -24,6 +26,8 @@ public sealed class SqlMapperTests {
 
 		[null, typeof(char), false, char.MinValue],
 		[null, typeof(char?), true, null],
+		[DBNull.Value, typeof(char), false, char.MinValue],
+		[DBNull.Value, typeof(char?), true, null],
 		[0, typeof(char), false, char.MinValue],
 		[65_535, typeof(char?), true, char.MaxValue],
 		[97, typeof(char), false, 'a'],
@@ -33,6 +37,8 @@ public sealed class SqlMapperTests {
 
 		[null, typeof(DateTime), false, DateTime.MinValue],
 		[null, typeof(DateTime?), true, null],
+		[DBNull.Value, typeof(DateTime), false, DateTime.MinValue],
+		[DBNull.Value, typeof(DateTime?), true, null],
 		[DateTime.MaxValue, typeof(DateTime), false, DateTime.MaxValue],
 		[DateTime.UnixEpoch, typeof(DateTime?), true, DateTime.UnixEpoch],
 		[new DateTime(2025, 6, 7, 10, 45, 1), typeof(DateTime), false, new DateTime(2025, 6, 7, 10, 45, 1)],
@@ -42,6 +48,8 @@ public sealed class SqlMapperTests {
 
 		[null, typeof(DayOfWeek), false, DayOfWeek.Sunday],
 		[null, typeof(DayOfWeek?), true, null],
+		[DBNull.Value, typeof(DayOfWeek), false, DayOfWeek.Sunday],
+		[DBNull.Value, typeof(DayOfWeek?), true, null],
 		[0, typeof(DayOfWeek), false, DayOfWeek.Sunday],
 		[1, typeof(DayOfWeek?), true, DayOfWeek.Monday],
 		[5, typeof(DayOfWeek), false, DayOfWeek.Friday],
@@ -51,6 +59,8 @@ public sealed class SqlMapperTests {
 
 		[null, typeof(double), false, 0.0],
 		[null, typeof(double?), true, null],
+		[DBNull.Value, typeof(double), false, 0.0],
+		[DBNull.Value, typeof(double?), true, null],
 		[0, typeof(double), false, 0.0],
 		[0, typeof(double?), true, 0.0],
 		[123, typeof(double), false, 123.0],
@@ -60,6 +70,8 @@ public sealed class SqlMapperTests {
 
 		[null, typeof(int), false, 0],
 		[null, typeof(int?), true, null],
+		[DBNull.Value, typeof(int), false, 0],
+		[DBNull.Value, typeof(int?), true, null],
 		[0, typeof(int), false, 0],
 		[0, typeof(int?), true, 0],
 		[123, typeof(int), false, 123],
