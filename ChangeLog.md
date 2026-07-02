@@ -1,5 +1,8 @@
 # Changelog
 
+## Version [5.0.4](https://github.com/CedX/Sql.net/compare/v5.0.3...v5.0.4)
+- Fixed the `SqlMapper.ChangeType()` method when the value to convert is `DBNull.Value`.
+
 ## Version [5.0.3](https://github.com/CedX/Sql.net/compare/v5.0.2...v5.0.3)
 - Fixed the `DbConnectionExtensions.ExecuteScalar()` method when using a nullable type as target type.
 
