@@ -1,5 +1,7 @@
 namespace Belin.Sql;
 
+using System.Management.Automation;
+
 /// <summary>
 /// Tests the features of the <see cref="SqlParameter"/> class.
 /// </summary>
@@ -57,6 +59,7 @@ public sealed class SqlParameterTests {
 
 	[TestMethod]
 	public void Value() {
+		// It should normalize the parameter value.
 		AreEqual(DBNull.Value, new SqlParameter("Name", null).Value);
 		AreEqual(DBNull.Value, new SqlParameter("Name", DBNull.Value).Value);
 		AreEqual(123, new SqlParameter("Name", 123).Value);
@@ -64,5 +67,10 @@ public sealed class SqlParameterTests {
 		AreEqual("", new SqlParameter("Name", "").Value);
 		AreEqual("Foo", new SqlParameter("Name", "Foo").Value);
 		AreEqual(DateTime.UnixEpoch, new SqlParameter("Name", DateTime.UnixEpoch).Value);
+
+		// It should support the values wrapped in a `PSObject` instance.
+		var now = DateTime.Now;
+		AreEqual(now, new SqlParameter("Name", new PSObject(now)).Value);
+		AreEqual("FooBar", new SqlParameter("Name", new PSObject("FooBar")).Value);
 	}
 }

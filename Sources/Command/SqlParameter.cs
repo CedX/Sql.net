@@ -102,5 +102,9 @@ public sealed class SqlParameter(string name = "?", object? value = null) {
 	/// </summary>
 	/// <param name="value">The parameter value.</param>
 	/// <returns>The normalized parameter value.</returns>
-	internal static object NormalizeValue(object? value) => value ?? DBNull.Value;
+	internal static object NormalizeValue(object? value) {
+		if (value is null) return DBNull.Value;
+		if (PowerShell.PSObject is null || value.GetType() != PowerShell.PSObject) return value;
+		return PowerShell.PSObject.GetProperty("BaseObject")!.GetValue(value) ?? DBNull.Value;
+	}
 }
