@@ -23,16 +23,6 @@ public sealed class SqlMapper {
 	private static readonly ConcurrentDictionary<Type, DbTableInfo> mapping = [];
 
 	/// <summary>
-	/// The type of the <c>PSNoteProperty</c> class.
-	/// </summary>
-	private static readonly Type? psNoteProperty = Type.GetType("System.Management.Automation.PSNoteProperty, System.Management.Automation");
-
-	/// <summary>
-	/// The type of the <c>PSObject</c> class.
-	/// </summary>
-	private static readonly Type? psObject = Type.GetType("System.Management.Automation.PSObject, System.Management.Automation");
-
-	/// <summary>
 	/// Creates a new data mapper.
 	/// </summary>
 	private SqlMapper() {}
@@ -232,10 +222,10 @@ public sealed class SqlMapper {
 			return expandoObject;
 		}
 
-		if (psObject is not null && psNoteProperty is not null && type == psObject) {
-			var psCustomObject = Activator.CreateInstance(psObject)!;
-			dynamic psProperties = psObject.GetProperty("Properties")!.GetValue(psCustomObject)!;
-			foreach (var (key, value) in properties) psProperties.Add((dynamic) Activator.CreateInstance(psNoteProperty, [key, value])!);
+		if (PowerShell.PSObject is not null && PowerShell.PSNoteProperty is not null && type == PowerShell.PSObject) {
+			var psCustomObject = Activator.CreateInstance(PowerShell.PSObject)!;
+			dynamic psProperties = PowerShell.PSObject.GetProperty("Properties")!.GetValue(psCustomObject)!;
+			foreach (var (key, value) in properties) psProperties.Add((dynamic) Activator.CreateInstance(PowerShell.PSNoteProperty, [key, value])!);
 			return psCustomObject;
 		}
 
