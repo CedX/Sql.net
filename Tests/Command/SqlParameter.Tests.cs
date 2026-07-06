@@ -69,8 +69,8 @@ public sealed class SqlParameterTests {
 		AreEqual(DateTime.UnixEpoch, new SqlParameter("Name", DateTime.UnixEpoch).Value);
 
 		// It should support the values wrapped in a `PSObject` instance.
-		var now = DateTime.Now;
-		AreEqual(now, new SqlParameter("Name", new PSObject(now)).Value);
+		AreEqual(DBNull.Value, new SqlParameter("Name", new PSObject(DBNull.Value)).Value);
 		AreEqual("FooBar", new SqlParameter("Name", new PSObject("FooBar")).Value);
+		AreEqual(DateTime.UnixEpoch, new SqlParameter("Name", new PSObject(DateTime.UnixEpoch)).Value);
 	}
 }

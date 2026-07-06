@@ -1,5 +1,8 @@
 # Changelog
 
+## Version [5.1.0](https://github.com/CedX/Sql.net/compare/v5.0.4...v5.1.0)
+- Added support for SQL parameter values wrapped in `PSObject` instances.
+
 ## Version [5.0.4](https://github.com/CedX/Sql.net/compare/v5.0.3...v5.0.4)
 - Fixed the `SqlMapper.ChangeType()` method when the value to convert is `DBNull.Value`.
 
