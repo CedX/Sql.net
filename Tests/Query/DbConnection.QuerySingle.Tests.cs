@@ -18,7 +18,7 @@ public sealed partial class DbConnectionExtensionsTests {
 
 		// It should throw an error if the query produces more than one result.
 		sql = "SELECT * FROM Characters WHERE gender = @Gender";
-		Throws<InvalidOperationException>(() => connection.QuerySingle(sql, [("Gender", CharacterGender.Human.ToString())]));
+		Throws<InvalidOperationException>(() => connection.QuerySingle(sql, [("Gender", nameof(CharacterGender.Human))]));
 	}
 
 	[TestMethod]
@@ -34,6 +34,6 @@ public sealed partial class DbConnectionExtensionsTests {
 
 		// It should throw an error if the query produces more than one result.
 		sql = "SELECT * FROM Characters WHERE gender = @Gender";
-		await ThrowsAsync<InvalidOperationException>(() => connection.QuerySingleAsync(sql, [("Gender", CharacterGender.Human.ToString())], testContext.CancellationToken));
+		await ThrowsAsync<InvalidOperationException>(() => connection.QuerySingleAsync(sql, [("Gender", nameof(CharacterGender.Human))], testContext.CancellationToken));
 	}
 }

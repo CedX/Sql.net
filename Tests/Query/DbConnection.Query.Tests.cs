@@ -11,7 +11,7 @@ public sealed partial class DbConnectionExtensionsTests {
 	public void Query() {
 		// It should return the records produced by the SQL query.
 		var sql = "SELECT * FROM Characters WHERE gender = @Gender ORDER BY fullName";
-		var records = connection.Query<Character>(sql, [("Gender", CharacterGender.Elf.ToString())]);
+		var records = connection.Query<Character>(sql, [("Gender", nameof(CharacterGender.Elf))]);
 		HasCount(3, records);
 
 		var elrond = records[0];
@@ -44,8 +44,8 @@ public sealed partial class DbConnectionExtensionsTests {
 	public async Task QueryAsync() {
 		// It should return the records produced by the SQL query.
 		var sql = "SELECT * FROM Characters WHERE gender = @Gender ORDER BY fullName";
-		var parameters = new SqlParameterCollection(("Gender", CharacterGender.Elf.ToString()));
-		var records = (await connection.QueryAsync<Character>(sql, parameters, testContext.CancellationToken));
+		var parameters = new SqlParameterCollection(("Gender", nameof(CharacterGender.Elf)));
+		var records = await connection.QueryAsync<Character>(sql, parameters, testContext.CancellationToken);
 		HasCount(3, records);
 
 		var elrond = records[0];
@@ -58,7 +58,7 @@ public sealed partial class DbConnectionExtensionsTests {
 
 		// It should allow the data rows to be split into distinct objects.
 		sql = "SELECT ID, firstName, lastName, ID, fullName, gender FROM Characters WHERE firstName = @FirstName";
-		var objects = (await connection.QueryAsync<ExpandoObject, ExpandoObject>(sql, [("FirstName", "Frodo")], "id", testContext.CancellationToken));
+		var objects = await connection.QueryAsync<ExpandoObject, ExpandoObject>(sql, [("FirstName", "Frodo")], "id", testContext.CancellationToken);
 		HasCount(1, objects);
 
 		dynamic left = objects[0].Item1;

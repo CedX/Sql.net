@@ -89,7 +89,7 @@ public sealed class SqlMapperTests {
 		var properties = new Dictionary<string, object?> {
 			["CLASS"] = "Bard/minstrel",
 			["firstName"] = "Cédric",
-			["gender"] = CharacterGender.Balrog.ToString(),
+			["gender"] = nameof(CharacterGender.Balrog),
 			["lastName"] = null
 		};
 
@@ -98,7 +98,7 @@ public sealed class SqlMapperTests {
 		IsInstanceOfType<ExpandoObject>(expandoObject);
 		AreEqual("Bard/minstrel", expandoObject.CLASS);
 		AreEqual("Cédric", expandoObject.firstName);
-		AreEqual(CharacterGender.Balrog.ToString(), expandoObject.gender);
+		AreEqual(nameof(CharacterGender.Balrog), expandoObject.gender);
 		IsNull(expandoObject.lastName);
 
 		// It should support creating an object of type `PSObject`.
@@ -106,7 +106,7 @@ public sealed class SqlMapperTests {
 		IsInstanceOfType<PSObject>(psObject);
 		AreEqual("Bard/minstrel", psObject.CLASS);
 		AreEqual("Cédric", psObject.firstName);
-		AreEqual(CharacterGender.Balrog.ToString(), psObject.gender);
+		AreEqual(nameof(CharacterGender.Balrog), psObject.gender);
 		IsNull(psObject.lastName);
 
 		// It should create an object of the specified type.

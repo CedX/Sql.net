@@ -9,7 +9,7 @@ public sealed partial class DbConnectionExtensionsTests {
 	[TestMethod]
 	public void ExecuteScalar() {
 		var sql = "SELECT COUNT(*) FROM Characters WHERE gender = @Gender";
-		AreEqual(2, connection.ExecuteScalar<int>(sql, [("Gender", CharacterGender.Balrog.ToString())]));
+		AreEqual(2, connection.ExecuteScalar<int>(sql, [("Gender", nameof(CharacterGender.Balrog))]));
 
 		sql = "SELECT tbl_name FROM sqlite_schema WHERE type = @Type AND name = @Name";
 		AreEqual("Characters", connection.ExecuteScalar<string>(sql, [("Name", "Characters"), ("Type", "table")]));
@@ -21,7 +21,7 @@ public sealed partial class DbConnectionExtensionsTests {
 	[TestMethod]
 	public async Task ExecuteScalarAsync() {
 		var sql = "SELECT COUNT(*) FROM Characters WHERE gender = @Gender";
-		var parameters = new SqlParameterCollection(("Gender", CharacterGender.Balrog.ToString()));
+		var parameters = new SqlParameterCollection(("Gender", nameof(CharacterGender.Balrog)));
 		AreEqual(2, await connection.ExecuteScalarAsync<int>(sql, parameters, testContext.CancellationToken));
 
 		sql = "SELECT tbl_name FROM sqlite_schema WHERE type = @Type AND name = @Name";

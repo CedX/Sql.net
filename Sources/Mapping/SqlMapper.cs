@@ -171,8 +171,10 @@ public sealed class SqlMapper {
 	/// </summary>
 	/// <param name="properties">A hash table providing the properties to be set on the created object.</param>
 	/// <returns>The newly created object.</returns>
-	public ExpandoObject CreateInstance(Hashtable properties) =>
-		CreateInstance<ExpandoObject>(properties.Cast<DictionaryEntry>().ToDictionary(entry => entry.Key.ToString() ?? "", entry => entry.Value));
+	public ExpandoObject CreateInstance(Hashtable properties) => CreateInstance<ExpandoObject>(
+		properties.Cast<DictionaryEntry>().ToDictionary(entry => Convert.ToString(entry.Key, CultureInfo.InvariantCulture) ?? "",
+		entry => entry.Value
+	));
 
 	/// <summary>
 	/// Creates a new dynamic object from the specified dictionary.
@@ -188,8 +190,10 @@ public sealed class SqlMapper {
 	/// <typeparam name="T">The object type.</typeparam>
 	/// <param name="properties">A hash table providing the properties to be set on the created object.</param>
 	/// <returns>The newly created object.</returns>
-	public T CreateInstance<T>(Hashtable properties) where T: new() =>
-		CreateInstance<T>(properties.Cast<DictionaryEntry>().ToDictionary(entry => entry.Key.ToString() ?? "", entry => entry.Value));
+	public T CreateInstance<T>(Hashtable properties) where T: new() => CreateInstance<T>(
+		properties.Cast<DictionaryEntry>().ToDictionary(entry => Convert.ToString(entry.Key, CultureInfo.InvariantCulture) ?? "",
+		entry => entry.Value
+	));
 
 	/// <summary>
 	/// Creates a new object of a given type from the specified dictionary.
@@ -206,8 +210,10 @@ public sealed class SqlMapper {
 	/// <param name="type">The object type.</param>
 	/// <param name="properties">A hash table providing the properties to be set on the created object.</param>
 	/// <returns>The newly created object.</returns>
-	public object CreateInstance(Type type, Hashtable properties) =>
-		CreateInstance(type, properties.Cast<DictionaryEntry>().ToDictionary(entry => entry.Key.ToString() ?? "", entry => entry.Value));
+	public object CreateInstance(Type type, Hashtable properties) => CreateInstance(type, properties.Cast<DictionaryEntry>().ToDictionary(
+		entry => Convert.ToString(entry.Key, CultureInfo.InvariantCulture) ?? "",
+		entry => entry.Value
+	));
 
 	/// <summary>
 	/// Creates a new object of a given type from the specified dictionary.
