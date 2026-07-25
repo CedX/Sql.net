@@ -1,6 +1,7 @@
 namespace Belin.Sql;
 
 using System.Collections;
+using System.Globalization;
 
 /// <summary>
 /// Collects all parameters relevant to a parameterized SQL statement.
@@ -53,8 +54,10 @@ public class SqlParameterCollection(params IEnumerable<SqlParameter> parameters)
 	/// </summary>
 	/// <param name="parameters">The hash table whose elements are copied to the parameter collection.</param>
 	/// <returns>The parameter collection corresponding to the specified hash table of named parameters.</returns>
-	public static implicit operator SqlParameterCollection(Hashtable parameters) =>
-		parameters.Cast<DictionaryEntry>().ToDictionary(entry => entry.Key.ToString() ?? "", entry => entry.Value);
+	public static implicit operator SqlParameterCollection(Hashtable parameters) => parameters.Cast<DictionaryEntry>().ToDictionary(
+		entry => Convert.ToString(entry.Key, CultureInfo.InvariantCulture) ?? "",
+		entry => entry.Value
+	);
 
 	/// <summary>
 	/// Adds a new positional parameter to the end of this collection.

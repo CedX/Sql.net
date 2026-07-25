@@ -2,6 +2,7 @@ namespace Belin.Sql;
 
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 
 /// <summary>
 /// Represents a parameter of a parameterized SQL statement.
@@ -56,7 +57,7 @@ public sealed class SqlParameter(string name = "?", object? value = null) {
 	/// <returns>The parameter corresponding to the specified tuple.</returns>
 	/// <exception cref="ArgumentException">The specified array does not contain a parameter name and a value.</param>
 	public static implicit operator SqlParameter(object?[] parameter) => parameter.Length == 2
-		? new(parameter[0]?.ToString() ?? "", parameter[1])
+		? new(Convert.ToString(parameter[0], CultureInfo.InvariantCulture) ?? "", parameter[1])
 		: throw new ArgumentException("The specified array must contain a parameter name and a value.", nameof(parameter));
 
 	/// <summary>

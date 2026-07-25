@@ -2,6 +2,7 @@ namespace Belin.Sql;
 
 using System.Collections;
 using System.Collections.Specialized;
+using System.Globalization;
 
 /// <summary>
 /// A collection of hints describing the sort order of columns.
@@ -24,7 +25,7 @@ public class SqlOrderHintCollection(params IEnumerable<SqlOrderHint> orderHints)
 	/// <param name="columns">The array whose elements are copied to the order hint collection.</param>
 	/// <returns>The order hint collection corresponding to the specified array of column names.</returns>
 	public static implicit operator SqlOrderHintCollection(object?[] columns) =>
-		[.. columns.Select(value => new SqlOrderHint(value?.ToString() ?? "", SortOrder.Ascending))];
+		[.. columns.Select(value => new SqlOrderHint(Convert.ToString(value, CultureInfo.InvariantCulture) ?? "", SortOrder.Ascending))];
 
 	/// <summary>
 	/// Creates a new order hint collection from the specified array of column names.
@@ -48,8 +49,8 @@ public class SqlOrderHintCollection(params IEnumerable<SqlOrderHint> orderHints)
 	/// <param name="orderHints">The dictionary whose elements are copied to the order hint collection.</param>
 	/// <returns>The order hint collection corresponding to the specified dictionary of column names and sort orders.</returns>
 	public static implicit operator SqlOrderHintCollection(OrderedDictionary orderHints) => [.. orderHints.Cast<DictionaryEntry>().Select(entry => {
-		var value = entry.Value is SortOrder sortOrder ? sortOrder : Enum.Parse<SortOrder>(entry.Value?.ToString() ?? "", ignoreCase: true);
-		return new SqlOrderHint(entry.Key.ToString() ?? "", value);
+		var value = entry.Value is SortOrder sortOrder ? sortOrder : Enum.Parse<SortOrder>(Convert.ToString(entry.Value, CultureInfo.InvariantCulture) ?? "", ignoreCase: true);
+		return new SqlOrderHint(Convert.ToString(entry.Key, CultureInfo.InvariantCulture) ?? "", value);
 	})];
 
 	/// <summary>
