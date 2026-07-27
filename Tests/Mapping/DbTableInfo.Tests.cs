@@ -13,7 +13,7 @@ public sealed class DbTableInfoTests {
 
 		var columns = new DbTableInfo(typeof(Character)).Columns;
 		HasCount(5, columns);
-		CollectionAssert.AreEquivalent(new[] { "firstName", "fullName", "gender", "ID", "lastName" }, columns.Keys.ToArray());
+		AreSequenceEqual(["firstName", "fullName", "gender", "ID", "lastName"], columns.Keys);
 	}
 
 	[TestMethod]

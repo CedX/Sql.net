@@ -43,26 +43,26 @@ public sealed class SqlOrderHintCollectionTests {
 	public void ImplicitConversion() {
 		// It should create a collection from the specified array of column names.
 		SqlOrderHintCollection collection = new object[] { "ID", "Name" };
-		CollectionAssert.AreEqual(new[] { "ID", "Name" }, collection.Select(parameter => parameter.Column).ToArray());
-		CollectionAssert.AreEqual(new[] { SortOrder.Ascending, SortOrder.Ascending }, collection.Select(parameter => parameter.SortOrder).ToArray());
+		AreSequenceEqual(["ID", "Name"], collection.Select(parameter => parameter.Column));
+		AreSequenceEqual([SortOrder.Ascending, SortOrder.Ascending], collection.Select(parameter => parameter.SortOrder));
 
 		collection = new string[] { "ID", "Name" };
-		CollectionAssert.AreEqual(new[] { "ID", "Name" }, collection.Select(parameter => parameter.Column).ToArray());
-		CollectionAssert.AreEqual(new[] { SortOrder.Ascending, SortOrder.Ascending }, collection.Select(parameter => parameter.SortOrder).ToArray());
+		AreSequenceEqual(["ID", "Name"], collection.Select(parameter => parameter.Column));
+		AreSequenceEqual([SortOrder.Ascending, SortOrder.Ascending], collection.Select(parameter => parameter.SortOrder));
 
 		// It should create a collection from the specified list of column names.
 		collection = new List<string> { "ID", "Name" };
-		CollectionAssert.AreEqual(new[] { "ID", "Name" }, collection.Select(parameter => parameter.Column).ToArray());
-		CollectionAssert.AreEqual(new[] { SortOrder.Ascending, SortOrder.Ascending }, collection.Select(parameter => parameter.SortOrder).ToArray());
+		AreSequenceEqual(["ID", "Name"], collection.Select(parameter => parameter.Column));
+		AreSequenceEqual([SortOrder.Ascending, SortOrder.Ascending], collection.Select(parameter => parameter.SortOrder));
 
 		// It should create a collection from the specified dictionary of column names and sort orders.
 		collection = new OrderedDictionary { ["ID"] = "Descending", ["Name"] = "Ascending" };
-		CollectionAssert.AreEqual(new[] { "ID", "Name" }, collection.Select(parameter => parameter.Column).ToArray());
-		CollectionAssert.AreEqual(new[] { SortOrder.Descending, SortOrder.Ascending }, collection.Select(parameter => parameter.SortOrder).ToArray());
+		AreSequenceEqual(["ID", "Name"], collection.Select(parameter => parameter.Column));
+		AreSequenceEqual([SortOrder.Descending, SortOrder.Ascending], collection.Select(parameter => parameter.SortOrder));
 
 		collection = new OrderedDictionary<string, SortOrder> { ["ID"] = SortOrder.Descending, ["Name"] = SortOrder.Ascending };
-		CollectionAssert.AreEqual(new[] { "ID", "Name" }, collection.Select(parameter => parameter.Column).ToArray());
-		CollectionAssert.AreEqual(new[] { SortOrder.Descending, SortOrder.Ascending }, collection.Select(parameter => parameter.SortOrder).ToArray());
+		AreSequenceEqual(["ID", "Name"], collection.Select(parameter => parameter.Column));
+		AreSequenceEqual([SortOrder.Descending, SortOrder.Ascending], collection.Select(parameter => parameter.SortOrder));
 	}
 
 	[TestMethod]

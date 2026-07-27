@@ -63,23 +63,23 @@ public sealed class SqlParameterCollectionTests {
 	public void ImplicitConversion() {
 		// It should create a collection from the specified array of positional parameters.
 		SqlParameterCollection collection = new object[] { "foo", "bar" };
-		CollectionAssert.AreEqual(new[] { "?1", "?2" }, collection.Select(parameter => parameter.Name).ToArray());
-		CollectionAssert.AreEqual(new[] { "foo", "bar" }, collection.Select(parameter => parameter.Value).ToArray());
+		AreSequenceEqual(["?1", "?2"], collection.Select(parameter => parameter.Name));
+		AreSequenceEqual(["foo", "bar"], collection.Select(parameter => parameter.Value));
 
 		// It should create a collection from the specified list of positional parameters.
 		collection = new List<object?> { "foo", "bar" };
-		CollectionAssert.AreEqual(new[] { "?1", "?2" }, collection.Select(parameter => parameter.Name).ToArray());
-		CollectionAssert.AreEqual(new[] { "foo", "bar" }, collection.Select(parameter => parameter.Value).ToArray());
+		AreSequenceEqual(["?1", "?2"], collection.Select(parameter => parameter.Name));
+		AreSequenceEqual(["foo", "bar"], collection.Select(parameter => parameter.Value));
 
 		// It should create a collection from the specified dictionary of named parameters.
 		collection = new Dictionary<string, object?> { ["foo"] = "bar", ["baz"] = "qux" };
-		CollectionAssert.AreEquivalent(new[] { "@foo", "@baz" }, collection.Select(parameter => parameter.Name).ToArray());
-		CollectionAssert.AreEquivalent(new[] { "bar", "qux" }, collection.Select(parameter => parameter.Value).ToArray());
+		AreSequenceEqual(["@foo", "@baz"], collection.Select(parameter => parameter.Name));
+		AreSequenceEqual(["bar", "qux"], collection.Select(parameter => parameter.Value));
 
 		// It should create a collection from the specified hash table of named parameters.
 		collection = new Hashtable { ["foo"] = "bar", ["baz"] = "qux" };
-		CollectionAssert.AreEquivalent(new[] { "@foo", "@baz" }, collection.Select(parameter => parameter.Name).ToArray());
-		CollectionAssert.AreEquivalent(new[] { "bar", "qux" }, collection.Select(parameter => parameter.Value).ToArray());
+		AreSequenceEqual(["@foo", "@baz"], collection.Select(parameter => parameter.Name), SequenceOrder.InAnyOrder);
+		AreSequenceEqual(["bar", "qux"], collection.Select(parameter => parameter.Value), SequenceOrder.InAnyOrder);
 	}
 
 	[TestMethod]

@@ -168,23 +168,23 @@ public sealed class SqlMapperTests {
 		// It should return a dictionary equivalent to the specified data row.
 		var records = SqlMapper.SplitOn(record);
 		HasCount(1, records);
-		CollectionAssert.AreEqual(properties, records[0]);
+		AreSequenceEqual(properties, records[0]);
 
 		// It should not split the data row if the specified field does not exist.
 		records = SqlMapper.SplitOn(record, "_NonExistent_");
 		HasCount(1, records);
-		CollectionAssert.AreEqual(properties, records[0]);
+		AreSequenceEqual(properties, records[0]);
 
 		// It should split the data row according to the specified fields.
 		records = SqlMapper.SplitOn(record, "id");
 		HasCount(2, records);
-		CollectionAssert.AreEqual(new Dictionary<string, object?> { ["Id"] = 123, ["LongLabel"] = "Hello World!", ["ShortLabel"] = null }, records[0]);
-		CollectionAssert.AreEqual(new Dictionary<string, object?> { ["Id"] = 456, ["FirstName"] = "Cédric", ["LastName"] = "Belin", ["RowID"] = 789 }, records[1]);
+		AreSequenceEqual(new Dictionary<string, object?> { ["Id"] = 123, ["LongLabel"] = "Hello World!", ["ShortLabel"] = null }, records[0]);
+		AreSequenceEqual(new Dictionary<string, object?> { ["Id"] = 456, ["FirstName"] = "Cédric", ["LastName"] = "Belin", ["RowID"] = 789 }, records[1]);
 
 		records = SqlMapper.SplitOn(record, "id", "rowid", "_Unused_");
 		HasCount(3, records);
-		CollectionAssert.AreEqual(new Dictionary<string, object?> { ["Id"] = 123, ["LongLabel"] = "Hello World!", ["ShortLabel"] = null }, records[0]);
-		CollectionAssert.AreEqual(new Dictionary<string, object?> { ["Id"] = 456, ["FirstName"] = "Cédric", ["LastName"] = "Belin" }, records[1]);
-		CollectionAssert.AreEqual(new Dictionary<string, object?> { ["RowID"] = 789 }, records[2]);
+		AreSequenceEqual(new Dictionary<string, object?> { ["Id"] = 123, ["LongLabel"] = "Hello World!", ["ShortLabel"] = null }, records[0]);
+		AreSequenceEqual(new Dictionary<string, object?> { ["Id"] = 456, ["FirstName"] = "Cédric", ["LastName"] = "Belin" }, records[1]);
+		AreSequenceEqual(new Dictionary<string, object?> { ["RowID"] = 789 }, records[2]);
 	}
 }
