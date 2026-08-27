@@ -32,7 +32,7 @@ public sealed class SqlOrderHint(string column, SortOrder sortOrder = SortOrder.
 	/// <param name="orderHint">The tuple providing the column name and its sort order.</param>
 	/// <returns>The order hint corresponding to the specified tuple.</returns>
 	/// <exception cref="ArgumentException">The specified array does not contain a column name and a sort order.</param>
-	public static implicit operator SqlOrderHint(object?[] orderHint) => orderHint.Length == 2
+	public static implicit operator SqlOrderHint(object[] orderHint) => orderHint.Length == 2
 		? new(Convert.ToString(orderHint[0], CultureInfo.InvariantCulture) ?? "", orderHint[1] is SortOrder sortOrder ? sortOrder : Enum.Parse<SortOrder>(Convert.ToString(orderHint[1], CultureInfo.InvariantCulture) ?? "", ignoreCase: true))
 		: throw new ArgumentException("The specified array must contain a column name and a sort order.", nameof(orderHint));
 

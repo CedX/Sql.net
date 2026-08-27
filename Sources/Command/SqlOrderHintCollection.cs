@@ -24,7 +24,7 @@ public class SqlOrderHintCollection(params IEnumerable<SqlOrderHint> orderHints)
 	/// </summary>
 	/// <param name="columns">The array whose elements are copied to the order hint collection.</param>
 	/// <returns>The order hint collection corresponding to the specified array of column names.</returns>
-	public static implicit operator SqlOrderHintCollection(object?[] columns) =>
+	public static implicit operator SqlOrderHintCollection(object[] columns) =>
 		[.. columns.Select(value => new SqlOrderHint(Convert.ToString(value, CultureInfo.InvariantCulture) ?? "", SortOrder.Ascending))];
 
 	/// <summary>
