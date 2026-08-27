@@ -1,7 +1,7 @@
 # Changelog
 
 ## Version [5.2.0](https://github.com/CedX/Sql.net/compare/v5.1.0...v5.2.0)
-- Replaced `object.ToString()` calls by `Convert.ToString()` calls with the invariant culture.
+- Replaced the `object.ToString()` calls by `Convert.ToString()` calls with the invariant culture.
 - Replaced the type comparisons with `DBNull` by `Convert.IsDBNull()` calls.
 
 ## Version [5.1.0](https://github.com/CedX/Sql.net/compare/v5.0.4...v5.1.0)
