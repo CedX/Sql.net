@@ -1,7 +1,116 @@
 namespace Belin.Sql;
 
 using System.Collections;
+using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+
+/// <summary>
+/// Represents a parameter of a parameterized SQL statement.
+/// </summary>
+public sealed class SqlParameter(string name = "?", object? value = null) {
+
+	/// <summary>
+	/// The prefixes used for parameter placeholders.
+	/// </summary>
+	private static readonly char[] prefixes = ['?', '@', ':', '$'];
+
+	/// <summary>
+	/// The database type of this parameter.
+	/// </summary>
+	public DbType? DbType { get; set; }
+
+	/// <summary>
+	/// Value indicating whether this parameter is input-only, output-only, bidirectional, or a stored procedure return value parameter.
+	/// </summary>
+	public ParameterDirection? Direction { get; set; }
+
+	/// <summary>
+	/// The parameter name.
+	/// </summary>
+	public string Name { get; set => field = NormalizeName(value); } = NormalizeName(name);
+
+	/// <summary>
+	/// Indicates the precision of numeric parameters.
+	/// </summary>
+	public byte? Precision { get; set; }
+
+	/// <summary>
+	/// Indicates the scale of numeric parameters.
+	/// </summary>
+	public byte? Scale { get; set; }
+
+	/// <summary>
+	/// The maximum size of this parameter, in bytes.
+	/// </summary>
+	public int? Size { get; set; }
+
+	/// <summary>
+	/// The parameter value.
+	/// </summary>
+	[NotNull]
+	public object? Value { get; set => field = NormalizeValue(value); } = NormalizeValue(value);
+
+	/// <summary>
+	/// Creates a new parameter from the specified tuple.
+	/// </summary>
+	/// <param name="parameter">The tuple providing the parameter name and value.</param>
+	/// <returns>The parameter corresponding to the specified tuple.</returns>
+	/// <exception cref="ArgumentException">The specified array does not contain a parameter name and a value.</param>
+	public static implicit operator SqlParameter(object?[] parameter) => parameter.Length == 2
+		? new(Convert.ToString(parameter[0], CultureInfo.InvariantCulture) ?? "", parameter[1])
+		: throw new ArgumentException("The specified array must contain a parameter name and a value.", nameof(parameter));
+
+	/// <summary>
+	/// Creates a new parameter from the specified tuple.
+	/// </summary>
+	/// <param name="parameter">The tuple providing the parameter name and value.</param>
+	/// <returns>The parameter corresponding to the specified tuple.</returns>
+	public static implicit operator SqlParameter((string Name, object? Value) parameter) => new(parameter.Name, parameter.Value);
+
+	/// <summary>
+	/// Creates a new parameter from the specified key/value pair.
+	/// </summary>
+	/// <param name="parameter">The key/value pair providing the parameter name and value.</param>
+	/// <returns>The parameter corresponding to the specified key/value pair.</returns>
+	public static implicit operator SqlParameter(KeyValuePair<string, object?> parameter) => new(parameter.Key, parameter.Value);
+
+	/// <summary>
+	/// Converts this parameter into an <see cref="IDbDataParameter"/> object.
+	/// </summary>
+	/// <param name="command">The command to associate with the created parameter.</param>
+	/// <returns>The <see cref="IDbDataParameter"/> object corresponding to this parameter.</returns>
+	public IDbDataParameter ToDbParameter(IDbCommand command) {
+		var parameter = command.CreateParameter();
+		parameter.ParameterName = Name;
+		parameter.Value = Value;
+		if (DbType is not null) parameter.DbType = DbType.Value;
+		if (Direction is not null) parameter.Direction = Direction.Value;
+		if (Precision is not null) parameter.Precision = Precision.Value;
+		if (Scale is not null) parameter.Scale = Scale.Value;
+		if (Size is not null) parameter.Size = Size.Value;
+		return parameter;
+	}
+
+	/// <summary>
+	/// Normalizes the specified parameter name.
+	/// </summary>
+	/// <param name="name">The parameter name.</param>
+	/// <returns>The normalized parameter name.</returns>
+	internal static string NormalizeName(string name) =>
+		name.Length == 0 ? "?" : (prefixes.Contains(name[0]) ? name : $"@{name}");
+
+	/// <summary>
+	/// Normalizes the specified parameter value.
+	/// </summary>
+	/// <param name="value">The parameter value.</param>
+	/// <returns>The normalized parameter value.</returns>
+	internal static object NormalizeValue(object? value) {
+		if (value is null) return DBNull.Value;
+		if (PowerShell.PSObject is null || value.GetType() != PowerShell.PSObject) return value;
+		return PowerShell.PSObject.GetProperty("BaseObject")!.GetValue(value) ?? DBNull.Value;
+	}
+}
 
 /// <summary>
 /// Collects all parameters relevant to a parameterized SQL statement.

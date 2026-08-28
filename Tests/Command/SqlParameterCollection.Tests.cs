@@ -2,6 +2,80 @@ namespace Belin.Sql;
 
 using System.Collections;
 using System.Data;
+using System.Management.Automation;
+
+/// <summary>
+/// Tests the features of the <see cref="SqlParameter"/> class.
+/// </summary>
+[TestClass]
+public sealed class SqlParameterTests {
+
+	[TestMethod]
+	public void ImplicitConversion() {
+		// It should create a parameter from the specified array.
+		SqlParameter parameter = new object?[] { "", null };
+		AreEqual("?", parameter.Name);
+		AreEqual(DBNull.Value, parameter.Value);
+
+		parameter = new object[] { ":foo", "bar" };
+		AreEqual(":foo", parameter.Name);
+		AreEqual("bar", parameter.Value);
+
+		parameter = new object[] { "baz", 123 };
+		AreEqual("@baz", parameter.Name);
+		AreEqual(123, parameter.Value);
+
+		// It should create a parameter from the specified tuple.
+		parameter = ("", null);
+		AreEqual("?", parameter.Name);
+		AreEqual(DBNull.Value, parameter.Value);
+
+		parameter = (":foo", "bar");
+		AreEqual(":foo", parameter.Name);
+		AreEqual("bar", parameter.Value);
+
+		parameter = ("baz", 123);
+		AreEqual("@baz", parameter.Name);
+		AreEqual(123, parameter.Value);
+
+		// It should create a parameter from the specified key/value pair.
+		parameter = new KeyValuePair<string, object?>("foo", null);
+		AreEqual("@foo", parameter.Name);
+		AreEqual(DBNull.Value, parameter.Value);
+
+		parameter = (":bar", "Baz");
+		AreEqual(":bar", parameter.Name);
+		AreEqual("Baz", parameter.Value);
+	}
+
+	[TestMethod]
+	[DataRow("", "?")]
+	[DataRow("?", "?")]
+	[DataRow("?1", "?1")]
+	[DataRow("foo", "@foo")]
+	[DataRow("@bar", "@bar")]
+	[DataRow(":baz", ":baz")]
+	[DataRow("$qux", "$qux")]
+	public void Name(string name, string expected) =>
+		AreEqual(expected, new SqlParameter(name).Name);
+
+	[TestMethod]
+	public void Value() {
+		// It should normalize the parameter value.
+		AreEqual(DBNull.Value, new SqlParameter("Name", null).Value);
+		AreEqual(DBNull.Value, new SqlParameter("Name", DBNull.Value).Value);
+		AreEqual(123, new SqlParameter("Name", 123).Value);
+		AreEqual(-123.456, new SqlParameter("Name", -123.456).Value);
+		AreEqual("", new SqlParameter("Name", "").Value);
+		AreEqual("Foo", new SqlParameter("Name", "Foo").Value);
+		AreEqual(DateTime.UnixEpoch, new SqlParameter("Name", DateTime.UnixEpoch).Value);
+
+		// It should support the values wrapped in a `PSObject` instance.
+		AreEqual(DBNull.Value, new SqlParameter("Name", new PSObject(DBNull.Value)).Value);
+		AreEqual("FooBar", new SqlParameter("Name", new PSObject("FooBar")).Value);
+		AreEqual(DateTime.UnixEpoch, new SqlParameter("Name", new PSObject(DateTime.UnixEpoch)).Value);
+	}
+}
 
 /// <summary>
 /// Tests the features of the <see cref="SqlParameterCollection"/> class.
