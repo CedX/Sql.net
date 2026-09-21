@@ -9,7 +9,7 @@ If you like [SQL](https://en.wikipedia.org/wiki/SQL) but dislike the boilerplate
 ## Quick start
 Install the latest version of **SQL Mapper for .NET** with [NuGet](https://www.nuget.org) package manager:
 
-```shell
+```powershell
 dotnet package add Belin.Sql
 ```
 
