@@ -10,11 +10,11 @@ public sealed partial class DbConnectionExtensionsTests {
 		// It should return the first record produced by the SQL query.
 		var sql = "SELECT * FROM Characters WHERE fullName = @FullName";
 		var record = connection.QueryFirst<Character>(sql, [("FullName", "Sauron")]);
-		AreEqual("Sauron", record.FirstName);
-		AreEqual(CharacterGender.DarkLord, record.Gender);
+		Assert.AreEqual("Sauron", record.FirstName);
+		Assert.AreEqual(CharacterGender.DarkLord, record.Gender);
 
 		// It should throw an error if the query produces no results.
-		Throws<InvalidOperationException>(() => connection.QueryFirst(sql, [("FullName", "Cédric")]));
+		Assert.Throws<InvalidOperationException>(() => connection.QueryFirst(sql, [("FullName", "Cédric")]));
 	}
 
 	[TestMethod]
@@ -22,10 +22,10 @@ public sealed partial class DbConnectionExtensionsTests {
 		// It should return the first record produced by the SQL query.
 		var sql = "SELECT * FROM Characters WHERE fullName = @FullName";
 		var record = await connection.QueryFirstAsync<Character>(sql, [("FullName", "Sauron")], testContext.CancellationToken);
-		AreEqual("Sauron", record.FirstName);
-		AreEqual(CharacterGender.DarkLord, record.Gender);
+		Assert.AreEqual("Sauron", record.FirstName);
+		Assert.AreEqual(CharacterGender.DarkLord, record.Gender);
 
 		// It should throw an error if the query produces no results.
-		await ThrowsAsync<InvalidOperationException>(() => connection.QueryFirstAsync(sql, [("FullName", "Cédric")], testContext.CancellationToken));
+		await Assert.ThrowsAsync<InvalidOperationException>(() => connection.QueryFirstAsync(sql, [("FullName", "Cédric")], testContext.CancellationToken));
 	}
 }

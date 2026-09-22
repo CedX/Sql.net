@@ -11,7 +11,7 @@ public sealed class SqlCommandTests {
 	[TestMethod]
 	public void ImplicitConversion() {
 		SqlCommand command = "SELECT * FROM Characters";
-		AreEqual("SELECT * FROM Characters", command.Text);
+		Assert.AreEqual("SELECT * FROM Characters", command.Text);
 	}
 }
 
@@ -35,37 +35,37 @@ public sealed class SqlCommandBuilderTests {
 	public void GetDeleteCommand() {
 		// It should return the SQL command to delete an entity.
 		var (command, parameters) = SqlCommandBuilder.Create(connection).GetDeleteCommand(character);
-		StartsWith(@"DELETE FROM ""main"".""Characters""", command.Text);
-		EndsWith(@"WHERE ""ID"" = @ID", command.Text);
+		Assert.StartsWith(@"DELETE FROM ""main"".""Characters""", command.Text);
+		Assert.EndsWith(@"WHERE ""ID"" = @ID", command.Text);
 
 		// It should also return the parameters used by the SQL command.
 		var parameter = parameters.Single();
-		AreEqual("@ID", parameter.Name);
-		AreEqual(1000, parameter.Value);
+		Assert.AreEqual("@ID", parameter.Name);
+		Assert.AreEqual(1000, parameter.Value);
 	}
 
 	[TestMethod]
 	public void GetDeleteAllCommand() {
 		// It should return the SQL command to delete all entities.
 		var (command, parameters) = SqlCommandBuilder.Create(connection).GetDeleteAllCommand<Character>();
-		AreEqual(@"DELETE FROM ""main"".""Characters""", command.Text);
+		Assert.AreEqual(@"DELETE FROM ""main"".""Characters""", command.Text);
 
 		// It should also return an empty parameter collection.
-		IsEmpty(parameters);
+		Assert.IsEmpty(parameters);
 	}
 
 	[TestMethod]
 	public void GetExistsCommand() {
 		// It should return the SQL command to check the existence of an entity.
 		var (command, parameters) = SqlCommandBuilder.Create(connection).GetExistsCommand<Character>(character.Id);
-		StartsWith("SELECT 1", command.Text);
-		Contains(@"FROM ""main"".""Characters""", command.Text);
-		EndsWith(@"WHERE ""ID"" = @ID", command.Text);
+		Assert.StartsWith("SELECT 1", command.Text);
+		Assert.Contains(@"FROM ""main"".""Characters""", command.Text);
+		Assert.EndsWith(@"WHERE ""ID"" = @ID", command.Text);
 
 		// It should also return the parameters used by the SQL command.
 		var parameter = parameters.Single();
-		AreEqual("@ID", parameter.Name);
-		AreEqual(1000, parameter.Value);
+		Assert.AreEqual("@ID", parameter.Name);
+		Assert.AreEqual(1000, parameter.Value);
 	}
 
 	[TestMethod]
@@ -74,22 +74,22 @@ public sealed class SqlCommandBuilderTests {
 
 		// It should return the SQL command to find an entity.
 		var (command, parameters) = builder.GetFindCommand<Character>(character.Id);
-		StartsWith(@"SELECT """, command.Text);
-		DoesNotContain("*", command.Text);
-		Contains(@"FROM ""main"".""Characters""", command.Text);
-		EndsWith(@"WHERE ""ID"" = @ID", command.Text);
+		Assert.StartsWith(@"SELECT """, command.Text);
+		Assert.DoesNotContain("*", command.Text);
+		Assert.Contains(@"FROM ""main"".""Characters""", command.Text);
+		Assert.EndsWith(@"WHERE ""ID"" = @ID", command.Text);
 
 		// It should also return the parameters used by the SQL command.
 		var parameter = parameters.Single();
-		AreEqual("@ID", parameter.Name);
-		AreEqual(1000, parameter.Value);
+		Assert.AreEqual("@ID", parameter.Name);
+		Assert.AreEqual(1000, parameter.Value);
 
 		// It should allow selecting a specific set of columns.
 		(command, _) = builder.GetFindCommand<Character>(character.Id, ["firstName"]);
-		StartsWith(@"SELECT ""firstName""", command.Text);
-		DoesNotContain("gender", command.Text);
-		DoesNotContain("lastName", command.Text);
-		EndsWith(@"WHERE ""ID"" = @ID", command.Text);
+		Assert.StartsWith(@"SELECT ""firstName""", command.Text);
+		Assert.DoesNotContain("gender", command.Text);
+		Assert.DoesNotContain("lastName", command.Text);
+		Assert.EndsWith(@"WHERE ""ID"" = @ID", command.Text);
 	}
 
 	[TestMethod]
@@ -98,41 +98,41 @@ public sealed class SqlCommandBuilderTests {
 
 		// It should return the SQL command to find all entities.
 		var (command, parameters) = builder.GetFindAllCommand<Character>();
-		StartsWith(@"SELECT """, command.Text);
-		DoesNotContain("*", command.Text);
-		Contains(@"FROM ""main"".""Characters""", command.Text);
-		EndsWith(@"ORDER BY ""ID"" ASC", command.Text);
+		Assert.StartsWith(@"SELECT """, command.Text);
+		Assert.DoesNotContain("*", command.Text);
+		Assert.Contains(@"FROM ""main"".""Characters""", command.Text);
+		Assert.EndsWith(@"ORDER BY ""ID"" ASC", command.Text);
 
 		// It should also return an empty parameter collection.
-		IsEmpty(parameters);
+		Assert.IsEmpty(parameters);
 
 		// It should allow sorting the results by a specific set of columns.
 		(command, _) = builder.GetFindAllCommand<Character>([("gender", SortOrder.Ascending), ("fullName", SortOrder.Descending)]);
-		StartsWith(@"SELECT """, command.Text);
-		DoesNotContain("*", command.Text);
-		Contains(@"FROM ""main"".""Characters""", command.Text);
-		EndsWith(@"ORDER BY ""gender"" ASC, ""fullName"" DESC", command.Text);
+		Assert.StartsWith(@"SELECT """, command.Text);
+		Assert.DoesNotContain("*", command.Text);
+		Assert.Contains(@"FROM ""main"".""Characters""", command.Text);
+		Assert.EndsWith(@"ORDER BY ""gender"" ASC, ""fullName"" DESC", command.Text);
 
 		// It should allow selecting a specific set of columns.
 		(command, _) = builder.GetFindAllCommand<Character>(columns: ["firstName"]);
-		StartsWith(@"SELECT ""firstName""", command.Text);
-		DoesNotContain("gender", command.Text);
-		DoesNotContain("lastName", command.Text);
-		EndsWith(@"ORDER BY ""ID"" ASC", command.Text);
+		Assert.StartsWith(@"SELECT ""firstName""", command.Text);
+		Assert.DoesNotContain("gender", command.Text);
+		Assert.DoesNotContain("lastName", command.Text);
+		Assert.EndsWith(@"ORDER BY ""ID"" ASC", command.Text);
 	}
 
 	[TestMethod]
 	public void GetInsertCommand() {
 		// It should return the SQL command to insert an entity.
 		var (command, parameters) = SqlCommandBuilder.Create(connection).GetInsertCommand(character);
-		StartsWith(@"INSERT INTO ""main"".""Characters"" (", command.Text);
-		Contains("VALUES (", command.Text);
+		Assert.StartsWith(@"INSERT INTO ""main"".""Characters"" (", command.Text);
+		Assert.Contains("VALUES (", command.Text);
 
 		// It should also return the parameters used by the SQL command.
-		HasCount(3, parameters);
-		AreEqual("Cédric", parameters["firstName"].Value);
-		AreEqual(nameof(CharacterGender.DarkLord), parameters["gender"].Value);
-		AreEqual("", parameters["lastName"].Value);
+		Assert.HasCount(3, parameters);
+		Assert.AreEqual("Cédric", parameters["firstName"].Value);
+		Assert.AreEqual(nameof(CharacterGender.DarkLord), parameters["gender"].Value);
+		Assert.AreEqual("", parameters["lastName"].Value);
 	}
 
 	[TestMethod]
@@ -141,21 +141,21 @@ public sealed class SqlCommandBuilderTests {
 
 		// It should return the SQL command to update an entity.
 		var (command, parameters) = builder.GetUpdateCommand(character);
-		StartsWith(@"UPDATE ""main"".""Characters""", command.Text);
-		Contains(@"SET """, command.Text);
-		EndsWith(@"WHERE ""ID"" = @ID", command.Text);
+		Assert.StartsWith(@"UPDATE ""main"".""Characters""", command.Text);
+		Assert.Contains(@"SET """, command.Text);
+		Assert.EndsWith(@"WHERE ""ID"" = @ID", command.Text);
 
 		// It should also return the parameters used by the SQL command.
-		HasCount(4, parameters);
-		AreEqual(1000, parameters["ID"].Value);
-		AreEqual("Cédric", parameters["firstName"].Value);
-		AreEqual(nameof(CharacterGender.DarkLord), parameters["gender"].Value);
-		AreEqual("", parameters["lastName"].Value);
+		Assert.HasCount(4, parameters);
+		Assert.AreEqual(1000, parameters["ID"].Value);
+		Assert.AreEqual("Cédric", parameters["firstName"].Value);
+		Assert.AreEqual(nameof(CharacterGender.DarkLord), parameters["gender"].Value);
+		Assert.AreEqual("", parameters["lastName"].Value);
 
 		// It should allow updating a specific set of columns.
 		(_, parameters) = builder.GetUpdateCommand(character, "firstName");
-		HasCount(2, parameters);
-		AreEqual(1000, parameters["ID"].Value);
-		AreEqual("Cédric", parameters["firstName"].Value);
+		Assert.HasCount(2, parameters);
+		Assert.AreEqual(1000, parameters["ID"].Value);
+		Assert.AreEqual("Cédric", parameters["firstName"].Value);
 	}
 }

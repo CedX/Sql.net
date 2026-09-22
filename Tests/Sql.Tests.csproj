@@ -29,6 +29,5 @@
 
 	<ItemGroup>
 		<Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
-		<Using Include="Microsoft.VisualStudio.TestTools.UnitTesting.Assert" Static="true" />
 	</ItemGroup>
 </Project>

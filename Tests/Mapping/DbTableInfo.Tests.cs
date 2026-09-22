@@ -9,37 +9,37 @@ public sealed class DbTableInfoTests {
 
 	[TestMethod]
 	public void Columns() {
-		HasCount(0, new DbTableInfo(typeof(ConsoleKeyInfo)).Columns);
+		Assert.IsEmpty(new DbTableInfo(typeof(ConsoleKeyInfo)).Columns);
 
 		var columns = new DbTableInfo(typeof(Character)).Columns;
-		HasCount(5, columns);
-		AreSequenceEqual(["firstName", "fullName", "gender", "ID", "lastName"], columns.Keys);
+		Assert.HasCount(5, columns);
+		Assert.AreSequenceEqual(["firstName", "fullName", "gender", "ID", "lastName"], columns.Keys);
 	}
 
 	[TestMethod]
 	public void IdentityColumn() {
-		IsNull(new DbTableInfo(typeof(ConsoleKeyInfo)).IdentityColumn);
+		Assert.IsNull(new DbTableInfo(typeof(ConsoleKeyInfo)).IdentityColumn);
 
 		var identityColumn = new DbTableInfo(typeof(Character)).IdentityColumn;
-		IsNotNull(identityColumn);
-		AreEqual("ID", identityColumn.Name);
+		Assert.IsNotNull(identityColumn);
+		Assert.AreEqual("ID", identityColumn.Name);
 	}
 
 	[TestMethod]
 	public void Name() {
 		// It should return the class name when there is no [Table] attribute.
-		AreEqual(nameof(ConsoleKeyInfo), new DbTableInfo(typeof(ConsoleKeyInfo)).Name);
+		Assert.AreEqual(nameof(ConsoleKeyInfo), new DbTableInfo(typeof(ConsoleKeyInfo)).Name);
 
 		// It should return the value of the [Table] attribute when it is present.
-		AreEqual("Characters", new DbTableInfo(typeof(Character)).Name);
+		Assert.AreEqual("Characters", new DbTableInfo(typeof(Character)).Name);
 	}
 
 	[TestMethod]
 	public void Schema() {
 		// It should return `null` when there is no [Table] attribute.
-		IsNull(new DbTableInfo(typeof(ConsoleKeyInfo)).Schema);
+		Assert.IsNull(new DbTableInfo(typeof(ConsoleKeyInfo)).Schema);
 
 		// It should return the value of the [Table] attribute when it is present.
-		AreEqual("main", new DbTableInfo(typeof(Character)).Schema);
+		Assert.AreEqual("main", new DbTableInfo(typeof(Character)).Schema);
 	}
 }

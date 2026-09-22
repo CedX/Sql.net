@@ -82,7 +82,7 @@ public sealed class SqlMapperTests {
 
 	[TestMethod, DynamicData(nameof(ChangeTypeData))]
 	public void ChangeType(object? value, Type conversionType, bool isNullable, object? expected) =>
-		AreEqual(expected, SqlMapper.Instance.ChangeType(value, conversionType, isNullable));
+		Assert.AreEqual(expected, SqlMapper.Instance.ChangeType(value, conversionType, isNullable));
 
 	[TestMethod]
 	public void CreateInstance() {
@@ -95,53 +95,53 @@ public sealed class SqlMapperTests {
 
 		// It should create an `ExpandoObject` by default.
 		dynamic expandoObject = SqlMapper.Instance.CreateInstance(properties);
-		IsInstanceOfType<ExpandoObject>(expandoObject);
-		AreEqual("Bard/minstrel", expandoObject.CLASS);
-		AreEqual("Cédric", expandoObject.firstName);
-		AreEqual(nameof(CharacterGender.Balrog), expandoObject.gender);
-		IsNull(expandoObject.lastName);
+		Assert.IsInstanceOfType<ExpandoObject>(expandoObject);
+		Assert.AreEqual("Bard/minstrel", expandoObject.CLASS);
+		Assert.AreEqual("Cédric", expandoObject.firstName);
+		Assert.AreEqual(nameof(CharacterGender.Balrog), expandoObject.gender);
+		Assert.IsNull(expandoObject.lastName);
 
 		// It should support creating an object of type `PSObject`.
 		dynamic psObject = SqlMapper.Instance.CreateInstance<PSObject>(properties);
-		IsInstanceOfType<PSObject>(psObject);
-		AreEqual("Bard/minstrel", psObject.CLASS);
-		AreEqual("Cédric", psObject.firstName);
-		AreEqual(nameof(CharacterGender.Balrog), psObject.gender);
-		IsNull(psObject.lastName);
+		Assert.IsInstanceOfType<PSObject>(psObject);
+		Assert.AreEqual("Bard/minstrel", psObject.CLASS);
+		Assert.AreEqual("Cédric", psObject.firstName);
+		Assert.AreEqual(nameof(CharacterGender.Balrog), psObject.gender);
+		Assert.IsNull(psObject.lastName);
 
 		// It should create an object of the specified type.
 		var character = SqlMapper.Instance.CreateInstance<Character>(properties);
-		IsInstanceOfType<Character>(character);
-		AreEqual("Cédric", character.FirstName);
-		AreEqual(CharacterGender.Balrog, character.Gender);
-		AreEqual("", character.LastName);
+		Assert.IsInstanceOfType<Character>(character);
+		Assert.AreEqual("Cédric", character.FirstName);
+		Assert.AreEqual(CharacterGender.Balrog, character.Gender);
+		Assert.AreEqual("", character.LastName);
 	}
 
 	[TestMethod]
 	public void GetTable() {
 		var table = SqlMapper.Instance.GetTable<Character>();
-		AreEqual("Characters", table.Name);
-		AreEqual("main", table.Schema);
-		AreEqual(typeof(Character), table.Type);
+		Assert.AreEqual("Characters", table.Name);
+		Assert.AreEqual("main", table.Schema);
+		Assert.AreEqual(typeof(Character), table.Type);
 
-		HasCount(5, table.Columns.Keys);
-		AreEqual(table.Columns["ID"], table.IdentityColumn);
-		AreEqual(typeof(CharacterGender), table.Columns["gender"].PropertyType);
-		AreEqual(typeof(string), table.Columns["lastName"].PropertyType);
+		Assert.HasCount(5, table.Columns.Keys);
+		Assert.AreEqual(table.Columns["ID"], table.IdentityColumn);
+		Assert.AreEqual(typeof(CharacterGender), table.Columns["gender"].PropertyType);
+		Assert.AreEqual(typeof(string), table.Columns["lastName"].PropertyType);
 
-		IsTrue(table.Columns["firstName"].CanWrite);
-		IsTrue(table.Columns["fullName"].IsComputed);
-		IsTrue(table.Columns["ID"].IsIdentity);
+		Assert.IsTrue(table.Columns["firstName"].CanWrite);
+		Assert.IsTrue(table.Columns["fullName"].IsComputed);
+		Assert.IsTrue(table.Columns["ID"].IsIdentity);
 	}
 
 	[TestMethod]
 	public void IsNullObject() {
 		// It should return `true` if all values of the specified dictionary are `null`.
-		IsTrue(SqlMapper.IsNullObject([]));
-		IsTrue(SqlMapper.IsNullObject(new Dictionary<string, object?> { ["Foo"] = null, ["Bar"] = null }));
+		Assert.IsTrue(SqlMapper.IsNullObject([]));
+		Assert.IsTrue(SqlMapper.IsNullObject(new Dictionary<string, object?> { ["Foo"] = null, ["Bar"] = null }));
 
 		// It should return `false` if at least one value of the specified dictionary is not `null`.
-		IsFalse(SqlMapper.IsNullObject(new Dictionary<string, object?> { ["Foo"] = "Bar", ["Baz"] = null }));
+		Assert.IsFalse(SqlMapper.IsNullObject(new Dictionary<string, object?> { ["Foo"] = "Bar", ["Baz"] = null }));
 	}
 
 	[TestMethod]
@@ -167,24 +167,24 @@ public sealed class SqlMapperTests {
 
 		// It should return a dictionary equivalent to the specified data row.
 		var records = SqlMapper.SplitOn(record);
-		HasCount(1, records);
-		AreSequenceEqual(properties, records[0]);
+		Assert.HasCount(1, records);
+		Assert.AreSequenceEqual(properties, records[0]);
 
 		// It should not split the data row if the specified field does not exist.
 		records = SqlMapper.SplitOn(record, "_NonExistent_");
-		HasCount(1, records);
-		AreSequenceEqual(properties, records[0]);
+		Assert.HasCount(1, records);
+		Assert.AreSequenceEqual(properties, records[0]);
 
 		// It should split the data row according to the specified fields.
 		records = SqlMapper.SplitOn(record, "id");
-		HasCount(2, records);
-		AreSequenceEqual(new Dictionary<string, object?> { ["Id"] = 123, ["LongLabel"] = "Hello World!", ["ShortLabel"] = null }, records[0]);
-		AreSequenceEqual(new Dictionary<string, object?> { ["Id"] = 456, ["FirstName"] = "Cédric", ["LastName"] = "Belin", ["RowID"] = 789 }, records[1]);
+		Assert.HasCount(2, records);
+		Assert.AreSequenceEqual(new Dictionary<string, object?> { ["Id"] = 123, ["LongLabel"] = "Hello World!", ["ShortLabel"] = null }, records[0]);
+		Assert.AreSequenceEqual(new Dictionary<string, object?> { ["Id"] = 456, ["FirstName"] = "Cédric", ["LastName"] = "Belin", ["RowID"] = 789 }, records[1]);
 
 		records = SqlMapper.SplitOn(record, "id", "rowid", "_Unused_");
-		HasCount(3, records);
-		AreSequenceEqual(new Dictionary<string, object?> { ["Id"] = 123, ["LongLabel"] = "Hello World!", ["ShortLabel"] = null }, records[0]);
-		AreSequenceEqual(new Dictionary<string, object?> { ["Id"] = 456, ["FirstName"] = "Cédric", ["LastName"] = "Belin" }, records[1]);
-		AreSequenceEqual(new Dictionary<string, object?> { ["RowID"] = 789 }, records[2]);
+		Assert.HasCount(3, records);
+		Assert.AreSequenceEqual(new Dictionary<string, object?> { ["Id"] = 123, ["LongLabel"] = "Hello World!", ["ShortLabel"] = null }, records[0]);
+		Assert.AreSequenceEqual(new Dictionary<string, object?> { ["Id"] = 456, ["FirstName"] = "Cédric", ["LastName"] = "Belin" }, records[1]);
+		Assert.AreSequenceEqual(new Dictionary<string, object?> { ["RowID"] = 789 }, records[2]);
 	}
 }

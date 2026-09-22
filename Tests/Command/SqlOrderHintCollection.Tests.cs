@@ -12,23 +12,23 @@ public sealed class SqlOrderHintTests {
 	public void ImplicitConversion() {
 		// It should create an order hint from the specified column name.
 		SqlOrderHint orderHint = "Name";
-		AreEqual("Name", orderHint.Column);
-		AreEqual(SortOrder.Ascending, orderHint.SortOrder);
+		Assert.AreEqual("Name", orderHint.Column);
+		Assert.AreEqual(SortOrder.Ascending, orderHint.SortOrder);
 
 		// It should create an order hint from the specified array.
 		orderHint = new object[] { "ID", "Descending" };
-		AreEqual("ID", orderHint.Column);
-		AreEqual(SortOrder.Descending, orderHint.SortOrder);
+		Assert.AreEqual("ID", orderHint.Column);
+		Assert.AreEqual(SortOrder.Descending, orderHint.SortOrder);
 
 		// It should create an order hint from the specified tuple.
 		orderHint = ("ID", SortOrder.Descending);
-		AreEqual("ID", orderHint.Column);
-		AreEqual(SortOrder.Descending, orderHint.SortOrder);
+		Assert.AreEqual("ID", orderHint.Column);
+		Assert.AreEqual(SortOrder.Descending, orderHint.SortOrder);
 
 		// It should create an order hint from the specified key/value pair.
 		orderHint = new KeyValuePair<string, SortOrder>("Name", SortOrder.Ascending);
-		AreEqual("Name", orderHint.Column);
-		AreEqual(SortOrder.Ascending, orderHint.SortOrder);
+		Assert.AreEqual("Name", orderHint.Column);
+		Assert.AreEqual(SortOrder.Ascending, orderHint.SortOrder);
 	}
 }
 
@@ -42,57 +42,57 @@ public sealed class SqlOrderHintCollectionTests {
 	public void Constructor() {
 		// It should create an empty collection by default.
 		var collection = new SqlOrderHintCollection();
-		IsEmpty(collection);
+		Assert.IsEmpty(collection);
 
 		// It should create a collection from a single order order hint.
 		collection = new(new SqlOrderHint("ID", SortOrder.Descending));
-		HasCount(1, collection);
+		Assert.HasCount(1, collection);
 
 		var orderHint = collection.First();
-		AreEqual("ID", orderHint.Column);
-		AreEqual(SortOrder.Descending, orderHint.SortOrder);
+		Assert.AreEqual("ID", orderHint.Column);
+		Assert.AreEqual(SortOrder.Descending, orderHint.SortOrder);
 
 		// It should create a collection from a list of order hints.
 		collection = new(new("ID", SortOrder.Descending), new("Name", SortOrder.Ascending));
-		HasCount(2, collection);
+		Assert.HasCount(2, collection);
 
 		orderHint = collection.Last();
-		AreEqual("Name", orderHint.Column);
-		AreEqual(SortOrder.Ascending, orderHint.SortOrder);
+		Assert.AreEqual("Name", orderHint.Column);
+		Assert.AreEqual(SortOrder.Ascending, orderHint.SortOrder);
 	}
 
 	[TestMethod]
 	public void Contains() {
 		var collection = new SqlOrderHintCollection(("Key", SortOrder.Ascending));
-		IsTrue(collection.Contains("key"));
-		IsTrue(collection.Contains("KEY"));
-		IsFalse(collection.Contains("foo"));
+		Assert.IsTrue(collection.Contains("key"));
+		Assert.IsTrue(collection.Contains("KEY"));
+		Assert.IsFalse(collection.Contains("foo"));
 	}
 
 	[TestMethod]
 	public void ImplicitConversion() {
 		// It should create a collection from the specified array of column names.
 		SqlOrderHintCollection collection = new object[] { "ID", "Name" };
-		AreSequenceEqual(["ID", "Name"], collection.Select(parameter => parameter.Column));
-		AreSequenceEqual([SortOrder.Ascending, SortOrder.Ascending], collection.Select(parameter => parameter.SortOrder));
+		Assert.AreSequenceEqual(["ID", "Name"], collection.Select(parameter => parameter.Column));
+		Assert.AreSequenceEqual([SortOrder.Ascending, SortOrder.Ascending], collection.Select(parameter => parameter.SortOrder));
 
 		collection = new string[] { "ID", "Name" };
-		AreSequenceEqual(["ID", "Name"], collection.Select(parameter => parameter.Column));
-		AreSequenceEqual([SortOrder.Ascending, SortOrder.Ascending], collection.Select(parameter => parameter.SortOrder));
+		Assert.AreSequenceEqual(["ID", "Name"], collection.Select(parameter => parameter.Column));
+		Assert.AreSequenceEqual([SortOrder.Ascending, SortOrder.Ascending], collection.Select(parameter => parameter.SortOrder));
 
 		// It should create a collection from the specified list of column names.
 		collection = new List<string> { "ID", "Name" };
-		AreSequenceEqual(["ID", "Name"], collection.Select(parameter => parameter.Column));
-		AreSequenceEqual([SortOrder.Ascending, SortOrder.Ascending], collection.Select(parameter => parameter.SortOrder));
+		Assert.AreSequenceEqual(["ID", "Name"], collection.Select(parameter => parameter.Column));
+		Assert.AreSequenceEqual([SortOrder.Ascending, SortOrder.Ascending], collection.Select(parameter => parameter.SortOrder));
 
 		// It should create a collection from the specified dictionary of column names and sort orders.
 		collection = new OrderedDictionary { ["ID"] = "Descending", ["Name"] = "Ascending" };
-		AreSequenceEqual(["ID", "Name"], collection.Select(parameter => parameter.Column));
-		AreSequenceEqual([SortOrder.Descending, SortOrder.Ascending], collection.Select(parameter => parameter.SortOrder));
+		Assert.AreSequenceEqual(["ID", "Name"], collection.Select(parameter => parameter.Column));
+		Assert.AreSequenceEqual([SortOrder.Descending, SortOrder.Ascending], collection.Select(parameter => parameter.SortOrder));
 
 		collection = new OrderedDictionary<string, SortOrder> { ["ID"] = SortOrder.Descending, ["Name"] = SortOrder.Ascending };
-		AreSequenceEqual(["ID", "Name"], collection.Select(parameter => parameter.Column));
-		AreSequenceEqual([SortOrder.Descending, SortOrder.Ascending], collection.Select(parameter => parameter.SortOrder));
+		Assert.AreSequenceEqual(["ID", "Name"], collection.Select(parameter => parameter.Column));
+		Assert.AreSequenceEqual([SortOrder.Descending, SortOrder.Ascending], collection.Select(parameter => parameter.SortOrder));
 	}
 
 	[TestMethod]
@@ -101,34 +101,34 @@ public sealed class SqlOrderHintCollectionTests {
 
 		// It should return the order hint with the specified column name.
 		var orderHint = collection["id"];
-		AreEqual("ID", orderHint.Column);
-		AreEqual(SortOrder.Descending, orderHint.SortOrder);
-		AreEqual(orderHint, collection[0]);
+		Assert.AreEqual("ID", orderHint.Column);
+		Assert.AreEqual(SortOrder.Descending, orderHint.SortOrder);
+		Assert.AreEqual(orderHint, collection[0]);
 
 		// It should throw an error if the specified column does not exist.
-		Throws<KeyNotFoundException>(() => collection["foo"]);
+		Assert.Throws<KeyNotFoundException>(() => collection["foo"]);
 	}
 
 	[TestMethod]
 	public void IndexOf() {
 		var collection = new SqlOrderHintCollection(("ID", SortOrder.Descending), ("Name", SortOrder.Ascending));
-		AreEqual(0, collection.IndexOf("id"));
-		AreEqual(1, collection.IndexOf("name"));
-		AreEqual(-1, collection.IndexOf("foo"));
+		Assert.AreEqual(0, collection.IndexOf("id"));
+		Assert.AreEqual(1, collection.IndexOf("name"));
+		Assert.AreEqual(-1, collection.IndexOf("foo"));
 	}
 
 	[TestMethod]
 	public void RemoveAt() {
 		// It should remove the order hint with the specified column name.
 		var collection = new SqlOrderHintCollection(("ID", SortOrder.Descending), ("Name", SortOrder.Ascending));
-		HasCount(2, collection);
+		Assert.HasCount(2, collection);
 		collection.RemoveAt("name");
-		HasCount(1, collection);
+		Assert.HasCount(1, collection);
 		collection.RemoveAt("id");
-		IsEmpty(collection);
+		Assert.IsEmpty(collection);
 
 		// It should throw an error if the specified column does not exist.
 		collection = new SqlOrderHintCollection(("ID", SortOrder.Descending), ("Name", SortOrder.Ascending));
-		Throws<KeyNotFoundException>(() => collection.RemoveAt("Foo"));
+		Assert.Throws<KeyNotFoundException>(() => collection.RemoveAt("Foo"));
 	}
 }

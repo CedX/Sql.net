@@ -14,7 +14,7 @@ public sealed class DbColumnInfoTests {
 	[DataRow("Gender")]
 	[DataRow("Id")]
 	public void CanRead(string name) =>
-		IsTrue(new DbColumnInfo(typeof(Character).GetProperty(name)!).CanRead);
+		Assert.IsTrue(new DbColumnInfo(typeof(Character).GetProperty(name)!).CanRead);
 
 	[TestMethod]
 	[DataRow("FirstName")]
@@ -22,7 +22,7 @@ public sealed class DbColumnInfoTests {
 	[DataRow("Gender")]
 	[DataRow("Id")]
 	public void CanWrite(string name) =>
-		IsTrue(new DbColumnInfo(typeof(Character).GetProperty(name)!).CanWrite);
+		Assert.IsTrue(new DbColumnInfo(typeof(Character).GetProperty(name)!).CanWrite);
 
 	[TestMethod]
 	[DataRow("FirstName", DataType.String)]
@@ -30,7 +30,7 @@ public sealed class DbColumnInfoTests {
 	[DataRow("Gender", DataType.AnsiString)]
 	[DataRow("Id", DataType.Int32)]
 	public void DbType(string name, DataType expected) =>
-		AreEqual(expected, new DbColumnInfo(typeof(Character).GetProperty(name)!).DbType);
+		Assert.AreEqual(expected, new DbColumnInfo(typeof(Character).GetProperty(name)!).DbType);
 
 	[TestMethod]
 	[DataRow("FirstName", false)]
@@ -38,7 +38,7 @@ public sealed class DbColumnInfoTests {
 	[DataRow("Gender", false)]
 	[DataRow("Id", true)]
 	public void IsComputed(string name, bool expected) =>
-		AreEqual(expected, new DbColumnInfo(typeof(Character).GetProperty(name)!).IsComputed);
+		Assert.AreEqual(expected, new DbColumnInfo(typeof(Character).GetProperty(name)!).IsComputed);
 
 	[TestMethod]
 	[DataRow("FirstName", false)]
@@ -46,7 +46,7 @@ public sealed class DbColumnInfoTests {
 	[DataRow("Gender", false)]
 	[DataRow("Id", true)]
 	public void IsIdentity(string name, bool expected) =>
-		AreEqual(expected, new DbColumnInfo(typeof(Character).GetProperty(name)!).IsIdentity);
+		Assert.AreEqual(expected, new DbColumnInfo(typeof(Character).GetProperty(name)!).IsIdentity);
 
 	[TestMethod]
 	[DataRow("FirstName", false)]
@@ -54,7 +54,7 @@ public sealed class DbColumnInfoTests {
 	[DataRow("Gender", false)]
 	[DataRow("Id", false)]
 	public void IsNullable(string name, bool expected) =>
-		AreEqual(expected, new DbColumnInfo(typeof(Character).GetProperty(name)!).IsNullable);
+		Assert.AreEqual(expected, new DbColumnInfo(typeof(Character).GetProperty(name)!).IsNullable);
 
 	[TestMethod]
 	[DataRow("FirstName", "firstName")]
@@ -62,7 +62,7 @@ public sealed class DbColumnInfoTests {
 	[DataRow("Gender", "gender")]
 	[DataRow("Id", "ID")]
 	public void Name(string name, string expected) =>
-		AreEqual(expected, new DbColumnInfo(typeof(Character).GetProperty(name)!).Name);
+		Assert.AreEqual(expected, new DbColumnInfo(typeof(Character).GetProperty(name)!).Name);
 
 	[TestMethod]
 	[DataRow("FirstName", typeof(string))]
@@ -70,13 +70,13 @@ public sealed class DbColumnInfoTests {
 	[DataRow("Gender", typeof(CharacterGender))]
 	[DataRow("Id", typeof(int))]
 	public void PropertyType(string name, Type expected) =>
-		AreEqual(expected, new DbColumnInfo(typeof(Character).GetProperty(name)!).PropertyType);
+		Assert.AreEqual(expected, new DbColumnInfo(typeof(Character).GetProperty(name)!).PropertyType);
 
 	[TestMethod]
 	public void GetValue() {
 		var record = new Character { FirstName = "Cédric", LastName = "Belin" };
-		AreEqual("Cédric", new DbColumnInfo(typeof(Character).GetProperty("FirstName")!).GetValue(record));
-		AreEqual("Belin", new DbColumnInfo(typeof(Character).GetProperty("LastName")!).GetValue(record));
+		Assert.AreEqual("Cédric", new DbColumnInfo(typeof(Character).GetProperty("FirstName")!).GetValue(record));
+		Assert.AreEqual("Belin", new DbColumnInfo(typeof(Character).GetProperty("LastName")!).GetValue(record));
 	}
 
 	[TestMethod]
@@ -84,7 +84,7 @@ public sealed class DbColumnInfoTests {
 		var record = new Character { FirstName = "Cédric", LastName = "Belin" };
 		new DbColumnInfo(typeof(Character).GetProperty("FirstName")!).SetValue(record, "Anders");
 		new DbColumnInfo(typeof(Character).GetProperty("LastName")!).SetValue(record, "Hejlsberg");
-		AreEqual("Anders", record.FirstName);
-		AreEqual("Hejlsberg", record.LastName);
+		Assert.AreEqual("Anders", record.FirstName);
+		Assert.AreEqual("Hejlsberg", record.LastName);
 	}
 }
