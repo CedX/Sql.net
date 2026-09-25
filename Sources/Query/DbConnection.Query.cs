@@ -82,7 +82,7 @@ public static partial class DbConnectionExtensions {
 		public async Task<IList<T>> QueryAsync<T>(SqlCommand command, SqlParameterCollection? parameters = null, CancellationToken cancellationToken = default) where T: new() {
 			if (connection.State == ConnectionState.Closed) await ((DbConnection) connection).OpenAsync(cancellationToken);
 			using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
-			using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
+			await using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
 			return [.. SqlMapper.Instance.CreateInstances<T>(reader)];
 		}
 
@@ -115,7 +115,7 @@ public static partial class DbConnectionExtensions {
 		public async Task<IList<(TItem1, TItem2)>> QueryAsync<TItem1, TItem2>(SqlCommand command, SqlParameterCollection? parameters = null, string splitOn = "Id", CancellationToken cancellationToken = default) where TItem1: new() where TItem2: new() {
 			if (connection.State == ConnectionState.Closed) await ((DbConnection) connection).OpenAsync(cancellationToken);
 			using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
-			using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
+			await using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
 			return [.. SqlMapper.Instance.CreateInstances<TItem1, TItem2>(reader, splitOn)];
 		}
 
@@ -150,7 +150,7 @@ public static partial class DbConnectionExtensions {
 		public async Task<IList<(TItem1, TItem2, TItem3)>> QueryAsync<TItem1, TItem2, TItem3>(SqlCommand command, SqlParameterCollection? parameters = null, (string, string)? splitOn = null, CancellationToken cancellationToken = default) where TItem1: new() where TItem2: new() where TItem3: new() {
 			if (connection.State == ConnectionState.Closed) await ((DbConnection) connection).OpenAsync(cancellationToken);
 			using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
-			using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
+			await using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
 			return [.. SqlMapper.Instance.CreateInstances<TItem1, TItem2, TItem3>(reader, splitOn)];
 		}
 
@@ -187,7 +187,7 @@ public static partial class DbConnectionExtensions {
 		public async Task<IList<(TItem1, TItem2, TItem3, TItem4)>> QueryAsync<TItem1, TItem2, TItem3, TItem4>(SqlCommand command, SqlParameterCollection? parameters = null, (string, string, string)? splitOn = null, CancellationToken cancellationToken = default) where TItem1: new() where TItem2: new() where TItem3: new() where TItem4: new() {
 			if (connection.State == ConnectionState.Closed) await ((DbConnection) connection).OpenAsync(cancellationToken);
 			using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
-			using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
+			await using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
 			return [.. SqlMapper.Instance.CreateInstances<TItem1, TItem2, TItem3, TItem4>(reader, splitOn)];
 		}
 	}

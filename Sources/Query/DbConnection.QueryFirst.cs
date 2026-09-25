@@ -71,8 +71,8 @@ public static partial class DbConnectionExtensions {
 		public async Task<T> QueryFirstAsync<T>(SqlCommand command, SqlParameterCollection? parameters = null, CancellationToken cancellationToken = default) where T: new() {
 			if (connection.State == ConnectionState.Closed) await ((DbConnection) connection).OpenAsync(cancellationToken);
 			using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
-			using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
-			return reader.Read() ? SqlMapper.Instance.CreateInstance<T>(reader) : throw new InvalidOperationException("The result set is empty.");
+			await using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
+			return await reader.ReadAsync(cancellationToken) ? SqlMapper.Instance.CreateInstance<T>(reader) : throw new InvalidOperationException("The result set is empty.");
 		}
 
 		/// <summary>
@@ -131,8 +131,8 @@ public static partial class DbConnectionExtensions {
 		public async Task<T?> QueryFirstOrDefaultAsync<T>(SqlCommand command, SqlParameterCollection? parameters = null, CancellationToken cancellationToken = default) where T: new() {
 			if (connection.State == ConnectionState.Closed) await ((DbConnection) connection).OpenAsync(cancellationToken);
 			using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
-			using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
-			return reader.Read() ? SqlMapper.Instance.CreateInstance<T>(reader) : default;
+			await using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
+			return await reader.ReadAsync(cancellationToken) ? SqlMapper.Instance.CreateInstance<T>(reader) : default;
 		}
 	}
 }

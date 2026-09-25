@@ -79,11 +79,11 @@ public static partial class DbConnectionExtensions {
 		public async Task<T> QuerySingleAsync<T>(SqlCommand command, SqlParameterCollection? parameters = null, CancellationToken cancellationToken = default) where T: new() {
 			if (connection.State == ConnectionState.Closed) await ((DbConnection) connection).OpenAsync(cancellationToken);
 			using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
-			using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
+			await using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
 
 			T? record = default;
 			var rowCount = 0;
-			while (reader.Read()) {
+			while (await reader.ReadAsync(cancellationToken)) {
 				if (++rowCount > 1) break;
 				record = SqlMapper.Instance.CreateInstance<T>(reader);
 			}
@@ -156,11 +156,11 @@ public static partial class DbConnectionExtensions {
 		public async Task<T?> QuerySingleOrDefaultAsync<T>(SqlCommand command, SqlParameterCollection? parameters = null, CancellationToken cancellationToken = default) where T: new() {
 			if (connection.State == ConnectionState.Closed) await ((DbConnection) connection).OpenAsync(cancellationToken);
 			using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
-			using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
+			await using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
 
 			T? record = default;
 			var rowCount = 0;
-			while (reader.Read()) {
+			while (await reader.ReadAsync(cancellationToken)) {
 				if (++rowCount > 1) break;
 				record = SqlMapper.Instance.CreateInstance<T>(reader);
 			}
