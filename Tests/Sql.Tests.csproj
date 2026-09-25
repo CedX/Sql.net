@@ -25,6 +25,5 @@
 		<PackageReference Include="System.Data.SQLite" Version="2.*" />
 		<PackageReference Include="System.Management.Automation" Version="7.6.*" />
 		<ProjectReference Include="../Sources/Sql.csproj" />
-		<Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
 	</ItemGroup>
 </Project>
