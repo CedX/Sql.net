@@ -1,5 +1,9 @@
 # Changelog
 
+## Version [5.3.0](https://github.com/CedX/Sql.net/compare/v5.2.0...v5.3.0)
+- Fixed the disposal of `IAsyncDisposable` instances.
+- Improved the data-reading operations in asynchronous methods.
+
 ## Version [5.2.0](https://github.com/CedX/Sql.net/compare/v5.1.0...v5.2.0)
 - Replaced the `object.ToString()` calls by `Convert.ToString()` calls with the invariant culture.
 - Replaced the type comparisons with `DBNull` by `Convert.IsDBNull()` calls.
