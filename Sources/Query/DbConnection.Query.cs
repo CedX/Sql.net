@@ -17,7 +17,7 @@ public static partial class DbConnectionExtensions {
 		/// <param name="command">The command to be executed.</param>
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The sequence of objects whose properties correspond to the columns.</returns>
-		/// <remarks>Each row can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{string, object?}"/>.</remarks>
+		/// <remarks>Each row can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{TKey, TValue}"/>.</remarks>
 		public IList<ExpandoObject> Query(SqlCommand command, SqlParameterCollection? parameters = null) =>
 			connection.Query<ExpandoObject>(command, parameters);
 
@@ -28,7 +28,7 @@ public static partial class DbConnectionExtensions {
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <param name="cancellationToken">The token to cancel the operation.</param>
 		/// <returns>The sequence of objects whose properties correspond to the columns.</returns>
-		/// <remarks>Each row can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{string, object?}"/>.</remarks>
+		/// <remarks>Each row can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{TKey, TValue}"/>.</remarks>
 		public async Task<IList<ExpandoObject>> QueryAsync(SqlCommand command, SqlParameterCollection? parameters = null, CancellationToken cancellationToken = default) =>
 			await connection.QueryAsync<ExpandoObject>(command, parameters, cancellationToken);
 
@@ -59,7 +59,7 @@ public static partial class DbConnectionExtensions {
 		/// <summary>
 		/// Executes a parameterized SQL query and returns a sequence of objects whose properties correspond to the columns.
 		/// </summary>
-		/// <param name="type">The type of objects to return.</param>
+		/// <param name="types">The type of objects to return.</param>
 		/// <param name="command">The command to be executed.</param>
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <param name="splitOn">The fields from which to split and read the next objects.</param>

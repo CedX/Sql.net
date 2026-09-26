@@ -17,7 +17,7 @@ public static partial class DbConnectionExtensions {
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The first row.</returns>
 		/// <exception cref="InvalidOperationException">The result set is empty.</exception>
-		/// <remarks>The row values can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{string, object?}"/>.</remarks>
+		/// <remarks>The row values can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{TKey, TValue}"/>.</remarks>
 		public ExpandoObject QueryFirst(SqlCommand command, SqlParameterCollection? parameters = null) =>
 			connection.QueryFirst<ExpandoObject>(command, parameters);
 
@@ -29,7 +29,7 @@ public static partial class DbConnectionExtensions {
 		/// <param name="cancellationToken">The token to cancel the operation.</param>
 		/// <returns>The first row.</returns>
 		/// <exception cref="InvalidOperationException">The result set is empty.</exception>
-		/// <remarks>The row values can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{string, object?}"/>.</remarks>
+		/// <remarks>The row values can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{TKey, TValue}"/>.</remarks>
 		public async Task<ExpandoObject> QueryFirstAsync(SqlCommand command, SqlParameterCollection? parameters = null, CancellationToken cancellationToken = default) =>
 			await connection.QueryFirstAsync<ExpandoObject>(command, parameters, cancellationToken);
 
@@ -81,7 +81,7 @@ public static partial class DbConnectionExtensions {
 		/// <param name="command">The command to be executed.</param>
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The first row, or <see langword="null"/> if not found.</returns>
-		/// <remarks>The row values can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{string, object?}"/>.</remarks>
+		/// <remarks>The row values can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{TKey, TValue}"/>.</remarks>
 		public ExpandoObject? QueryFirstOrDefault(SqlCommand command, SqlParameterCollection? parameters = null) =>
 			connection.QueryFirstOrDefault<ExpandoObject>(command, parameters);
 
@@ -92,7 +92,7 @@ public static partial class DbConnectionExtensions {
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <param name="cancellationToken">The token to cancel the operation.</param>
 		/// <returns>The first row, or <see langword="null"/> if not found.</returns>
-		/// <remarks>The row values can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{string, object?}"/>.</remarks>
+		/// <remarks>The row values can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{TKey, TValue}"/>.</remarks>
 		public async Task<ExpandoObject?> QueryFirstOrDefaultAsync(SqlCommand command, SqlParameterCollection? parameters = null, CancellationToken cancellationToken = default) =>
 			await connection.QueryFirstOrDefaultAsync<ExpandoObject>(command, parameters, cancellationToken);
 
