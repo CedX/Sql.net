@@ -20,9 +20,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MSTest" Version="4.*" />
-		<PackageReference Include="SQLite" Version="3.*" />
-		<PackageReference Include="System.Data.SQLite" Version="2.*" />
+		<PackageReference Include="MSTest" Version="4.4.1" />
+		<PackageReference Include="SQLite" Version="3.53.4" />
+		<PackageReference Include="System.Data.SQLite" Version="2.0.4" />
 		<PackageReference Include="System.Management.Automation" Version="7.6.0" />
 		<ProjectReference Include="../Sources/Sql.csproj" />
 		<Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
