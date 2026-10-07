@@ -11,13 +11,12 @@ public static partial class DbConnectionExtensions {
 		/// <summary>
 		/// Deletes the specified entity.
 		/// </summary>
-		/// <typeparam name="T">The entity type.</typeparam>
 		/// <param name="entity">The entity to delete.</param>
 		/// <param name="timeout">The wait time, in seconds, before terminating the attempt to execute the command and generating an error.</param>
 		/// <param name="transaction">The transaction within which the command executes.</param>
 		/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 		/// <returns><see langword="true"/> if the specified entity has been deleted, otherwise <see langword="false"/>.</returns>
-		public bool Delete<T>(T entity, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null) where T: new() {
+		public bool Delete(object entity, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null) {
 			var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetDeleteCommand(entity);
 			command.Timeout = timeout;
 			command.Transaction = transaction;
@@ -27,14 +26,13 @@ public static partial class DbConnectionExtensions {
 		/// <summary>
 		/// Deletes the specified entity.
 		/// </summary>
-		/// <typeparam name="T">The entity type.</typeparam>
 		/// <param name="entity">The entity to delete.</param>
 		/// <param name="timeout">The wait time, in seconds, before terminating the attempt to execute the command and generating an error.</param>
 		/// <param name="transaction">The transaction within which the command executes.</param>
 		/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 		/// <param name="cancellationToken">The token to cancel the operation.</param>
 		/// <returns><see langword="true"/> if the specified entity has been deleted, otherwise <see langword="false"/>.</returns>
-		public async Task<bool> DeleteAsync<T>(T entity, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null, CancellationToken cancellationToken = default) where T: new() {
+		public async Task<bool> DeleteAsync(object entity, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null, CancellationToken cancellationToken = default) {
 			var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetDeleteCommand(entity);
 			command.Timeout = timeout;
 			command.Transaction = transaction;
