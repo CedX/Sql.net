@@ -1,5 +1,9 @@
 # Changelog
 
+## Version [6.0.0](https://github.com/CedX/Sql.net/compare/v5.3.0...v6.0.0)
+- Breaking change: removed the generic type parameter from the `Delete()`, `Insert()` and `Update()` methods of the `DbConnectionExtensions` class.
+- Breaking change: removed the generic type parameter from the `GetDeleteCommand()`, `GetInsertCommand()` and `GetUpdateCommand()` methods of the `SqlCommandBuilder` class.
+
 ## Version [5.3.0](https://github.com/CedX/Sql.net/compare/v5.2.0...v5.3.0)
 - Fixed the disposal of `IAsyncDisposable` instances.
 - Improved the data-reading operations in asynchronous methods.
