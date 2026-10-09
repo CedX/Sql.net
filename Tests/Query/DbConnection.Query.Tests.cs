@@ -12,32 +12,32 @@ public partial class DbConnectionExtensionsTests {
 		// It should return the records produced by the SQL query.
 		var sql = "SELECT * FROM Characters WHERE gender = @Gender ORDER BY fullName";
 		var records = connection.Query<Character>(sql, [("Gender", nameof(CharacterGender.Elf))]);
-		Assert.HasCount(3, records);
+		records.Count.ShouldBe(3);
 
 		var elrond = records[0];
-		Assert.AreEqual("Elrond", elrond.FullName);
-		Assert.AreEqual(CharacterGender.Elf, elrond.Gender);
+		elrond.FullName.ShouldBe("Elrond");
+		elrond.Gender.ShouldBe(CharacterGender.Elf);
 
 		var galadriel = records[1];
-		Assert.AreEqual("Galadriel", galadriel.FullName);
-		Assert.AreEqual(CharacterGender.Elf, galadriel.Gender);
+		galadriel.FullName.ShouldBe("Galadriel");
+		galadriel.Gender.ShouldBe(CharacterGender.Elf);
 
 		// It should allow the data rows to be split into distinct objects.
 		sql = "SELECT ID, firstName, lastName, ID, fullName, gender FROM Characters WHERE firstName = @FirstName";
 		var objects = connection.Query<ExpandoObject, ExpandoObject>(sql, [("FirstName", "Frodo")]);
-		Assert.HasCount(1, objects);
+		objects.Count.ShouldBe(1);
 
-		dynamic left = objects[0].Item1;
-		Assert.AreEqual(6, left.ID);
-		Assert.AreEqual("Frodo", left.firstName);
-		Assert.AreEqual("Baggins", left.lastName);
-		Assert.IsFalse(((IDictionary<string, object?>) left).ContainsKey("fullName"));
+		var item1 = new Dictionary<string, object?>(objects[0].Item1);
+		item1.ShouldContainKeyAndValue("ID", 6L);
+		item1.ShouldContainKeyAndValue("firstName", "Frodo");
+		item1.ShouldContainKeyAndValue("lastName", "Baggins");
+		item1.ShouldNotContainKey("fullName");
 
-		dynamic right = objects[0].Item2;
-		Assert.AreEqual(6, right.ID);
-		Assert.AreEqual("Frodo Baggins", right.fullName);
-		Assert.AreEqual("Hobbit", right.gender);
-		Assert.IsFalse(((IDictionary<string, object?>) right).ContainsKey("firstName"));
+		var item2 = new Dictionary<string, object?>(objects[0].Item2);
+		item2.ShouldContainKeyAndValue("ID", 6L);
+		item2.ShouldContainKeyAndValue("fullName", "Frodo Baggins");
+		item2.ShouldContainKeyAndValue("gender", "Hobbit");
+		item2.ShouldNotContainKey("firstName");
 	}
 
 	[TestMethod]
@@ -46,31 +46,31 @@ public partial class DbConnectionExtensionsTests {
 		var sql = "SELECT * FROM Characters WHERE gender = @Gender ORDER BY fullName";
 		var parameters = new SqlParameterCollection(("Gender", nameof(CharacterGender.Elf)));
 		var records = await connection.QueryAsync<Character>(sql, parameters, testContext.CancellationToken);
-		Assert.HasCount(3, records);
+		records.Count.ShouldBe(3);
 
 		var elrond = records[0];
-		Assert.AreEqual("Elrond", elrond.FullName);
-		Assert.AreEqual(CharacterGender.Elf, elrond.Gender);
+		elrond.FullName.ShouldBe("Elrond");
+		elrond.Gender.ShouldBe(CharacterGender.Elf);
 
 		var galadriel = records[1];
-		Assert.AreEqual("Galadriel", galadriel.FullName);
-		Assert.AreEqual(CharacterGender.Elf, galadriel.Gender);
+		galadriel.FullName.ShouldBe("Galadriel");
+		galadriel.Gender.ShouldBe(CharacterGender.Elf);
 
 		// It should allow the data rows to be split into distinct objects.
 		sql = "SELECT ID, firstName, lastName, ID, fullName, gender FROM Characters WHERE firstName = @FirstName";
 		var objects = await connection.QueryAsync<ExpandoObject, ExpandoObject>(sql, [("FirstName", "Frodo")], "id", testContext.CancellationToken);
-		Assert.HasCount(1, objects);
+		objects.Count.ShouldBe(1);
 
-		dynamic left = objects[0].Item1;
-		Assert.AreEqual(6, left.ID);
-		Assert.AreEqual("Frodo", left.firstName);
-		Assert.AreEqual("Baggins", left.lastName);
-		Assert.IsFalse(((IDictionary<string, object?>) left).ContainsKey("fullName"));
+		var item1 = new Dictionary<string, object?>(objects[0].Item1);
+		item1.ShouldContainKeyAndValue("ID", 6L);
+		item1.ShouldContainKeyAndValue("firstName", "Frodo");
+		item1.ShouldContainKeyAndValue("lastName", "Baggins");
+		item1.ShouldNotContainKey("fullName");
 
-		dynamic right = objects[0].Item2;
-		Assert.AreEqual(6, right.ID);
-		Assert.AreEqual("Frodo Baggins", right.fullName);
-		Assert.AreEqual("Hobbit", right.gender);
-		Assert.IsFalse(((IDictionary<string, object?>) right).ContainsKey("firstName"));
+		var item2 = new Dictionary<string, object?>(objects[0].Item2);
+		item2.ShouldContainKeyAndValue("ID", 6L);
+		item2.ShouldContainKeyAndValue("fullName", "Frodo Baggins");
+		item2.ShouldContainKeyAndValue("gender", "Hobbit");
+		item2.ShouldNotContainKey("firstName");
 	}
 }

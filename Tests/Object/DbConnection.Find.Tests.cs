@@ -10,111 +10,111 @@ public partial class DbConnectionExtensionsTests {
 	public void Find() {
 		// It should find the record with the specified identifier.
 		var record = connection.Find<Character>(2);
-		Assert.IsNotNull(record);
-		Assert.AreEqual(2, record.Id);
-		Assert.AreEqual("Balin", record.FullName);
+		record.ShouldNotBeNull();
+		record.Id.ShouldBe(2);
+		record.FullName.ShouldBe("Balin");
 
 		record = connection.Find<Character>(14);
-		Assert.IsNotNull(record);
-		Assert.AreEqual(14, record.Id);
-		Assert.AreEqual("Sam Gamgee", record.FullName);
+		record.ShouldNotBeNull();
+		record.Id.ShouldBe(14);
+		record.FullName.ShouldBe("Sam Gamgee");
 
 		// It should allow selecting a specific set of columns.
 		record = connection.Find<Character>(2, ["gender"]);
-		Assert.IsNotNull(record);
-		Assert.IsNull(record.FullName);
-		Assert.AreEqual(CharacterGender.Dwarf, record.Gender);
+		record.ShouldNotBeNull();
+		record.FullName.ShouldBeNull();
+		record.Gender.ShouldBe(CharacterGender.Dwarf);
 
 		record = connection.Find<Character>(14, ["gender"]);
-		Assert.IsNotNull(record);
-		Assert.IsNull(record.FullName);
-		Assert.AreEqual(CharacterGender.Hobbit, record.Gender);
+		record.ShouldNotBeNull();
+		record.FullName.ShouldBeNull();
+		record.Gender.ShouldBe(CharacterGender.Hobbit);
 
 		// It should return `null` if the record is not found.
-		Assert.IsNull(connection.Find<Character>(666));
+		connection.Find<Character>(666).ShouldBeNull();
 	}
 
 	[TestMethod]
 	public async Task FindAsync() {
 		// It should find the record with the specified identifier.
 		var record = await connection.FindAsync<Character>(2, cancellationToken: testContext.CancellationToken);
-		Assert.IsNotNull(record);
-		Assert.AreEqual(2, record.Id);
-		Assert.AreEqual("Balin", record.FullName);
+		record.ShouldNotBeNull();
+		record.Id.ShouldBe(2);
+		record.FullName.ShouldBe("Balin");
 
 		record = await connection.FindAsync<Character>(14, cancellationToken: testContext.CancellationToken);
-		Assert.IsNotNull(record);
-		Assert.AreEqual(14, record.Id);
-		Assert.AreEqual("Sam Gamgee", record.FullName);
+		record.ShouldNotBeNull();
+		record.Id.ShouldBe(14);
+		record.FullName.ShouldBe("Sam Gamgee");
 
 		// It should allow selecting a specific set of columns.
 		record = await connection.FindAsync<Character>(2, ["gender"], cancellationToken: testContext.CancellationToken);
-		Assert.IsNotNull(record);
-		Assert.IsNull(record.FullName);
-		Assert.AreEqual(CharacterGender.Dwarf, record.Gender);
+		record.ShouldNotBeNull();
+		record.FullName.ShouldBeNull();
+		record.Gender.ShouldBe(CharacterGender.Dwarf);
 
 		record = await connection.FindAsync<Character>(14, ["gender"], cancellationToken: testContext.CancellationToken);
-		Assert.IsNotNull(record);
-		Assert.IsNull(record.FullName);
-		Assert.AreEqual(CharacterGender.Hobbit, record.Gender);
+		record.ShouldNotBeNull();
+		record.FullName.ShouldBeNull();
+		record.Gender.ShouldBe(CharacterGender.Hobbit);
 
 		// It should return `null` if the record is not found.
-		Assert.IsNull(await connection.FindAsync<Character>(666, cancellationToken: testContext.CancellationToken));
+		(await connection.FindAsync<Character>(666, cancellationToken: testContext.CancellationToken)).ShouldBeNull();
 	}
 
 	[TestMethod]
 	public void FindAll() {
 		// It should return the complete list of entities, sorted by default according to the identity column.
 		var records = connection.FindAll<Character>();
-		Assert.HasCount(16, records);
-		Assert.AreEqual(1, records[0].Id);
-		Assert.AreEqual("Aragorn", records[0].FullName);
-		Assert.AreEqual(16, records[15].Id);
-		Assert.AreEqual("Sauron", records[15].FullName);
+		records.Count.ShouldBe(16);
+		records[0].Id.ShouldBe(1);
+		records[0].FullName.ShouldBe("Aragorn");
+		records[15].Id.ShouldBe(16);
+		records[15].FullName.ShouldBe("Sauron");
 
 		// It should allow sorting the results by a specific set of columns.
 		records = connection.FindAll<Character>([("gender", SortOrder.Ascending), ("fullName", SortOrder.Descending)]);
-		Assert.HasCount(16, records);
-		Assert.AreEqual(11, records[0].Id);
-		Assert.AreEqual("Gothmog", records[0].FullName);
-		Assert.AreEqual(8, records[15].Id);
-		Assert.AreEqual("Gandalf", records[15].FullName);
+		records.Count.ShouldBe(16);
+		records[0].Id.ShouldBe(11);
+		records[0].FullName.ShouldBe("Gothmog");
+		records[15].Id.ShouldBe(8);
+		records[15].FullName.ShouldBe("Gandalf");
 
 		// It should allow selecting a specific set of columns.
 		records = connection.FindAll<Character>(columns: ["gender"]);
-		Assert.AreEqual(1, records[0].Id);
-		Assert.AreEqual(CharacterGender.Human, records[0].Gender);
-		Assert.IsNull(records[0].FullName);
-		Assert.AreEqual(16, records[15].Id);
-		Assert.AreEqual(CharacterGender.DarkLord, records[15].Gender);
-		Assert.IsNull(records[15].FullName);
+		records[0].Id.ShouldBe(1);
+		records[0].Gender.ShouldBe(CharacterGender.Human);
+		records[0].FullName.ShouldBeNull();
+		records[15].Id.ShouldBe(16);
+		records[15].Gender.ShouldBe(CharacterGender.DarkLord);
+		records[15].FullName.ShouldBeNull();
 	}
 
 	[TestMethod]
 	public async Task FindAllAsync() {
 		// It should return the complete list of entities, sorted by default according to the identity column.
 		var records = await connection.FindAllAsync<Character>(cancellationToken: testContext.CancellationToken);
-		Assert.HasCount(16, records);
-		Assert.AreEqual(1, records[0].Id);
-		Assert.AreEqual("Aragorn", records[0].FullName);
-		Assert.AreEqual(16, records[15].Id);
-		Assert.AreEqual("Sauron", records[15].FullName);
+		records.Count.ShouldBe(16);
+		records[0].Id.ShouldBe(1);
+		records[0].FullName.ShouldBe("Aragorn");
+		records[15].Id.ShouldBe(16);
+		records[15].FullName.ShouldBe("Sauron");
 
 		// It should allow sorting the results by a specific set of columns.
 		records = await connection.FindAllAsync<Character>([("gender", SortOrder.Ascending), ("fullName", SortOrder.Descending)], cancellationToken: testContext.CancellationToken);
-		Assert.HasCount(16, records);
-		Assert.AreEqual(11, records[0].Id);
-		Assert.AreEqual("Gothmog", records[0].FullName);
-		Assert.AreEqual(8, records[15].Id);
-		Assert.AreEqual("Gandalf", records[15].FullName);
+		records.Count.ShouldBe(16);
+		records[0].Id.ShouldBe(11);
+		records[0].FullName.ShouldBe("Gothmog");
+		records[15].Id.ShouldBe(8);
+		records[15].FullName.ShouldBe("Gandalf");
 
 		// It should allow selecting a specific set of columns.
 		records = await connection.FindAllAsync<Character>(columns: ["gender"], cancellationToken: testContext.CancellationToken);
-		Assert.AreEqual(1, records[0].Id);
-		Assert.AreEqual(CharacterGender.Human, records[0].Gender);
-		Assert.IsNull(records[0].FullName);
-		Assert.AreEqual(16, records[15].Id);
-		Assert.AreEqual(CharacterGender.DarkLord, records[15].Gender);
-		Assert.IsNull(records[15].FullName);
+		records[0].Id.ShouldBe(1);
+		records[0].Gender.ShouldBe(CharacterGender.Human);
+		records[0].FullName.ShouldBeNull();
+		records[15].Id.ShouldBe(16);
+		records[15].Gender.ShouldBe(CharacterGender.DarkLord);
+		records[15].FullName.ShouldBeNull();
 	}
 }

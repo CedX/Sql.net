@@ -9,12 +9,12 @@ public partial class DbConnectionExtensionsTests {
 	[TestMethod]
 	public void CountAll() {
 		// It should return the total number of entities from the underlying table.
-		Assert.AreEqual(16, connection.CountAll<Character>());
+		connection.CountAll<Character>().ShouldBe(16);
 	}
 
 	[TestMethod]
 	public async Task CountAllAsync() {
 		// It should return the total number of entities from the underlying table.
-		Assert.AreEqual(16, await connection.CountAllAsync<Character>(cancellationToken: testContext.CancellationToken));
+		(await connection.CountAllAsync<Character>(cancellationToken: testContext.CancellationToken)).ShouldBe(16);
 	}
 }

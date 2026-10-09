@@ -9,27 +9,27 @@ public partial class DbConnectionExtensionsTests {
 	[TestMethod]
 	public void ExecuteScalar() {
 		var sql = "SELECT COUNT(*) FROM Characters WHERE gender = @Gender";
-		Assert.AreEqual(2, connection.ExecuteScalar<int>(sql, [("Gender", nameof(CharacterGender.Balrog))]));
+		connection.ExecuteScalar<int>(sql, [("Gender", nameof(CharacterGender.Balrog))]).ShouldBe(2);
 
 		sql = "SELECT tbl_name FROM sqlite_schema WHERE type = @Type AND name = @Name";
-		Assert.AreEqual("Characters", connection.ExecuteScalar<string>(sql, [("Name", "Characters"), ("Type", "table")]));
+		connection.ExecuteScalar<string>(sql, [("Name", "Characters"), ("Type", "table")]).ShouldBe("Characters");
 
 		sql = "SELECT tbl_name FROM sqlite_schema WHERE name = @Name";
-		Assert.IsNull(connection.ExecuteScalar<string>(sql, [("Name", "FooBarBazQux")]));
+		connection.ExecuteScalar<string>(sql, [("Name", "FooBarBazQux")]).ShouldBeNull();
 	}
 
 	[TestMethod]
 	public async Task ExecuteScalarAsync() {
 		var sql = "SELECT COUNT(*) FROM Characters WHERE gender = @Gender";
 		var parameters = new SqlParameterCollection(("Gender", nameof(CharacterGender.Balrog)));
-		Assert.AreEqual(2, await connection.ExecuteScalarAsync<int>(sql, parameters, testContext.CancellationToken));
+		(await connection.ExecuteScalarAsync<int>(sql, parameters, testContext.CancellationToken)).ShouldBe(2);
 
 		sql = "SELECT tbl_name FROM sqlite_schema WHERE type = @Type AND name = @Name";
 		parameters = new SqlParameterCollection(("Name", "Characters"), ("Type", "table"));
-		Assert.AreEqual("Characters", await connection.ExecuteScalarAsync<string>(sql, parameters, testContext.CancellationToken));
+		(await connection.ExecuteScalarAsync<string>(sql, parameters, testContext.CancellationToken)).ShouldBe("Characters");
 
 		sql = "SELECT tbl_name FROM sqlite_schema WHERE name = @Name";
 		parameters = new SqlParameterCollection(("Name", "FooBarBazQux"));
-		Assert.IsNull(await connection.ExecuteScalarAsync<string>(sql, parameters, testContext.CancellationToken));
+		(await connection.ExecuteScalarAsync<string>(sql, parameters, testContext.CancellationToken)).ShouldBeNull();
 	}
 }

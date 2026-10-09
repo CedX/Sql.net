@@ -14,38 +14,38 @@ public class SqlParameterTests {
 	public void ImplicitConversion() {
 		// It should create a parameter from the specified array.
 		SqlParameter parameter = new object?[] { "", null };
-		Assert.AreEqual("?", parameter.Name);
-		Assert.AreEqual(DBNull.Value, parameter.Value);
+		parameter.Name.ShouldBe("?");
+		parameter.Value.ShouldBe(DBNull.Value);
 
 		parameter = new object[] { ":foo", "bar" };
-		Assert.AreEqual(":foo", parameter.Name);
-		Assert.AreEqual("bar", parameter.Value);
+		parameter.Name.ShouldBe(":foo");
+		parameter.Value.ShouldBe("bar");
 
 		parameter = new object[] { "baz", 123 };
-		Assert.AreEqual("@baz", parameter.Name);
-		Assert.AreEqual(123, parameter.Value);
+		parameter.Name.ShouldBe("@baz");
+		parameter.Value.ShouldBe(123);
 
 		// It should create a parameter from the specified tuple.
 		parameter = ("", null);
-		Assert.AreEqual("?", parameter.Name);
-		Assert.AreEqual(DBNull.Value, parameter.Value);
+		parameter.Name.ShouldBe("?");
+		parameter.Value.ShouldBe(DBNull.Value);
 
 		parameter = (":foo", "bar");
-		Assert.AreEqual(":foo", parameter.Name);
-		Assert.AreEqual("bar", parameter.Value);
+		parameter.Name.ShouldBe(":foo");
+		parameter.Value.ShouldBe("bar");
 
 		parameter = ("baz", 123);
-		Assert.AreEqual("@baz", parameter.Name);
-		Assert.AreEqual(123, parameter.Value);
+		parameter.Name.ShouldBe("@baz");
+		parameter.Value.ShouldBe(123);
 
 		// It should create a parameter from the specified key/value pair.
 		parameter = new KeyValuePair<string, object?>("foo", null);
-		Assert.AreEqual("@foo", parameter.Name);
-		Assert.AreEqual(DBNull.Value, parameter.Value);
+		parameter.Name.ShouldBe("@foo");
+		parameter.Value.ShouldBe(DBNull.Value);
 
 		parameter = (":bar", "Baz");
-		Assert.AreEqual(":bar", parameter.Name);
-		Assert.AreEqual("Baz", parameter.Value);
+		parameter.Name.ShouldBe(":bar");
+		parameter.Value.ShouldBe("Baz");
 	}
 
 	[TestMethod]
@@ -57,23 +57,23 @@ public class SqlParameterTests {
 	[DataRow(":baz", ":baz")]
 	[DataRow("$qux", "$qux")]
 	public void Name(string name, string expected) =>
-		Assert.AreEqual(expected, new SqlParameter(name).Name);
+		new SqlParameter(name).Name.ShouldBe(expected);
 
 	[TestMethod]
 	public void Value() {
 		// It should normalize the parameter value.
-		Assert.AreEqual(DBNull.Value, new SqlParameter("Name", null).Value);
-		Assert.AreEqual(DBNull.Value, new SqlParameter("Name", DBNull.Value).Value);
-		Assert.AreEqual(123, new SqlParameter("Name", 123).Value);
-		Assert.AreEqual(-123.456, new SqlParameter("Name", -123.456).Value);
-		Assert.AreEqual("", new SqlParameter("Name", "").Value);
-		Assert.AreEqual("Foo", new SqlParameter("Name", "Foo").Value);
-		Assert.AreEqual(DateTime.UnixEpoch, new SqlParameter("Name", DateTime.UnixEpoch).Value);
+		new SqlParameter("Name", null).Value.ShouldBe(DBNull.Value);
+		new SqlParameter("Name", DBNull.Value).Value.ShouldBe(DBNull.Value);
+		new SqlParameter("Name", 123).Value.ShouldBe(123);
+		new SqlParameter("Name", -123.456).Value.ShouldBe(-123.456);
+		new SqlParameter("Name", "").Value.ShouldBe("");
+		new SqlParameter("Name", "Foo").Value.ShouldBe("Foo");
+		new SqlParameter("Name", DateTime.UnixEpoch).Value.ShouldBe(DateTime.UnixEpoch);
 
 		// It should support the values wrapped in a `PSObject` instance.
-		Assert.AreEqual(DBNull.Value, new SqlParameter("Name", new PSObject(DBNull.Value)).Value);
-		Assert.AreEqual("FooBar", new SqlParameter("Name", new PSObject("FooBar")).Value);
-		Assert.AreEqual(DateTime.UnixEpoch, new SqlParameter("Name", new PSObject(DateTime.UnixEpoch)).Value);
+		new SqlParameter("Name", new PSObject(DBNull.Value)).Value.ShouldBe(DBNull.Value);
+		new SqlParameter("Name", new PSObject("FooBar")).Value.ShouldBe("FooBar");
+		new SqlParameter("Name", new PSObject(DateTime.UnixEpoch)).Value.ShouldBe(DateTime.UnixEpoch);
 	}
 }
 
@@ -86,74 +86,74 @@ public class SqlParameterCollectionTests {
 	[TestMethod]
 	public void AddWithValue() {
 		var collection = new SqlParameterCollection();
-		Assert.IsEmpty(collection);
+		collection.ShouldBeEmpty();
 
 		var parameter = collection.AddWithValue("Name", "Value1");
-		Assert.HasCount(1, collection);
-		Assert.AreEqual("@Name", parameter.Name);
-		Assert.AreEqual("Value1", parameter.Value);
+		collection.Count.ShouldBe(1);
+		parameter.Name.ShouldBe("@Name");
+		parameter.Value.ShouldBe("Value1");
 
 		parameter = collection.AddWithValue("Value2");
-		Assert.HasCount(2, collection);
-		Assert.AreEqual("?2", parameter.Name);
-		Assert.AreEqual("Value2", parameter.Value);
+		collection.Count.ShouldBe(2);
+		parameter.Name.ShouldBe("?2");
+		parameter.Value.ShouldBe("Value2");
 	}
 
 	[TestMethod]
 	public void Constructor() {
 		// It should create an empty collection by default.
 		var collection = new SqlParameterCollection();
-		Assert.IsEmpty(collection);
+		collection.ShouldBeEmpty();
 
 		// It should create a collection from a single parameter.
 		collection = new(new SqlParameter("?1", 123) { DbType = DbType.Int64 });
-		Assert.HasCount(1, collection);
+		collection.Count.ShouldBe(1);
 
 		var parameter = collection.First();
-		Assert.AreEqual("?1", parameter.Name);
-		Assert.AreEqual(123, parameter.Value);
-		Assert.AreEqual(DbType.Int64, parameter.DbType);
+		parameter.Name.ShouldBe("?1");
+		parameter.Value.ShouldBe(123);
+		parameter.DbType.ShouldBe(DbType.Int64);
 
 		// It should create a collection from a list of parameters.
 		collection = new(new("?1", 123), new("@Key", "Unique") { DbType = DbType.AnsiString });
-		Assert.HasCount(2, collection);
+		collection.Count.ShouldBe(2);
 
 		parameter = collection.Last();
-		Assert.AreEqual("@Key", parameter.Name);
-		Assert.AreEqual("Unique", parameter.Value);
-		Assert.AreEqual(DbType.AnsiString, parameter.DbType);
+		parameter.Name.ShouldBe("@Key");
+		parameter.Value.ShouldBe("Unique");
+		parameter.DbType.ShouldBe(DbType.AnsiString);
 	}
 
 	[TestMethod]
 	public void Contains() {
 		var collection = new SqlParameterCollection(("@Key", null));
-		Assert.IsTrue(collection.Contains("Key"));
-		Assert.IsTrue(collection.Contains("@Key"));
-		Assert.IsFalse(collection.Contains("Foo"));
-		Assert.IsFalse(collection.Contains("@Foo"));
+		collection.Contains("Key").ShouldBeTrue();
+		collection.Contains("@Key").ShouldBeTrue();
+		collection.Contains("Foo").ShouldBeFalse();
+		collection.Contains("@Foo").ShouldBeFalse();
 	}
 
 	[TestMethod]
 	public void ImplicitConversion() {
 		// It should create a collection from the specified array of positional parameters.
 		SqlParameterCollection collection = new object[] { "foo", "bar" };
-		Assert.AreSequenceEqual(["?1", "?2"], collection.Select(parameter => parameter.Name));
-		Assert.AreSequenceEqual(["foo", "bar"], collection.Select(parameter => parameter.Value));
+		collection.Select(parameter => parameter.Name).ShouldBe(["?1", "?2"]);
+		collection.Select(parameter => parameter.Value).ShouldBe(["foo", "bar"]);
 
 		// It should create a collection from the specified list of positional parameters.
 		collection = new List<object?> { "foo", "bar" };
-		Assert.AreSequenceEqual(["?1", "?2"], collection.Select(parameter => parameter.Name));
-		Assert.AreSequenceEqual(["foo", "bar"], collection.Select(parameter => parameter.Value));
+		collection.Select(parameter => parameter.Name).ShouldBe(["?1", "?2"]);
+		collection.Select(parameter => parameter.Value).ShouldBe(["foo", "bar"]);
 
 		// It should create a collection from the specified dictionary of named parameters.
 		collection = new Dictionary<string, object?> { ["foo"] = "bar", ["baz"] = "qux" };
-		Assert.AreSequenceEqual(["@foo", "@baz"], collection.Select(parameter => parameter.Name));
-		Assert.AreSequenceEqual(["bar", "qux"], collection.Select(parameter => parameter.Value));
+		collection.Select(parameter => parameter.Name).ShouldBe(["@foo", "@baz"]);
+		collection.Select(parameter => parameter.Value).ShouldBe(["bar", "qux"]);
 
 		// It should create a collection from the specified hash table of named parameters.
 		collection = new Hashtable { ["foo"] = "bar", ["baz"] = "qux" };
-		Assert.AreSequenceEqual(["@foo", "@baz"], collection.Select(parameter => parameter.Name), SequenceOrder.InAnyOrder);
-		Assert.AreSequenceEqual(["bar", "qux"], collection.Select(parameter => parameter.Value), SequenceOrder.InAnyOrder);
+		collection.Select(parameter => parameter.Name).ShouldBe(["@foo", "@baz"], ignoreOrder: true);
+		collection.Select(parameter => parameter.Value).ShouldBe(["bar", "qux"], ignoreOrder: true);
 	}
 
 	[TestMethod]
@@ -162,9 +162,9 @@ public class SqlParameterCollectionTests {
 
 		// It should return the parameter with the specified name.
 		var parameter = collection["Key"];
-		Assert.AreEqual("@Key", parameter.Name);
-		Assert.AreEqual("Unique", parameter.Value);
-		Assert.AreEqual(parameter, collection[1]);
+		parameter.Name.ShouldBe("@Key");
+		parameter.Value.ShouldBe("Unique");
+		collection[1].ShouldBe(parameter);
 
 		// It should throw an error if the specified name does not exist.
 		Should.Throw<KeyNotFoundException>(() => collection["@Foo"]);
@@ -173,21 +173,21 @@ public class SqlParameterCollectionTests {
 	[TestMethod]
 	public void IndexOf() {
 		var collection = new SqlParameterCollection(("?1", 123), ("@Key", "Unique"));
-		Assert.AreEqual(1, collection.IndexOf("Key"));
-		Assert.AreEqual(1, collection.IndexOf("@Key"));
-		Assert.AreEqual(-1, collection.IndexOf("Foo"));
-		Assert.AreEqual(-1, collection.IndexOf("@Foo"));
+		collection.IndexOf("Key").ShouldBe(1);
+		collection.IndexOf("@Key").ShouldBe(1);
+		collection.IndexOf("Foo").ShouldBe(-1);
+		collection.IndexOf("@Foo").ShouldBe(-1);
 	}
 
 	[TestMethod]
 	public void RemoveAt() {
 		// It should remove the parameter with the specified name.
 		var collection = new SqlParameterCollection(("?1", 123), ("@Key", "Unique"));
-		Assert.HasCount(2, collection);
+		collection.Count.ShouldBe(2);
 		collection.RemoveAt("Key");
-		Assert.HasCount(1, collection);
+		collection.Count.ShouldBe(1);
 		collection.RemoveAt("?1");
-		Assert.IsEmpty(collection);
+		collection.ShouldBeEmpty();
 
 		// It should throw an error if the specified name does not exist.
 		collection = new SqlParameterCollection(("?1", 123), ("@Key", "Unique"));

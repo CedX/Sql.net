@@ -14,7 +14,7 @@ public class DbColumnInfoTests {
 	[DataRow("Gender")]
 	[DataRow("Id")]
 	public void CanRead(string name) =>
-		Assert.IsTrue(new DbColumnInfo(typeof(Character).GetProperty(name)!).CanRead);
+		new DbColumnInfo(typeof(Character).GetProperty(name)!).CanRead.ShouldBeTrue();
 
 	[TestMethod]
 	[DataRow("FirstName")]
@@ -22,7 +22,7 @@ public class DbColumnInfoTests {
 	[DataRow("Gender")]
 	[DataRow("Id")]
 	public void CanWrite(string name) =>
-		Assert.IsTrue(new DbColumnInfo(typeof(Character).GetProperty(name)!).CanWrite);
+		new DbColumnInfo(typeof(Character).GetProperty(name)!).CanWrite.ShouldBeTrue();
 
 	[TestMethod]
 	[DataRow("FirstName", DataType.String)]
@@ -30,7 +30,7 @@ public class DbColumnInfoTests {
 	[DataRow("Gender", DataType.AnsiString)]
 	[DataRow("Id", DataType.Int32)]
 	public void DbType(string name, DataType expected) =>
-		Assert.AreEqual(expected, new DbColumnInfo(typeof(Character).GetProperty(name)!).DbType);
+		new DbColumnInfo(typeof(Character).GetProperty(name)!).DbType.ShouldBe(expected);
 
 	[TestMethod]
 	[DataRow("FirstName", false)]
@@ -38,7 +38,7 @@ public class DbColumnInfoTests {
 	[DataRow("Gender", false)]
 	[DataRow("Id", true)]
 	public void IsComputed(string name, bool expected) =>
-		Assert.AreEqual(expected, new DbColumnInfo(typeof(Character).GetProperty(name)!).IsComputed);
+		new DbColumnInfo(typeof(Character).GetProperty(name)!).IsComputed.ShouldBe(expected);
 
 	[TestMethod]
 	[DataRow("FirstName", false)]
@@ -46,7 +46,7 @@ public class DbColumnInfoTests {
 	[DataRow("Gender", false)]
 	[DataRow("Id", true)]
 	public void IsIdentity(string name, bool expected) =>
-		Assert.AreEqual(expected, new DbColumnInfo(typeof(Character).GetProperty(name)!).IsIdentity);
+		new DbColumnInfo(typeof(Character).GetProperty(name)!).IsIdentity.ShouldBe(expected);
 
 	[TestMethod]
 	[DataRow("FirstName", false)]
@@ -54,7 +54,7 @@ public class DbColumnInfoTests {
 	[DataRow("Gender", false)]
 	[DataRow("Id", false)]
 	public void IsNullable(string name, bool expected) =>
-		Assert.AreEqual(expected, new DbColumnInfo(typeof(Character).GetProperty(name)!).IsNullable);
+		new DbColumnInfo(typeof(Character).GetProperty(name)!).IsNullable.ShouldBe(expected);
 
 	[TestMethod]
 	[DataRow("FirstName", "firstName")]
@@ -62,7 +62,7 @@ public class DbColumnInfoTests {
 	[DataRow("Gender", "gender")]
 	[DataRow("Id", "ID")]
 	public void Name(string name, string expected) =>
-		Assert.AreEqual(expected, new DbColumnInfo(typeof(Character).GetProperty(name)!).Name);
+		new DbColumnInfo(typeof(Character).GetProperty(name)!).Name.ShouldBe(expected);
 
 	[TestMethod]
 	[DataRow("FirstName", typeof(string))]
@@ -70,13 +70,13 @@ public class DbColumnInfoTests {
 	[DataRow("Gender", typeof(CharacterGender))]
 	[DataRow("Id", typeof(int))]
 	public void PropertyType(string name, Type expected) =>
-		Assert.AreEqual(expected, new DbColumnInfo(typeof(Character).GetProperty(name)!).PropertyType);
+		new DbColumnInfo(typeof(Character).GetProperty(name)!).PropertyType.ShouldBe(expected);
 
 	[TestMethod]
 	public void GetValue() {
 		var record = new Character { FirstName = "Cédric", LastName = "Belin" };
-		Assert.AreEqual("Cédric", new DbColumnInfo(typeof(Character).GetProperty("FirstName")!).GetValue(record));
-		Assert.AreEqual("Belin", new DbColumnInfo(typeof(Character).GetProperty("LastName")!).GetValue(record));
+		new DbColumnInfo(typeof(Character).GetProperty("FirstName")!).GetValue(record).ShouldBe("Cédric");
+		new DbColumnInfo(typeof(Character).GetProperty("LastName")!).GetValue(record).ShouldBe("Belin");
 	}
 
 	[TestMethod]
@@ -84,7 +84,7 @@ public class DbColumnInfoTests {
 		var record = new Character { FirstName = "Cédric", LastName = "Belin" };
 		new DbColumnInfo(typeof(Character).GetProperty("FirstName")!).SetValue(record, "Anders");
 		new DbColumnInfo(typeof(Character).GetProperty("LastName")!).SetValue(record, "Hejlsberg");
-		Assert.AreEqual("Anders", record.FirstName);
-		Assert.AreEqual("Hejlsberg", record.LastName);
+		record.FirstName.ShouldBe("Anders");
+		record.LastName.ShouldBe("Hejlsberg");
 	}
 }

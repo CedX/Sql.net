@@ -8,13 +8,13 @@ public partial class DbConnectionExtensionsTests {
 
 	[TestMethod]
 	public void Exists() {
-		Assert.IsTrue(connection.Exists<Character>(1));
-		Assert.IsFalse(connection.Exists<Character>(666));
+		connection.Exists<Character>(1).ShouldBeTrue();
+		connection.Exists<Character>(666).ShouldBeFalse();
 	}
 
 	[TestMethod]
 	public async Task ExistsAsync() {
-		Assert.IsTrue(await connection.ExistsAsync<Character>(1, cancellationToken: testContext.CancellationToken));
-		Assert.IsFalse(await connection.ExistsAsync<Character>(666, cancellationToken: testContext.CancellationToken));
+		(await connection.ExistsAsync<Character>(1, cancellationToken: testContext.CancellationToken)).ShouldBeTrue();
+		(await connection.ExistsAsync<Character>(666, cancellationToken: testContext.CancellationToken)).ShouldBeFalse();
 	}
 }

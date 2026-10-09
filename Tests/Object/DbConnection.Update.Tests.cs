@@ -12,31 +12,31 @@ public partial class DbConnectionExtensionsTests {
 		var sql = "SELECT * FROM Characters WHERE firstName = 'Sauron'";
 
 		var sauron = connection.QuerySingle<Character>(sql);
-		Assert.AreEqual("Sauron", sauron.FullName);
-		Assert.AreEqual(CharacterGender.DarkLord, sauron.Gender);
+		sauron.FullName.ShouldBe("Sauron");
+		sauron.Gender.ShouldBe(CharacterGender.DarkLord);
 
 		sauron.LastName = "The big bad guy";
 		sauron.Gender = CharacterGender.Istari;
-		Assert.AreEqual(1, DbConnectionExtensions.Update(connection, sauron));
+		DbConnectionExtensions.Update(connection, sauron).ShouldBe(1);
 
 		sauron = connection.QuerySingle<Character>(sql);
-		Assert.AreEqual("Sauron The big bad guy", sauron.FullName);
-		Assert.AreEqual(CharacterGender.Istari, sauron.Gender);
+		sauron.FullName.ShouldBe("Sauron The big bad guy");
+		sauron.Gender.ShouldBe(CharacterGender.Istari);
 
 		// It should allow updating a specific set of columns.
 		sql = "SELECT * FROM Characters WHERE firstName = 'Saruman'";
 
 		var saruman = connection.QuerySingle<Character>(sql);
-		Assert.AreEqual("Saruman", saruman.FullName);
-		Assert.AreEqual(CharacterGender.Istari, saruman.Gender);
+		saruman.FullName.ShouldBe("Saruman");
+		saruman.Gender.ShouldBe(CharacterGender.Istari);
 
 		saruman.LastName = "The traitor";
 		saruman.Gender = CharacterGender.DarkLord;
-		Assert.AreEqual(1, DbConnectionExtensions.Update(connection, saruman, ["gender"]));
+		DbConnectionExtensions.Update(connection, saruman, ["gender"]).ShouldBe(1);
 
 		saruman = connection.QuerySingle<Character>(sql);
-		Assert.AreEqual("Saruman", saruman.FullName);
-		Assert.AreEqual(CharacterGender.DarkLord, saruman.Gender);
+		saruman.FullName.ShouldBe("Saruman");
+		saruman.Gender.ShouldBe(CharacterGender.DarkLord);
 	}
 
 	[TestMethod]
@@ -45,30 +45,30 @@ public partial class DbConnectionExtensionsTests {
 		var sql = "SELECT * FROM Characters WHERE firstName = 'Sauron'";
 
 		var sauron = await connection.QuerySingleAsync<Character>(sql, cancellationToken: testContext.CancellationToken);
-		Assert.AreEqual("Sauron", sauron.FullName);
-		Assert.AreEqual(CharacterGender.DarkLord, sauron.Gender);
+		sauron.FullName.ShouldBe("Sauron");
+		sauron.Gender.ShouldBe(CharacterGender.DarkLord);
 
 		sauron.LastName = "The big bad guy";
 		sauron.Gender = CharacterGender.Istari;
-		Assert.AreEqual(1, await connection.UpdateAsync(sauron, cancellationToken: testContext.CancellationToken));
+		(await connection.UpdateAsync(sauron, cancellationToken: testContext.CancellationToken)).ShouldBe(1);
 
 		sauron = await connection.QuerySingleAsync<Character>(sql, cancellationToken: testContext.CancellationToken);
-		Assert.AreEqual("Sauron The big bad guy", sauron.FullName);
-		Assert.AreEqual(CharacterGender.Istari, sauron.Gender);
+		sauron.FullName.ShouldBe("Sauron The big bad guy");
+		sauron.Gender.ShouldBe(CharacterGender.Istari);
 
 		// It should allow updating a specific set of columns.
 		sql = "SELECT * FROM Characters WHERE firstName = 'Saruman'";
 
 		var saruman = await connection.QuerySingleAsync<Character>(sql, cancellationToken: testContext.CancellationToken);
-		Assert.AreEqual("Saruman", saruman.FullName);
-		Assert.AreEqual(CharacterGender.Istari, saruman.Gender);
+		saruman.FullName.ShouldBe("Saruman");
+		saruman.Gender.ShouldBe(CharacterGender.Istari);
 
 		saruman.LastName = "The traitor";
 		saruman.Gender = CharacterGender.DarkLord;
-		Assert.AreEqual(1, await connection.UpdateAsync(saruman, ["gender"], cancellationToken: testContext.CancellationToken));
+		(await connection.UpdateAsync(saruman, ["gender"], cancellationToken: testContext.CancellationToken)).ShouldBe(1);
 
 		saruman = await connection.QuerySingleAsync<Character>(sql, cancellationToken: testContext.CancellationToken);
-		Assert.AreEqual("Saruman", saruman.FullName);
-		Assert.AreEqual(CharacterGender.DarkLord, saruman.Gender);
+		saruman.FullName.ShouldBe("Saruman");
+		saruman.Gender.ShouldBe(CharacterGender.DarkLord);
 	}
 }
