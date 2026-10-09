@@ -4,7 +4,7 @@ namespace Belin.Sql;
 /// <summary>
 /// Tests the features of the <see cref="DbConnectionExtensions"/> class.
 /// </summary>
-public sealed partial class DbConnectionExtensionsTests {
+public partial class DbConnectionExtensionsTests {
 
 	[TestMethod]
 	public void Delete() {

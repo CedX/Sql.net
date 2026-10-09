@@ -7,7 +7,7 @@ using System.Management.Automation;
 /// Tests the features of the <see cref="SqlMapper"/> class.
 /// </summary>
 [TestClass]
-public sealed class SqlMapperTests {
+public class SqlMapperTests {
 
 	/// <summary>
 	/// The test data used by the <see cref="ChangeType"/> method.

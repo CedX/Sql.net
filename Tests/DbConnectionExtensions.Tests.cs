@@ -7,7 +7,7 @@ using System.Data.SQLite;
 /// </summary>
 /// <param name="testContext">The test context.</param>
 [TestClass]
-public sealed partial class DbConnectionExtensionsTests(TestContext testContext) {
+public partial class DbConnectionExtensionsTests(TestContext testContext) {
 
 	/// <summary>
 	/// The connection to the data source.

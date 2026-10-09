@@ -6,12 +6,12 @@ using System.Data.SQLite;
 /// Tests the features of the <see cref="SqlCommand"/> class.
 /// </summary>
 [TestClass]
-public sealed class SqlCommandTests {
+public class SqlCommandTests {
 
 	[TestMethod]
 	public void ImplicitConversion() {
 		SqlCommand command = "SELECT * FROM Characters";
-		Assert.AreEqual("SELECT * FROM Characters", command.Text);
+		command.Text.ShouldBe("SELECT * FROM Characters");
 	}
 }
 
@@ -19,7 +19,7 @@ public sealed class SqlCommandTests {
 /// Tests the features of the <see cref="SqlCommandBuilder"/> class.
 /// </summary>
 [TestClass]
-public sealed class SqlCommandBuilderTests {
+public class SqlCommandBuilderTests {
 
 	/// <summary>
 	/// The test data.
@@ -40,15 +40,15 @@ public sealed class SqlCommandBuilderTests {
 
 		// It should also return the parameters used by the SQL command.
 		var parameter = parameters.Single();
-		Assert.AreEqual("@ID", parameter.Name);
-		Assert.AreEqual(1000, parameter.Value);
+		parameter.Name.ShouldBe("@ID");
+		parameter.Value.ShouldBe(1000);
 	}
 
 	[TestMethod]
 	public void GetDeleteAllCommand() {
 		// It should return the SQL command to delete all entities.
 		var (command, parameters) = SqlCommandBuilder.Create(connection).GetDeleteAllCommand<Character>();
-		Assert.AreEqual(@"DELETE FROM ""main"".""Characters""", command.Text);
+		command.Text.ShouldBe(@"DELETE FROM ""main"".""Characters""");
 
 		// It should also return an empty parameter collection.
 		Assert.IsEmpty(parameters);
@@ -64,8 +64,8 @@ public sealed class SqlCommandBuilderTests {
 
 		// It should also return the parameters used by the SQL command.
 		var parameter = parameters.Single();
-		Assert.AreEqual("@ID", parameter.Name);
-		Assert.AreEqual(1000, parameter.Value);
+		parameter.Name.ShouldBe("@ID");
+		parameter.Value.ShouldBe(1000);
 	}
 
 	[TestMethod]
@@ -81,8 +81,8 @@ public sealed class SqlCommandBuilderTests {
 
 		// It should also return the parameters used by the SQL command.
 		var parameter = parameters.Single();
-		Assert.AreEqual("@ID", parameter.Name);
-		Assert.AreEqual(1000, parameter.Value);
+		parameter.Name.ShouldBe("@ID");
+		parameter.Value.ShouldBe(1000);
 
 		// It should allow selecting a specific set of columns.
 		(command, _) = builder.GetFindCommand<Character>(character.Id, ["firstName"]);
@@ -130,9 +130,9 @@ public sealed class SqlCommandBuilderTests {
 
 		// It should also return the parameters used by the SQL command.
 		Assert.HasCount(3, parameters);
-		Assert.AreEqual("Cédric", parameters["firstName"].Value);
-		Assert.AreEqual(nameof(CharacterGender.DarkLord), parameters["gender"].Value);
-		Assert.AreEqual("", parameters["lastName"].Value);
+		parameters["firstName"].Value.ShouldBe("Cédric");
+		parameters["gender"].Value.ShouldBe(nameof(CharacterGender.DarkLord));
+		parameters["lastName"].Value.ShouldBe("");
 	}
 
 	[TestMethod]
@@ -147,15 +147,15 @@ public sealed class SqlCommandBuilderTests {
 
 		// It should also return the parameters used by the SQL command.
 		Assert.HasCount(4, parameters);
-		Assert.AreEqual(1000, parameters["ID"].Value);
-		Assert.AreEqual("Cédric", parameters["firstName"].Value);
-		Assert.AreEqual(nameof(CharacterGender.DarkLord), parameters["gender"].Value);
-		Assert.AreEqual("", parameters["lastName"].Value);
+		parameters["ID"].Value.ShouldBe(1000);
+		parameters["firstName"].Value.ShouldBe("Cédric");
+		parameters["gender"].Value.ShouldBe(nameof(CharacterGender.DarkLord));
+		parameters["lastName"].Value.ShouldBe("");
 
 		// It should allow updating a specific set of columns.
 		(_, parameters) = builder.GetUpdateCommand(character, "firstName");
 		Assert.HasCount(2, parameters);
-		Assert.AreEqual(1000, parameters["ID"].Value);
-		Assert.AreEqual("Cédric", parameters["firstName"].Value);
+		parameters["ID"].Value.ShouldBe(1000);
+		parameters["firstName"].Value.ShouldBe("Cédric");
 	}
 }

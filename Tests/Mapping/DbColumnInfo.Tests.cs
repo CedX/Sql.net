@@ -6,7 +6,7 @@ using DataType = System.Data.DbType;
 /// Tests the features of the <see cref="DbColumnInfo"/> class.
 /// </summary>
 [TestClass]
-public sealed class DbColumnInfoTests {
+public class DbColumnInfoTests {
 
 	[TestMethod]
 	[DataRow("FirstName")]

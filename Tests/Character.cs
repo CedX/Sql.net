@@ -7,7 +7,7 @@ using System.Data;
 /// Represents a fictional character from a well-known saga.
 /// </summary>
 [Table("Characters", Schema = "main")]
-public sealed class Character {
+public class Character {
 
 	/// <summary>
 	/// The first name.

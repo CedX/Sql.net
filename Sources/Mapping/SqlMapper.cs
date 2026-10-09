@@ -10,7 +10,7 @@ using System.Runtime.CompilerServices;
 /// <summary>
 /// Maps data records to entity objects.
 /// </summary>
-public sealed class SqlMapper {
+public class SqlMapper {
 
 	/// <summary>
 	/// The singleton instance of the data mapper.

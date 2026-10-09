@@ -7,7 +7,7 @@ using System.Reflection;
 /// <summary>
 /// Provides information about a database column.
 /// </summary>
-public sealed class DbColumnInfo {
+public class DbColumnInfo {
 
 	/// <summary>
 	/// The nullability context.

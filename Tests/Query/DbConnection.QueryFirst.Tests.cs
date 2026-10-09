@@ -3,7 +3,7 @@ namespace Belin.Sql;
 /// <summary>
 /// Tests the features of the <see cref="DbConnectionExtensions"/> class.
 /// </summary>
-public sealed partial class DbConnectionExtensionsTests {
+public partial class DbConnectionExtensionsTests {
 
 	[TestMethod]
 	public void QueryFirst() {
@@ -14,7 +14,7 @@ public sealed partial class DbConnectionExtensionsTests {
 		Assert.AreEqual(CharacterGender.DarkLord, record.Gender);
 
 		// It should throw an error if the query produces no results.
-		Assert.Throws<InvalidOperationException>(() => connection.QueryFirst(sql, [("FullName", "Cédric")]));
+		Should.Throw<InvalidOperationException>(() => connection.QueryFirst(sql, [("FullName", "Cédric")]));
 	}
 
 	[TestMethod]
@@ -26,6 +26,6 @@ public sealed partial class DbConnectionExtensionsTests {
 		Assert.AreEqual(CharacterGender.DarkLord, record.Gender);
 
 		// It should throw an error if the query produces no results.
-		await Assert.ThrowsAsync<InvalidOperationException>(() => connection.QueryFirstAsync(sql, [("FullName", "Cédric")], testContext.CancellationToken));
+		await Should.ThrowAsync<InvalidOperationException>(() => connection.QueryFirstAsync(sql, [("FullName", "Cédric")], testContext.CancellationToken));
 	}
 }

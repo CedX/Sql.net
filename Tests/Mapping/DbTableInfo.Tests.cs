@@ -5,7 +5,7 @@ namespace Belin.Sql;
 /// Tests the features of the <see cref="DbTableInfo"/> class.
 /// </summary>
 [TestClass]
-public sealed class DbTableInfoTests {
+public class DbTableInfoTests {
 
 	[TestMethod]
 	public void Columns() {

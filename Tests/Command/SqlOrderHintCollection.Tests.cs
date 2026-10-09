@@ -6,7 +6,7 @@ using System.Collections.Specialized;
 /// Tests the features of the <see cref="SqlOrderHint"/> class.
 /// </summary>
 [TestClass]
-public sealed class SqlOrderHintTests {
+public class SqlOrderHintTests {
 
 	[TestMethod]
 	public void ImplicitConversion() {
@@ -36,7 +36,7 @@ public sealed class SqlOrderHintTests {
 /// Tests the features of the <see cref="SqlOrderHintCollection"/> class.
 /// </summary>
 [TestClass]
-public sealed class SqlOrderHintCollectionTests {
+public class SqlOrderHintCollectionTests {
 
 	[TestMethod]
 	public void Constructor() {
@@ -106,7 +106,7 @@ public sealed class SqlOrderHintCollectionTests {
 		Assert.AreEqual(orderHint, collection[0]);
 
 		// It should throw an error if the specified column does not exist.
-		Assert.Throws<KeyNotFoundException>(() => collection["foo"]);
+		Should.Throw<KeyNotFoundException>(() => collection["foo"]);
 	}
 
 	[TestMethod]
@@ -129,6 +129,6 @@ public sealed class SqlOrderHintCollectionTests {
 
 		// It should throw an error if the specified column does not exist.
 		collection = new SqlOrderHintCollection(("ID", SortOrder.Descending), ("Name", SortOrder.Ascending));
-		Assert.Throws<KeyNotFoundException>(() => collection.RemoveAt("Foo"));
+		Should.Throw<KeyNotFoundException>(() => collection.RemoveAt("Foo"));
 	}
 }

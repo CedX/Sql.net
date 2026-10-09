@@ -25,7 +25,7 @@ public enum SortOrder {
 /// </summary>
 /// <param name="column">The name of the column for which the hint is being provided.</param>
 /// <param name="sortOrder">The sort order of the column.</param>
-public sealed class SqlOrderHint(string column, SortOrder sortOrder = SortOrder.Ascending) {
+public class SqlOrderHint(string column, SortOrder sortOrder = SortOrder.Ascending) {
 
 	/// <summary>
 	/// The name of the column for which the hint is being provided.

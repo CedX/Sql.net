@@ -8,7 +8,7 @@ using System.Management.Automation;
 /// Tests the features of the <see cref="SqlParameter"/> class.
 /// </summary>
 [TestClass]
-public sealed class SqlParameterTests {
+public class SqlParameterTests {
 
 	[TestMethod]
 	public void ImplicitConversion() {
@@ -81,7 +81,7 @@ public sealed class SqlParameterTests {
 /// Tests the features of the <see cref="SqlParameterCollection"/> class.
 /// </summary>
 [TestClass]
-public sealed class SqlParameterCollectionTests {
+public class SqlParameterCollectionTests {
 
 	[TestMethod]
 	public void AddWithValue() {
@@ -167,7 +167,7 @@ public sealed class SqlParameterCollectionTests {
 		Assert.AreEqual(parameter, collection[1]);
 
 		// It should throw an error if the specified name does not exist.
-		Assert.Throws<KeyNotFoundException>(() => collection["@Foo"]);
+		Should.Throw<KeyNotFoundException>(() => collection["@Foo"]);
 	}
 
 	[TestMethod]
@@ -191,6 +191,6 @@ public sealed class SqlParameterCollectionTests {
 
 		// It should throw an error if the specified name does not exist.
 		collection = new SqlParameterCollection(("?1", 123), ("@Key", "Unique"));
-		Assert.Throws<KeyNotFoundException>(() => collection.RemoveAt("Foo"));
+		Should.Throw<KeyNotFoundException>(() => collection.RemoveAt("Foo"));
 	}
 }

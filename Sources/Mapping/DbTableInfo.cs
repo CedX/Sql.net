@@ -7,7 +7,7 @@ using System.Reflection;
 /// <summary>
 /// Provides information about a database table.
 /// </summary>
-public sealed class DbTableInfo {
+public class DbTableInfo {
 
 	/// <summary>
 	/// The table columns.
