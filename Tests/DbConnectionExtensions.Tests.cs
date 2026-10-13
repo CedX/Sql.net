@@ -12,16 +12,14 @@ public partial class DbConnectionExtensionsTests(TestContext testContext) {
 	/// <summary>
 	/// The connection to the data source.
 	/// </summary>
-	private SQLiteConnection connection = null!;
+	private readonly SQLiteConnection connection = new("DataSource=:memory:");
 
 	/// <summary>
 	/// Opens a connection to the data source.
 	/// </summary>
 	[TestInitialize]
 	public void TestInitialize() {
-		connection = new("DataSource=:memory:");
 		connection.Open();
-
 		using var command = connection.CreateCommand();
 		command.CommandText = File.ReadAllText(Path.Join(AppContext.BaseDirectory, "../Resources/Schema.sql"));
 		command.ExecuteNonQuery();

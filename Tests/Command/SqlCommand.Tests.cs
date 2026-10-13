@@ -24,21 +24,12 @@ public class SqlCommandBuilderTests {
 	/// <summary>
 	/// The test data.
 	/// </summary>
-	private Character character = null!;
+	private readonly Character character = new() { Id = 1000, FirstName = "Cédric", Gender = CharacterGender.DarkLord };
 
 	/// <summary>
 	/// The connection to the data source.
 	/// </summary>
-	private SQLiteConnection connection = null!;
-
-	/// <summary>
-	/// Opens a connection to the data source.
-	/// </summary>
-	[TestInitialize]
-	public void TestInitialize() {
-		character = new() { Id = 1000, FirstName = "Cédric", Gender = CharacterGender.DarkLord };
-		connection = new("DataSource=:memory:");
-	}
+	private readonly SQLiteConnection connection = new("DataSource=:memory:");
 
 	/// <summary>
 	/// Closes the connection to the data source.
