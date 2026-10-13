@@ -12,14 +12,16 @@ public partial class DbConnectionExtensionsTests(TestContext testContext) {
 	/// <summary>
 	/// The connection to the data source.
 	/// </summary>
-	private readonly SQLiteConnection connection = new("DataSource=:memory:");
+	private SQLiteConnection connection = null!;
 
 	/// <summary>
 	/// Opens a connection to the data source.
 	/// </summary>
 	[TestInitialize]
 	public void TestInitialize() {
+		connection = new("DataSource=:memory:");
 		connection.Open();
+
 		using var command = connection.CreateCommand();
 		command.CommandText = File.ReadAllText(Path.Join(AppContext.BaseDirectory, "../Resources/Schema.sql"));
 		command.ExecuteNonQuery();
@@ -29,8 +31,5 @@ public partial class DbConnectionExtensionsTests(TestContext testContext) {
 	/// Closes the connection to the data source.
 	/// </summary>
 	[TestCleanup]
-	public void TestCleanup() {
-		connection.Close();
-		connection.Dispose();
-	}
+	public void TestCleanup() => connection.Dispose();
 }
