@@ -12,7 +12,7 @@ public class SqlMapperTests {
 	/// <summary>
 	/// The test data used by the <see cref="ChangeType"/> method.
 	/// </summary>
-	private static IEnumerable<object?[]> ChangeTypeData => [
+	private static readonly IEnumerable<object?[]> changeTypeData = [
 		[null, typeof(bool), false, false],
 		[null, typeof(bool?), true, null],
 		[DBNull.Value, typeof(bool), false, false],
@@ -80,7 +80,7 @@ public class SqlMapperTests {
 		["-123", typeof(int?), true, -123]
 	];
 
-	[TestMethod, DynamicData(nameof(ChangeTypeData))]
+	[TestMethod, DynamicData(nameof(changeTypeData))]
 	public void ChangeType(object? value, Type conversionType, bool isNullable, object? expected) =>
 		SqlMapper.Instance.ChangeType(value, conversionType, isNullable).ShouldBe(expected);
 
