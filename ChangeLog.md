@@ -1,5 +1,9 @@
 # Changelog
 
+## Version [2026.10.0](https://github.com/CedX/Sql.net/compare/v6.0.0...v2026.10.0)
+- Removed the `sealed` modifier from the classes.
+- Switched to a year-based versioning.
+
 ## Version [6.0.0](https://github.com/CedX/Sql.net/compare/v5.3.0...v6.0.0)
 - Breaking change: removed the generic type parameter from the `Delete()`, `Insert()` and `Update()` methods of the `DbConnectionExtensions` class.
 - Breaking change: removed the generic type parameter from the `GetDeleteCommand()`, `GetInsertCommand()` and `GetUpdateCommand()` methods of the `SqlCommandBuilder` class.
