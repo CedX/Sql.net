@@ -1,5 +1,8 @@
 # Changelog
 
+## Version [2026.11.0](https://github.com/CedX/Sql.net/compare/v2026.10.0...v2026.11.0)
+- Changed the return type of all query methods returning an `IList` to `List`.
+
 ## Version [2026.10.0](https://github.com/CedX/Sql.net/compare/v6.0.0...v2026.10.0)
 - Removed the `sealed` modifier from the classes.
 - Switched to a year-based versioning.
