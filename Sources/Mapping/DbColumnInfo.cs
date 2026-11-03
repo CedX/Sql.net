@@ -115,10 +115,10 @@ public class DbColumnInfo {
 	public DbColumnInfo(PropertyInfo property) {
 		this.property = property;
 
-		var column = property.GetCustomAttribute<ColumnAttribute>();
-		Name = column?.Name ?? property.Name;
+		var column = property.GetCustomAttribute<ColumnAttribute>() ?? new ColumnAttribute();
+		Name = column.Name ?? property.Name;
 		DbType = true switch {
-			true when string.IsNullOrWhiteSpace(column?.TypeName) => typeMap.TryGetValue(property.PropertyType, out var dbType) ? dbType : DataType.Object,
+			true when string.IsNullOrWhiteSpace(column.TypeName) => typeMap.TryGetValue(property.PropertyType, out var dbType) ? dbType : DataType.Object,
 			true when Enum.TryParse<DataType>(column.TypeName, ignoreCase: true, out var dbType) => dbType,
 			_ => DataType.Object
 		};
