@@ -7,7 +7,7 @@ using System.Dynamic;
 /// <summary>
 /// Provides extension members for database connections.
 /// </summary>
-public static partial class DbConnectionExtensions {
+public static partial class ConnectionExtensions {
 	extension(IDbConnection connection) {
 
 		/// <summary>

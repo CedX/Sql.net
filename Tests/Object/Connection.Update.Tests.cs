@@ -2,9 +2,9 @@ namespace Belin.Sql;
 
 
 /// <summary>
-/// Tests the features of the <see cref="DbConnectionExtensions"/> class.
+/// Tests the features of the <see cref="ConnectionExtensions"/> class.
 /// </summary>
-public partial class DbConnectionExtensionsTests {
+public partial class ConnectionExtensionsTests {
 
 	[TestMethod]
 	public void Update() {
@@ -17,7 +17,7 @@ public partial class DbConnectionExtensionsTests {
 
 		sauron.LastName = "The big bad guy";
 		sauron.Gender = CharacterGender.Istari;
-		DbConnectionExtensions.Update(connection, sauron).ShouldBe(1);
+		ConnectionExtensions.Update(connection, sauron).ShouldBe(1);
 
 		sauron = connection.QuerySingle<Character>(sql);
 		sauron.FullName.ShouldBe("Sauron The big bad guy");
@@ -32,7 +32,7 @@ public partial class DbConnectionExtensionsTests {
 
 		saruman.LastName = "The traitor";
 		saruman.Gender = CharacterGender.DarkLord;
-		DbConnectionExtensions.Update(connection, saruman, ["gender"]).ShouldBe(1);
+		ConnectionExtensions.Update(connection, saruman, ["gender"]).ShouldBe(1);
 
 		saruman = connection.QuerySingle<Character>(sql);
 		saruman.FullName.ShouldBe("Saruman");

@@ -2,9 +2,9 @@ namespace Belin.Sql;
 
 
 /// <summary>
-/// Tests the features of the <see cref="DbConnectionExtensions"/> class.
+/// Tests the features of the <see cref="ConnectionExtensions"/> class.
 /// </summary>
-public partial class DbConnectionExtensionsTests {
+public partial class ConnectionExtensionsTests {
 
 	[TestMethod]
 	public void Execute() {
