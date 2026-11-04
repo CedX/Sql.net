@@ -1,5 +1,8 @@
 # Changelog
 
+## Version [2026.12.0](https://github.com/CedX/Sql.net/compare/v2026.11.0...v2026.12.0)
+- Breaking change: renamed all types by removing their prefixes (i.e. `Db` and `Sql`).
+
 ## Version [2026.11.0](https://github.com/CedX/Sql.net/compare/v2026.10.0...v2026.11.0)
 - Changed the return type of all query methods returning an `IList` to `List`.
 
