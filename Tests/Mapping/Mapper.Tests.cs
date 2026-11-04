@@ -1,6 +1,7 @@
 namespace Belin.Sql;
 
 using System.Dynamic;
+using System.Management.Automation;
 
 /// <summary>
 /// Tests the features of the <see cref="Mapper"/> class.

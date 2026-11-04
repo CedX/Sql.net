@@ -18,7 +18,7 @@ public static partial class DbConnectionExtensions {
 		/// <returns>The single row.</returns>
 		/// <exception cref="InvalidOperationException">The result set is empty or contains more than one record.</exception>
 		/// <remarks>The row values can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{TKey, TValue}"/>.</remarks>
-		public ExpandoObject QuerySingle(SqlCommand command, SqlParameterCollection? parameters = null) =>
+		public ExpandoObject QuerySingle(Command command, ParameterCollection? parameters = null) =>
 			connection.QuerySingle<ExpandoObject>(command, parameters);
 
 		/// <summary>
@@ -30,7 +30,7 @@ public static partial class DbConnectionExtensions {
 		/// <returns>The single row.</returns>
 		/// <exception cref="InvalidOperationException">The result set is empty or contains more than one record.</exception>
 		/// <remarks>The row values can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{TKey, TValue}"/>.</remarks>
-		public async Task<ExpandoObject> QuerySingleAsync(SqlCommand command, SqlParameterCollection? parameters = null, CancellationToken cancellationToken = default) =>
+		public async Task<ExpandoObject> QuerySingleAsync(Command command, ParameterCollection? parameters = null, CancellationToken cancellationToken = default) =>
 			await connection.QuerySingleAsync<ExpandoObject>(command, parameters, cancellationToken);
 
 		/// <summary>
@@ -41,7 +41,7 @@ public static partial class DbConnectionExtensions {
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The single row.</returns>
 		/// <exception cref="InvalidOperationException">The result set is empty or contains more than one record.</exception>
-		public T QuerySingle<T>(SqlCommand command, SqlParameterCollection? parameters = null) where T: new() =>
+		public T QuerySingle<T>(Command command, ParameterCollection? parameters = null) where T: new() =>
 			(T) connection.QuerySingle(typeof(T), command, parameters);
 
 		/// <summary>
@@ -52,7 +52,7 @@ public static partial class DbConnectionExtensions {
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The single row.</returns>
 		/// <exception cref="InvalidOperationException">The result set is empty or contains more than one record.</exception>
-		public object QuerySingle(Type type, SqlCommand command, SqlParameterCollection? parameters = null) {
+		public object QuerySingle(Type type, Command command, ParameterCollection? parameters = null) {
 			if (connection.State == ConnectionState.Closed) connection.Open();
 			using var dbCommand = command.ToDbCommand(connection, parameters);
 			using var reader = dbCommand.ExecuteReader();
@@ -76,7 +76,7 @@ public static partial class DbConnectionExtensions {
 		/// <param name="cancellationToken">The token to cancel the operation.</param>
 		/// <returns>The single row.</returns>
 		/// <exception cref="InvalidOperationException">The result set is empty or contains more than one record.</exception>
-		public async Task<T> QuerySingleAsync<T>(SqlCommand command, SqlParameterCollection? parameters = null, CancellationToken cancellationToken = default) where T: new() {
+		public async Task<T> QuerySingleAsync<T>(Command command, ParameterCollection? parameters = null, CancellationToken cancellationToken = default) where T: new() {
 			if (connection.State == ConnectionState.Closed) await ((DbConnection) connection).OpenAsync(cancellationToken);
 			using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
 			await using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
@@ -98,7 +98,7 @@ public static partial class DbConnectionExtensions {
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The single row, or <see langword="null"/> if not found.</returns>
 		/// <remarks>The row values can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{TKey, TValue}"/>.</remarks>
-		public ExpandoObject? QuerySingleOrDefault(SqlCommand command, SqlParameterCollection? parameters = null) =>
+		public ExpandoObject? QuerySingleOrDefault(Command command, ParameterCollection? parameters = null) =>
 			connection.QuerySingleOrDefault<ExpandoObject>(command, parameters);
 
 		/// <summary>
@@ -109,7 +109,7 @@ public static partial class DbConnectionExtensions {
 		/// <param name="cancellationToken">The token to cancel the operation.</param>
 		/// <returns>The single row, or <see langword="null"/> if not found.</returns>
 		/// <remarks>The row values can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{TKey, TValue}"/>.</remarks>
-		public async Task<ExpandoObject?> QuerySingleOrDefaultAsync(SqlCommand command, SqlParameterCollection? parameters = null, CancellationToken cancellationToken = default) =>
+		public async Task<ExpandoObject?> QuerySingleOrDefaultAsync(Command command, ParameterCollection? parameters = null, CancellationToken cancellationToken = default) =>
 			await connection.QuerySingleOrDefaultAsync<ExpandoObject>(command, parameters, cancellationToken);
 
 		/// <summary>
@@ -119,7 +119,7 @@ public static partial class DbConnectionExtensions {
 		/// <param name="command">The command to be executed.</param>
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The single row, or <see langword="null"/> if not found.</returns>
-		public T? QuerySingleOrDefault<T>(SqlCommand command, SqlParameterCollection? parameters = null) where T: new() =>
+		public T? QuerySingleOrDefault<T>(Command command, ParameterCollection? parameters = null) where T: new() =>
 			(T?) connection.QuerySingleOrDefault(typeof(T), command, parameters);
 
 		/// <summary>
@@ -129,7 +129,7 @@ public static partial class DbConnectionExtensions {
 		/// <param name="command">The command to be executed.</param>
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The single row, or <see langword="null"/> if not found.</returns>
-		public object? QuerySingleOrDefault(Type type, SqlCommand command, SqlParameterCollection? parameters = null) {
+		public object? QuerySingleOrDefault(Type type, Command command, ParameterCollection? parameters = null) {
 			if (connection.State == ConnectionState.Closed) connection.Open();
 			using var dbCommand = command.ToDbCommand(connection, parameters);
 			using var reader = dbCommand.ExecuteReader();
@@ -153,7 +153,7 @@ public static partial class DbConnectionExtensions {
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <param name="cancellationToken">The token to cancel the operation.</param>
 		/// <returns>The single row, or <see langword="null"/> if not found.</returns>
-		public async Task<T?> QuerySingleOrDefaultAsync<T>(SqlCommand command, SqlParameterCollection? parameters = null, CancellationToken cancellationToken = default) where T: new() {
+		public async Task<T?> QuerySingleOrDefaultAsync<T>(Command command, ParameterCollection? parameters = null, CancellationToken cancellationToken = default) where T: new() {
 			if (connection.State == ConnectionState.Closed) await ((DbConnection) connection).OpenAsync(cancellationToken);
 			using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
 			await using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);

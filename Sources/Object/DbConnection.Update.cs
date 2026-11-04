@@ -17,8 +17,8 @@ public static partial class DbConnectionExtensions {
 		/// <param name="transaction">The transaction within which the command executes.</param>
 		/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 		/// <returns>The number of rows affected.</returns>
-		public int Update(object entity, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null) {
-			var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetUpdateCommand(entity, columns ?? []);
+		public int Update(object entity, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, CommandBuilder? builder = null) {
+			var (command, parameters) = (builder ?? CommandBuilder.Create(connection)).GetUpdateCommand(entity, columns ?? []);
 			command.Timeout = timeout;
 			command.Transaction = transaction;
 			return connection.Execute(command, parameters);
@@ -34,8 +34,8 @@ public static partial class DbConnectionExtensions {
 		/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 		/// <param name="cancellationToken">The token to cancel the operation.</param>
 		/// <returns>The number of rows affected.</returns>
-		public async Task<int> UpdateAsync(object entity, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null, CancellationToken cancellationToken = default) {
-			var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetUpdateCommand(entity, columns ?? []);
+		public async Task<int> UpdateAsync(object entity, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, CommandBuilder? builder = null, CancellationToken cancellationToken = default) {
+			var (command, parameters) = (builder ?? CommandBuilder.Create(connection)).GetUpdateCommand(entity, columns ?? []);
 			command.Timeout = timeout;
 			command.Transaction = transaction;
 			return await connection.ExecuteAsync(command, parameters, cancellationToken);

@@ -44,7 +44,7 @@ public partial class DbConnectionExtensionsTests {
 	public async Task QueryAsync() {
 		// It should return the records produced by the SQL query.
 		var sql = "SELECT * FROM Characters WHERE gender = @Gender ORDER BY fullName";
-		var parameters = new SqlParameterCollection(("Gender", nameof(CharacterGender.Elf)));
+		var parameters = new ParameterCollection(("Gender", nameof(CharacterGender.Elf)));
 		var records = await connection.QueryAsync<Character>(sql, parameters, testContext.CancellationToken);
 		records.Count.ShouldBe(3);
 

@@ -18,12 +18,12 @@ public partial class DbConnectionExtensionsTests {
 
 	[TestMethod]
 	public async Task ExecuteAsync() {
-		var parameters = new SqlParameterCollection(("Gender", nameof(CharacterGender.Balrog)));
+		var parameters = new ParameterCollection(("Gender", nameof(CharacterGender.Balrog)));
 		(await connection.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM Characters", cancellationToken: testContext.CancellationToken)).ShouldBe(16);
 		(await connection.ExecuteAsync("DELETE FROM Characters WHERE gender = @Gender", parameters, testContext.CancellationToken)).ShouldBe(2);
 		(await connection.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM Characters", cancellationToken: testContext.CancellationToken)).ShouldBe(14);
 
-		parameters = new SqlParameterCollection(("Gender", nameof(CharacterGender.Elf)));
+		parameters = new ParameterCollection(("Gender", nameof(CharacterGender.Elf)));
 		(await connection.ExecuteAsync("DELETE FROM Characters WHERE gender = @Gender", parameters, testContext.CancellationToken)).ShouldBe(3);
 		(await connection.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM Characters", cancellationToken: testContext.CancellationToken)).ShouldBe(11);
 	}

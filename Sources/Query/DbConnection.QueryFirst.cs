@@ -18,7 +18,7 @@ public static partial class DbConnectionExtensions {
 		/// <returns>The first row.</returns>
 		/// <exception cref="InvalidOperationException">The result set is empty.</exception>
 		/// <remarks>The row values can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{TKey, TValue}"/>.</remarks>
-		public ExpandoObject QueryFirst(SqlCommand command, SqlParameterCollection? parameters = null) =>
+		public ExpandoObject QueryFirst(Command command, ParameterCollection? parameters = null) =>
 			connection.QueryFirst<ExpandoObject>(command, parameters);
 
 		/// <summary>
@@ -30,7 +30,7 @@ public static partial class DbConnectionExtensions {
 		/// <returns>The first row.</returns>
 		/// <exception cref="InvalidOperationException">The result set is empty.</exception>
 		/// <remarks>The row values can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{TKey, TValue}"/>.</remarks>
-		public async Task<ExpandoObject> QueryFirstAsync(SqlCommand command, SqlParameterCollection? parameters = null, CancellationToken cancellationToken = default) =>
+		public async Task<ExpandoObject> QueryFirstAsync(Command command, ParameterCollection? parameters = null, CancellationToken cancellationToken = default) =>
 			await connection.QueryFirstAsync<ExpandoObject>(command, parameters, cancellationToken);
 
 		/// <summary>
@@ -41,7 +41,7 @@ public static partial class DbConnectionExtensions {
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The first row.</returns>
 		/// <exception cref="InvalidOperationException">The result set is empty.</exception>
-		public T QueryFirst<T>(SqlCommand command, SqlParameterCollection? parameters = null) where T: new() =>
+		public T QueryFirst<T>(Command command, ParameterCollection? parameters = null) where T: new() =>
 			(T) connection.QueryFirst(typeof(T), command, parameters);
 
 		/// <summary>
@@ -52,7 +52,7 @@ public static partial class DbConnectionExtensions {
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The first row.</returns>
 		/// <exception cref="InvalidOperationException">The result set is empty.</exception>
-		public object QueryFirst(Type type, SqlCommand command, SqlParameterCollection? parameters = null) {
+		public object QueryFirst(Type type, Command command, ParameterCollection? parameters = null) {
 			if (connection.State == ConnectionState.Closed) connection.Open();
 			using var dbCommand = command.ToDbCommand(connection, parameters);
 			using var reader = dbCommand.ExecuteReader();
@@ -68,7 +68,7 @@ public static partial class DbConnectionExtensions {
 		/// <param name="cancellationToken">The token to cancel the operation.</param>
 		/// <returns>The first row.</returns>
 		/// <exception cref="InvalidOperationException">The result set is empty.</exception>
-		public async Task<T> QueryFirstAsync<T>(SqlCommand command, SqlParameterCollection? parameters = null, CancellationToken cancellationToken = default) where T: new() {
+		public async Task<T> QueryFirstAsync<T>(Command command, ParameterCollection? parameters = null, CancellationToken cancellationToken = default) where T: new() {
 			if (connection.State == ConnectionState.Closed) await ((DbConnection) connection).OpenAsync(cancellationToken);
 			using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
 			await using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
@@ -82,7 +82,7 @@ public static partial class DbConnectionExtensions {
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The first row, or <see langword="null"/> if not found.</returns>
 		/// <remarks>The row values can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{TKey, TValue}"/>.</remarks>
-		public ExpandoObject? QueryFirstOrDefault(SqlCommand command, SqlParameterCollection? parameters = null) =>
+		public ExpandoObject? QueryFirstOrDefault(Command command, ParameterCollection? parameters = null) =>
 			connection.QueryFirstOrDefault<ExpandoObject>(command, parameters);
 
 		/// <summary>
@@ -93,7 +93,7 @@ public static partial class DbConnectionExtensions {
 		/// <param name="cancellationToken">The token to cancel the operation.</param>
 		/// <returns>The first row, or <see langword="null"/> if not found.</returns>
 		/// <remarks>The row values can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{TKey, TValue}"/>.</remarks>
-		public async Task<ExpandoObject?> QueryFirstOrDefaultAsync(SqlCommand command, SqlParameterCollection? parameters = null, CancellationToken cancellationToken = default) =>
+		public async Task<ExpandoObject?> QueryFirstOrDefaultAsync(Command command, ParameterCollection? parameters = null, CancellationToken cancellationToken = default) =>
 			await connection.QueryFirstOrDefaultAsync<ExpandoObject>(command, parameters, cancellationToken);
 
 		/// <summary>
@@ -103,7 +103,7 @@ public static partial class DbConnectionExtensions {
 		/// <param name="command">The command to be executed.</param>
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The first row, or <see langword="null"/> if not found.</returns>
-		public T? QueryFirstOrDefault<T>(SqlCommand command, SqlParameterCollection? parameters = null) where T: new() =>
+		public T? QueryFirstOrDefault<T>(Command command, ParameterCollection? parameters = null) where T: new() =>
 			(T?) connection.QueryFirstOrDefault(typeof(T), command, parameters);
 
 		/// <summary>
@@ -113,7 +113,7 @@ public static partial class DbConnectionExtensions {
 		/// <param name="command">The command to be executed.</param>
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The first row, or <see langword="null"/> if not found.</returns>
-		public object? QueryFirstOrDefault(Type type, SqlCommand command, SqlParameterCollection? parameters = null) {
+		public object? QueryFirstOrDefault(Type type, Command command, ParameterCollection? parameters = null) {
 			if (connection.State == ConnectionState.Closed) connection.Open();
 			using var dbCommand = command.ToDbCommand(connection, parameters);
 			using var reader = dbCommand.ExecuteReader();
@@ -128,7 +128,7 @@ public static partial class DbConnectionExtensions {
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <param name="cancellationToken">The token to cancel the operation.</param>
 		/// <returns>The first row, or <see langword="null"/> if not found.</returns>
-		public async Task<T?> QueryFirstOrDefaultAsync<T>(SqlCommand command, SqlParameterCollection? parameters = null, CancellationToken cancellationToken = default) where T: new() {
+		public async Task<T?> QueryFirstOrDefaultAsync<T>(Command command, ParameterCollection? parameters = null, CancellationToken cancellationToken = default) where T: new() {
 			if (connection.State == ConnectionState.Closed) await ((DbConnection) connection).OpenAsync(cancellationToken);
 			using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
 			await using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);

@@ -21,15 +21,15 @@ public partial class DbConnectionExtensionsTests {
 	[TestMethod]
 	public async Task ExecuteScalarAsync() {
 		var sql = "SELECT COUNT(*) FROM Characters WHERE gender = @Gender";
-		var parameters = new SqlParameterCollection(("Gender", nameof(CharacterGender.Balrog)));
+		var parameters = new ParameterCollection(("Gender", nameof(CharacterGender.Balrog)));
 		(await connection.ExecuteScalarAsync<int>(sql, parameters, testContext.CancellationToken)).ShouldBe(2);
 
 		sql = "SELECT tbl_name FROM sqlite_schema WHERE type = @Type AND name = @Name";
-		parameters = new SqlParameterCollection(("Name", "Characters"), ("Type", "table"));
+		parameters = new ParameterCollection(("Name", "Characters"), ("Type", "table"));
 		(await connection.ExecuteScalarAsync<string>(sql, parameters, testContext.CancellationToken)).ShouldBe("Characters");
 
 		sql = "SELECT tbl_name FROM sqlite_schema WHERE name = @Name";
-		parameters = new SqlParameterCollection(("Name", "FooBarBazQux"));
+		parameters = new ParameterCollection(("Name", "FooBarBazQux"));
 		(await connection.ExecuteScalarAsync<string>(sql, parameters, testContext.CancellationToken)).ShouldBeNull();
 	}
 }

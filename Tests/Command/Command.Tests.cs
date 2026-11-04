@@ -3,23 +3,23 @@ namespace Belin.Sql;
 using System.Data.SQLite;
 
 /// <summary>
-/// Tests the features of the <see cref="SqlCommand"/> class.
+/// Tests the features of the <see cref="Command"/> class.
 /// </summary>
 [TestClass]
-public class SqlCommandTests {
+public class CommandTests {
 
 	[TestMethod]
 	public void ImplicitConversion() {
-		SqlCommand command = "SELECT * FROM Characters";
+		Command command = "SELECT * FROM Characters";
 		command.Text.ShouldBe("SELECT * FROM Characters");
 	}
 }
 
 /// <summary>
-/// Tests the features of the <see cref="SqlCommandBuilder"/> class.
+/// Tests the features of the <see cref="CommandBuilder"/> class.
 /// </summary>
 [TestClass]
-public class SqlCommandBuilderTests {
+public class CommandBuilderTests {
 
 	/// <summary>
 	/// The test data.
@@ -40,7 +40,7 @@ public class SqlCommandBuilderTests {
 	[TestMethod]
 	public void GetDeleteCommand() {
 		// It should return the SQL command to delete an entity.
-		var (command, parameters) = SqlCommandBuilder.Create(connection).GetDeleteCommand(character);
+		var (command, parameters) = CommandBuilder.Create(connection).GetDeleteCommand(character);
 		command.Text.ShouldStartWith(@"DELETE FROM ""main"".""Characters""");
 		command.Text.ShouldEndWith(@"WHERE ""ID"" = @ID");
 
@@ -53,7 +53,7 @@ public class SqlCommandBuilderTests {
 	[TestMethod]
 	public void GetDeleteAllCommand() {
 		// It should return the SQL command to delete all entities.
-		var (command, parameters) = SqlCommandBuilder.Create(connection).GetDeleteAllCommand<Character>();
+		var (command, parameters) = CommandBuilder.Create(connection).GetDeleteAllCommand<Character>();
 		command.Text.ShouldBe(@"DELETE FROM ""main"".""Characters""");
 
 		// It should also return an empty parameter collection.
@@ -63,7 +63,7 @@ public class SqlCommandBuilderTests {
 	[TestMethod]
 	public void GetExistsCommand() {
 		// It should return the SQL command to check the existence of an entity.
-		var (command, parameters) = SqlCommandBuilder.Create(connection).GetExistsCommand<Character>(character.Id);
+		var (command, parameters) = CommandBuilder.Create(connection).GetExistsCommand<Character>(character.Id);
 		command.Text.ShouldStartWith("SELECT 1");
 		command.Text.ShouldContain(@"FROM ""main"".""Characters""");
 		command.Text.ShouldEndWith(@"WHERE ""ID"" = @ID");
@@ -76,7 +76,7 @@ public class SqlCommandBuilderTests {
 
 	[TestMethod]
 	public void GetFindCommand() {
-		var builder = SqlCommandBuilder.Create(connection);
+		var builder = CommandBuilder.Create(connection);
 
 		// It should return the SQL command to find an entity.
 		var (command, parameters) = builder.GetFindCommand<Character>(character.Id);
@@ -100,7 +100,7 @@ public class SqlCommandBuilderTests {
 
 	[TestMethod]
 	public void GetFindAllCommand() {
-		var builder = SqlCommandBuilder.Create(connection);
+		var builder = CommandBuilder.Create(connection);
 
 		// It should return the SQL command to find all entities.
 		var (command, parameters) = builder.GetFindAllCommand<Character>();
@@ -130,7 +130,7 @@ public class SqlCommandBuilderTests {
 	[TestMethod]
 	public void GetInsertCommand() {
 		// It should return the SQL command to insert an entity.
-		var (command, parameters) = SqlCommandBuilder.Create(connection).GetInsertCommand(character);
+		var (command, parameters) = CommandBuilder.Create(connection).GetInsertCommand(character);
 		command.Text.ShouldStartWith(@"INSERT INTO ""main"".""Characters"" (");
 		command.Text.ShouldContain("VALUES (");
 
@@ -143,7 +143,7 @@ public class SqlCommandBuilderTests {
 
 	[TestMethod]
 	public void GetUpdateCommand() {
-		var builder = SqlCommandBuilder.Create(connection);
+		var builder = CommandBuilder.Create(connection);
 
 		// It should return the SQL command to update an entity.
 		var (command, parameters) = builder.GetUpdateCommand(character);

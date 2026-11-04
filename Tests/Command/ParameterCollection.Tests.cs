@@ -5,15 +5,15 @@ using System.Data;
 using System.Management.Automation;
 
 /// <summary>
-/// Tests the features of the <see cref="SqlParameter"/> class.
+/// Tests the features of the <see cref="Parameter"/> class.
 /// </summary>
 [TestClass]
-public class SqlParameterTests {
+public class ParameterTests {
 
 	[TestMethod]
 	public void ImplicitConversion() {
 		// It should create a parameter from the specified array.
-		SqlParameter parameter = new object?[] { "", null };
+		Parameter parameter = new object?[] { "", null };
 		parameter.Name.ShouldBe("?");
 		parameter.Value.ShouldBe(DBNull.Value);
 
@@ -57,35 +57,35 @@ public class SqlParameterTests {
 	[DataRow(":baz", ":baz")]
 	[DataRow("$qux", "$qux")]
 	public void Name(string name, string expected) =>
-		new SqlParameter(name).Name.ShouldBe(expected);
+		new Parameter(name).Name.ShouldBe(expected);
 
 	[TestMethod]
 	public void Value() {
 		// It should normalize the parameter value.
-		new SqlParameter("Name", null).Value.ShouldBe(DBNull.Value);
-		new SqlParameter("Name", DBNull.Value).Value.ShouldBe(DBNull.Value);
-		new SqlParameter("Name", 123).Value.ShouldBe(123);
-		new SqlParameter("Name", -123.456).Value.ShouldBe(-123.456);
-		new SqlParameter("Name", "").Value.ShouldBe("");
-		new SqlParameter("Name", "Foo").Value.ShouldBe("Foo");
-		new SqlParameter("Name", DateTime.UnixEpoch).Value.ShouldBe(DateTime.UnixEpoch);
+		new Parameter("Name", null).Value.ShouldBe(DBNull.Value);
+		new Parameter("Name", DBNull.Value).Value.ShouldBe(DBNull.Value);
+		new Parameter("Name", 123).Value.ShouldBe(123);
+		new Parameter("Name", -123.456).Value.ShouldBe(-123.456);
+		new Parameter("Name", "").Value.ShouldBe("");
+		new Parameter("Name", "Foo").Value.ShouldBe("Foo");
+		new Parameter("Name", DateTime.UnixEpoch).Value.ShouldBe(DateTime.UnixEpoch);
 
 		// It should support the values wrapped in a `PSObject` instance.
-		new SqlParameter("Name", new PSObject(DBNull.Value)).Value.ShouldBe(DBNull.Value);
-		new SqlParameter("Name", new PSObject("FooBar")).Value.ShouldBe("FooBar");
-		new SqlParameter("Name", new PSObject(DateTime.UnixEpoch)).Value.ShouldBe(DateTime.UnixEpoch);
+		new Parameter("Name", new PSObject(DBNull.Value)).Value.ShouldBe(DBNull.Value);
+		new Parameter("Name", new PSObject("FooBar")).Value.ShouldBe("FooBar");
+		new Parameter("Name", new PSObject(DateTime.UnixEpoch)).Value.ShouldBe(DateTime.UnixEpoch);
 	}
 }
 
 /// <summary>
-/// Tests the features of the <see cref="SqlParameterCollection"/> class.
+/// Tests the features of the <see cref="ParameterCollection"/> class.
 /// </summary>
 [TestClass]
-public class SqlParameterCollectionTests {
+public class ParameterCollectionTests {
 
 	[TestMethod]
 	public void AddWithValue() {
-		var collection = new SqlParameterCollection();
+		var collection = new ParameterCollection();
 		collection.ShouldBeEmpty();
 
 		var parameter = collection.AddWithValue("Name", "Value1");
@@ -102,11 +102,11 @@ public class SqlParameterCollectionTests {
 	[TestMethod]
 	public void Constructor() {
 		// It should create an empty collection by default.
-		var collection = new SqlParameterCollection();
+		var collection = new ParameterCollection();
 		collection.ShouldBeEmpty();
 
 		// It should create a collection from a single parameter.
-		collection = new(new SqlParameter("?1", 123) { DbType = DbType.Int64 });
+		collection = new(new Parameter("?1", 123) { DbType = DbType.Int64 });
 		collection.Count.ShouldBe(1);
 
 		var parameter = collection.First();
@@ -126,7 +126,7 @@ public class SqlParameterCollectionTests {
 
 	[TestMethod]
 	public void Contains() {
-		var collection = new SqlParameterCollection(("@Key", null));
+		var collection = new ParameterCollection(("@Key", null));
 		collection.Contains("Key").ShouldBeTrue();
 		collection.Contains("@Key").ShouldBeTrue();
 		collection.Contains("Foo").ShouldBeFalse();
@@ -136,7 +136,7 @@ public class SqlParameterCollectionTests {
 	[TestMethod]
 	public void ImplicitConversion() {
 		// It should create a collection from the specified array of positional parameters.
-		SqlParameterCollection collection = new object[] { "foo", "bar" };
+		ParameterCollection collection = new object[] { "foo", "bar" };
 		collection.Select(parameter => parameter.Name).ShouldBe(["?1", "?2"]);
 		collection.Select(parameter => parameter.Value).ShouldBe(["foo", "bar"]);
 
@@ -158,7 +158,7 @@ public class SqlParameterCollectionTests {
 
 	[TestMethod]
 	public void Indexer() {
-		var collection = new SqlParameterCollection(("?1", 123), ("@Key", "Unique"));
+		var collection = new ParameterCollection(("?1", 123), ("@Key", "Unique"));
 
 		// It should return the parameter with the specified name.
 		var parameter = collection["Key"];
@@ -172,7 +172,7 @@ public class SqlParameterCollectionTests {
 
 	[TestMethod]
 	public void IndexOf() {
-		var collection = new SqlParameterCollection(("?1", 123), ("@Key", "Unique"));
+		var collection = new ParameterCollection(("?1", 123), ("@Key", "Unique"));
 		collection.IndexOf("Key").ShouldBe(1);
 		collection.IndexOf("@Key").ShouldBe(1);
 		collection.IndexOf("Foo").ShouldBe(-1);
@@ -182,7 +182,7 @@ public class SqlParameterCollectionTests {
 	[TestMethod]
 	public void RemoveAt() {
 		// It should remove the parameter with the specified name.
-		var collection = new SqlParameterCollection(("?1", 123), ("@Key", "Unique"));
+		var collection = new ParameterCollection(("?1", 123), ("@Key", "Unique"));
 		collection.Count.ShouldBe(2);
 		collection.RemoveAt("Key");
 		collection.Count.ShouldBe(1);
@@ -190,7 +190,7 @@ public class SqlParameterCollectionTests {
 		collection.ShouldBeEmpty();
 
 		// It should throw an error if the specified name does not exist.
-		collection = new SqlParameterCollection(("?1", 123), ("@Key", "Unique"));
+		collection = new ParameterCollection(("?1", 123), ("@Key", "Unique"));
 		Should.Throw<KeyNotFoundException>(() => collection.RemoveAt("Foo"));
 	}
 }

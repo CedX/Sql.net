@@ -16,8 +16,8 @@ public static partial class DbConnectionExtensions {
 		/// <param name="transaction">The transaction within which the command executes.</param>
 		/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 		/// <returns>The generated primary key value.</returns>
-		public long Insert(object entity, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null) {
-			var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetInsertCommand(entity);
+		public long Insert(object entity, int timeout = 30, IDbTransaction? transaction = null, CommandBuilder? builder = null) {
+			var (command, parameters) = (builder ?? CommandBuilder.Create(connection)).GetInsertCommand(entity);
 			command.Timeout = timeout;
 			command.Transaction = transaction;
 
@@ -35,8 +35,8 @@ public static partial class DbConnectionExtensions {
 		/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 		/// <param name="cancellationToken">The token to cancel the operation.</param>
 		/// <returns>The generated primary key value.</returns>
-		public async Task<long> InsertAsync(object entity, int timeout = 30, IDbTransaction? transaction = null, SqlCommandBuilder? builder = null, CancellationToken cancellationToken = default) {
-			var (command, parameters) = (builder ?? SqlCommandBuilder.Create(connection)).GetInsertCommand(entity);
+		public async Task<long> InsertAsync(object entity, int timeout = 30, IDbTransaction? transaction = null, CommandBuilder? builder = null, CancellationToken cancellationToken = default) {
+			var (command, parameters) = (builder ?? CommandBuilder.Create(connection)).GetInsertCommand(entity);
 			command.Timeout = timeout;
 			command.Transaction = transaction;
 

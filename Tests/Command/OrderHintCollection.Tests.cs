@@ -3,15 +3,15 @@ namespace Belin.Sql;
 using System.Collections.Specialized;
 
 /// <summary>
-/// Tests the features of the <see cref="SqlOrderHint"/> class.
+/// Tests the features of the <see cref="OrderHint"/> class.
 /// </summary>
 [TestClass]
-public class SqlOrderHintTests {
+public class OrderHintTests {
 
 	[TestMethod]
 	public void ImplicitConversion() {
 		// It should create an order hint from the specified column name.
-		SqlOrderHint orderHint = "Name";
+		OrderHint orderHint = "Name";
 		orderHint.Column.ShouldBe("Name");
 		orderHint.SortOrder.ShouldBe(SortOrder.Ascending);
 
@@ -33,19 +33,19 @@ public class SqlOrderHintTests {
 }
 
 /// <summary>
-/// Tests the features of the <see cref="SqlOrderHintCollection"/> class.
+/// Tests the features of the <see cref="OrderHintCollection"/> class.
 /// </summary>
 [TestClass]
-public class SqlOrderHintCollectionTests {
+public class OrderHintCollectionTests {
 
 	[TestMethod]
 	public void Constructor() {
 		// It should create an empty collection by default.
-		var collection = new SqlOrderHintCollection();
+		var collection = new OrderHintCollection();
 		collection.ShouldBeEmpty();
 
 		// It should create a collection from a single order order hint.
-		collection = new(new SqlOrderHint("ID", SortOrder.Descending));
+		collection = new(new OrderHint("ID", SortOrder.Descending));
 		collection.Count.ShouldBe(1);
 
 		var orderHint = collection.First();
@@ -63,7 +63,7 @@ public class SqlOrderHintCollectionTests {
 
 	[TestMethod]
 	public void Contains() {
-		var collection = new SqlOrderHintCollection(("Key", SortOrder.Ascending));
+		var collection = new OrderHintCollection(("Key", SortOrder.Ascending));
 		collection.Contains("key").ShouldBeTrue();
 		collection.Contains("KEY").ShouldBeTrue();
 		collection.Contains("foo").ShouldBeFalse();
@@ -72,7 +72,7 @@ public class SqlOrderHintCollectionTests {
 	[TestMethod]
 	public void ImplicitConversion() {
 		// It should create a collection from the specified array of column names.
-		SqlOrderHintCollection collection = new object[] { "ID", "Name" };
+		OrderHintCollection collection = new object[] { "ID", "Name" };
 		collection.Select(parameter => parameter.Column).ShouldBe(["ID", "Name"]);
 		collection.Select(parameter => parameter.SortOrder).ShouldBe([SortOrder.Ascending, SortOrder.Ascending]);
 
@@ -97,7 +97,7 @@ public class SqlOrderHintCollectionTests {
 
 	[TestMethod]
 	public void Indexer() {
-		var collection = new SqlOrderHintCollection(("ID", SortOrder.Descending), ("Name", SortOrder.Ascending));
+		var collection = new OrderHintCollection(("ID", SortOrder.Descending), ("Name", SortOrder.Ascending));
 
 		// It should return the order hint with the specified column name.
 		var orderHint = collection["id"];
@@ -111,7 +111,7 @@ public class SqlOrderHintCollectionTests {
 
 	[TestMethod]
 	public void IndexOf() {
-		var collection = new SqlOrderHintCollection(("ID", SortOrder.Descending), ("Name", SortOrder.Ascending));
+		var collection = new OrderHintCollection(("ID", SortOrder.Descending), ("Name", SortOrder.Ascending));
 		collection.IndexOf("id").ShouldBe(0);
 		collection.IndexOf("name").ShouldBe(1);
 		collection.IndexOf("foo").ShouldBe(-1);
@@ -120,7 +120,7 @@ public class SqlOrderHintCollectionTests {
 	[TestMethod]
 	public void RemoveAt() {
 		// It should remove the order hint with the specified column name.
-		var collection = new SqlOrderHintCollection(("ID", SortOrder.Descending), ("Name", SortOrder.Ascending));
+		var collection = new OrderHintCollection(("ID", SortOrder.Descending), ("Name", SortOrder.Ascending));
 		collection.Count.ShouldBe(2);
 		collection.RemoveAt("name");
 		collection.Count.ShouldBe(1);
@@ -128,7 +128,7 @@ public class SqlOrderHintCollectionTests {
 		collection.ShouldBeEmpty();
 
 		// It should throw an error if the specified column does not exist.
-		collection = new SqlOrderHintCollection(("ID", SortOrder.Descending), ("Name", SortOrder.Ascending));
+		collection = new OrderHintCollection(("ID", SortOrder.Descending), ("Name", SortOrder.Ascending));
 		Should.Throw<KeyNotFoundException>(() => collection.RemoveAt("Foo"));
 	}
 }

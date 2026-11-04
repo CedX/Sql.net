@@ -15,7 +15,7 @@ public static partial class DbConnectionExtensions {
 		/// <param name="command">The command to be executed.</param>
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The number of rows affected.</returns>
-		public int Execute(SqlCommand command, SqlParameterCollection? parameters = null) {
+		public int Execute(Command command, ParameterCollection? parameters = null) {
 			if (connection.State == ConnectionState.Closed) connection.Open();
 			using var dbCommand = command.ToDbCommand(connection, parameters);
 			return dbCommand.ExecuteNonQuery();
@@ -28,7 +28,7 @@ public static partial class DbConnectionExtensions {
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <param name="cancellationToken">The token to cancel the operation.</param>
 		/// <returns>The number of rows affected.</returns>
-		public async Task<int> ExecuteAsync(SqlCommand command, SqlParameterCollection? parameters = null, CancellationToken cancellationToken = default) {
+		public async Task<int> ExecuteAsync(Command command, ParameterCollection? parameters = null, CancellationToken cancellationToken = default) {
 			if (connection.State == ConnectionState.Closed) await ((DbConnection) connection).OpenAsync(cancellationToken);
 			using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
 			return await dbCommand.ExecuteNonQueryAsync(cancellationToken);

@@ -16,7 +16,7 @@ public static partial class DbConnectionExtensions {
 		/// <param name="command">The command to be executed.</param>
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The first column of the first row.</returns>
-		public object? ExecuteScalar(SqlCommand command, SqlParameterCollection? parameters = null) =>
+		public object? ExecuteScalar(Command command, ParameterCollection? parameters = null) =>
 			connection.ExecuteScalar<object>(command, parameters);
 
 		/// <summary>
@@ -26,7 +26,7 @@ public static partial class DbConnectionExtensions {
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <param name="cancellationToken">The token to cancel the operation.</param>
 		/// <returns>The first column of the first row.</returns>
-		public async Task<object?> ExecuteScalarAsync(SqlCommand command, SqlParameterCollection? parameters = null, CancellationToken cancellationToken = default) =>
+		public async Task<object?> ExecuteScalarAsync(Command command, ParameterCollection? parameters = null, CancellationToken cancellationToken = default) =>
 			await connection.ExecuteScalarAsync<object>(command, parameters, cancellationToken);
 
 		/// <summary>
@@ -36,7 +36,7 @@ public static partial class DbConnectionExtensions {
 		/// <param name="command">The command to be executed.</param>
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The first column of the first row.</returns>
-		public T? ExecuteScalar<T>(SqlCommand command, SqlParameterCollection? parameters = null) =>
+		public T? ExecuteScalar<T>(Command command, ParameterCollection? parameters = null) =>
 			(T?) connection.ExecuteScalar(typeof(T), command, parameters);
 
 		/// <summary>
@@ -46,7 +46,7 @@ public static partial class DbConnectionExtensions {
 		/// <param name="command">The command to be executed.</param>
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The first column of the first row.</returns>
-		public object? ExecuteScalar(Type type, SqlCommand command, SqlParameterCollection? parameters = null) {
+		public object? ExecuteScalar(Type type, Command command, ParameterCollection? parameters = null) {
 			if (connection.State == ConnectionState.Closed) connection.Open();
 			using var dbCommand = command.ToDbCommand(connection, parameters);
 			return Mapper.Instance.ChangeType(dbCommand.ExecuteScalar(), type, isNullable: true);
@@ -60,7 +60,7 @@ public static partial class DbConnectionExtensions {
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <param name="cancellationToken">The token to cancel the operation.</param>
 		/// <returns>The first column of the first row.</returns>
-		public async Task<T?> ExecuteScalarAsync<T>(SqlCommand command, SqlParameterCollection? parameters = null, CancellationToken cancellationToken = default) {
+		public async Task<T?> ExecuteScalarAsync<T>(Command command, ParameterCollection? parameters = null, CancellationToken cancellationToken = default) {
 			if (connection.State == ConnectionState.Closed) await ((DbConnection) connection).OpenAsync(cancellationToken);
 			using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
 			return (T?) Mapper.Instance.ChangeType(await dbCommand.ExecuteScalarAsync(cancellationToken), typeof(T), isNullable: true);

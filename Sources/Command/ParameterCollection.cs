@@ -8,7 +8,7 @@ using System.Globalization;
 /// <summary>
 /// Represents a parameter of a parameterized SQL statement.
 /// </summary>
-public class SqlParameter(string name = "?", object? value = null) {
+public class Parameter(string name = "?", object? value = null) {
 
 	/// <summary>
 	/// The prefixes used for parameter placeholders.
@@ -57,7 +57,7 @@ public class SqlParameter(string name = "?", object? value = null) {
 	/// <param name="parameter">The tuple providing the parameter name and value.</param>
 	/// <returns>The parameter corresponding to the specified tuple.</returns>
 	/// <exception cref="ArgumentException">The specified array does not contain a parameter name and a value.</exception>
-	public static implicit operator SqlParameter(object?[] parameter) => parameter.Length == 2
+	public static implicit operator Parameter(object?[] parameter) => parameter.Length == 2
 		? new(Convert.ToString(parameter[0], CultureInfo.InvariantCulture) ?? "", parameter[1])
 		: throw new ArgumentException("The specified array must contain a parameter name and a value.", nameof(parameter));
 
@@ -66,14 +66,14 @@ public class SqlParameter(string name = "?", object? value = null) {
 	/// </summary>
 	/// <param name="parameter">The tuple providing the parameter name and value.</param>
 	/// <returns>The parameter corresponding to the specified tuple.</returns>
-	public static implicit operator SqlParameter((string Name, object? Value) parameter) => new(parameter.Name, parameter.Value);
+	public static implicit operator Parameter((string Name, object? Value) parameter) => new(parameter.Name, parameter.Value);
 
 	/// <summary>
 	/// Creates a new parameter from the specified key/value pair.
 	/// </summary>
 	/// <param name="parameter">The key/value pair providing the parameter name and value.</param>
 	/// <returns>The parameter corresponding to the specified key/value pair.</returns>
-	public static implicit operator SqlParameter(KeyValuePair<string, object?> parameter) => new(parameter.Key, parameter.Value);
+	public static implicit operator Parameter(KeyValuePair<string, object?> parameter) => new(parameter.Key, parameter.Value);
 
 	/// <summary>
 	/// Converts this parameter into an <see cref="IDbDataParameter"/> object.
@@ -116,7 +116,7 @@ public class SqlParameter(string name = "?", object? value = null) {
 /// Collects all parameters relevant to a parameterized SQL statement.
 /// </summary>
 /// <param name="parameters">The collection whose elements are copied to the parameter collection.</param>
-public class SqlParameterCollection(params IEnumerable<SqlParameter> parameters): List<SqlParameter>(parameters) {
+public class ParameterCollection(params IEnumerable<Parameter> parameters): List<Parameter>(parameters) {
 
 	/// <summary>
 	/// Gets the parameter with the specified name.
@@ -124,9 +124,9 @@ public class SqlParameterCollection(params IEnumerable<SqlParameter> parameters)
 	/// <param name="name">The parameter name.</param>
 	/// <returns>The parameter with the specified name.</returns>
 	/// <exception cref="KeyNotFoundException">The specified parameter name does not exist.</exception>
-	public SqlParameter this[string name] {
+	public Parameter this[string name] {
 		get {
-			var normalizedName = SqlParameter.NormalizeName(name);
+			var normalizedName = Parameter.NormalizeName(name);
 			return Find(parameter => parameter.Name == normalizedName) ?? throw new KeyNotFoundException(normalizedName);
 		}
 	}
@@ -136,8 +136,8 @@ public class SqlParameterCollection(params IEnumerable<SqlParameter> parameters)
 	/// </summary>
 	/// <param name="parameters">The array whose elements are copied to the parameter collection.</param>
 	/// <returns>The parameter collection corresponding to the specified array of positional parameters.</returns>
-	public static implicit operator SqlParameterCollection(object?[] parameters) => [.. parameters.Select((value, index) =>
-		value is SqlParameter parameter ? parameter : new SqlParameter($"?{index + 1}", value)
+	public static implicit operator ParameterCollection(object?[] parameters) => [.. parameters.Select((value, index) =>
+		value is Parameter parameter ? parameter : new Parameter($"?{index + 1}", value)
 	)];
 
 	/// <summary>
@@ -145,8 +145,8 @@ public class SqlParameterCollection(params IEnumerable<SqlParameter> parameters)
 	/// </summary>
 	/// <param name="parameters">The list whose elements are copied to the parameter collection.</param>
 	/// <returns>The parameter collection corresponding to the specified list of positional parameters.</returns>
-	public static implicit operator SqlParameterCollection(List<object?> parameters) => [.. parameters.Select((value, index) =>
-		value is SqlParameter parameter ? parameter : new SqlParameter($"?{index + 1}", value)
+	public static implicit operator ParameterCollection(List<object?> parameters) => [.. parameters.Select((value, index) =>
+		value is Parameter parameter ? parameter : new Parameter($"?{index + 1}", value)
 	)];
 
 	/// <summary>
@@ -154,8 +154,8 @@ public class SqlParameterCollection(params IEnumerable<SqlParameter> parameters)
 	/// </summary>
 	/// <param name="parameters">The dictionary whose elements are copied to the parameter collection.</param>
 	/// <returns>The parameter collection corresponding to the specified dictionary of named parameters.</returns>
-	public static implicit operator SqlParameterCollection(Dictionary<string, object?> parameters) => [.. parameters.Select(entry =>
-		entry.Value is SqlParameter parameter ? parameter : new SqlParameter(entry.Key, entry.Value)
+	public static implicit operator ParameterCollection(Dictionary<string, object?> parameters) => [.. parameters.Select(entry =>
+		entry.Value is Parameter parameter ? parameter : new Parameter(entry.Key, entry.Value)
 	)];
 
 	/// <summary>
@@ -163,7 +163,7 @@ public class SqlParameterCollection(params IEnumerable<SqlParameter> parameters)
 	/// </summary>
 	/// <param name="parameters">The hash table whose elements are copied to the parameter collection.</param>
 	/// <returns>The parameter collection corresponding to the specified hash table of named parameters.</returns>
-	public static implicit operator SqlParameterCollection(Hashtable parameters) => parameters.Cast<DictionaryEntry>().ToDictionary(
+	public static implicit operator ParameterCollection(Hashtable parameters) => parameters.Cast<DictionaryEntry>().ToDictionary(
 		entry => Convert.ToString(entry.Key, CultureInfo.InvariantCulture) ?? "",
 		entry => entry.Value
 	);
@@ -173,7 +173,7 @@ public class SqlParameterCollection(params IEnumerable<SqlParameter> parameters)
 	/// </summary>
 	/// <param name="value">The parameter value.</param>
 	/// <returns>The newly added parameter.</returns>
-	public SqlParameter AddWithValue(object? value) => AddWithValue($"?{Count + 1}", value);
+	public Parameter AddWithValue(object? value) => AddWithValue($"?{Count + 1}", value);
 
 	/// <summary>
 	/// Adds a new named parameter to the end of this collection.
@@ -181,8 +181,8 @@ public class SqlParameterCollection(params IEnumerable<SqlParameter> parameters)
 	/// <param name="name">The parameter name.</param>
 	/// <param name="value">The parameter value.</param>
 	/// <returns>The newly added parameter.</returns>
-	public SqlParameter AddWithValue(string name, object? value) {
-		var parameter = new SqlParameter(name, value);
+	public Parameter AddWithValue(string name, object? value) {
+		var parameter = new Parameter(name, value);
 		Add(parameter);
 		return parameter;
 	}
@@ -193,7 +193,7 @@ public class SqlParameterCollection(params IEnumerable<SqlParameter> parameters)
 	/// <param name="name">The parameter name.</param>
 	/// <returns><see langword="true"/> if this collection contains a parameter with the specified name, otherwise <see langword="false"/>.</returns>
 	public bool Contains(string name) {
-		var normalizedName = SqlParameter.NormalizeName(name);
+		var normalizedName = Parameter.NormalizeName(name);
 		return Exists(parameter => parameter.Name == normalizedName);
 	}
 
@@ -203,7 +203,7 @@ public class SqlParameterCollection(params IEnumerable<SqlParameter> parameters)
 	/// <param name="name">The parameter name.</param>
 	/// <returns>The index of the parameter with the specified name, or <c>-1</c> if not found.</returns>
 	public int IndexOf(string name) {
-		var normalizedName = SqlParameter.NormalizeName(name);
+		var normalizedName = Parameter.NormalizeName(name);
 		return FindIndex(parameter => parameter.Name == normalizedName);
 	}
 
@@ -214,6 +214,6 @@ public class SqlParameterCollection(params IEnumerable<SqlParameter> parameters)
 	/// <exception cref="KeyNotFoundException">The specified parameter name does not exist.</exception>
 	public void RemoveAt(string name) {
 		try { RemoveAt(IndexOf(name)); }
-		catch (ArgumentOutOfRangeException e) { throw new KeyNotFoundException(SqlParameter.NormalizeName(name), e); }
+		catch (ArgumentOutOfRangeException e) { throw new KeyNotFoundException(Parameter.NormalizeName(name), e); }
 	}
 }

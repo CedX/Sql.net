@@ -7,7 +7,7 @@ using System.Data.Common;
 /// Represents an SQL statement that is executed while connected to a data source.
 /// </summary>
 /// <param name="text">The text of the SQL statement.</param>
-public class SqlCommand(string text) {
+public class Command(string text) {
 
 	/// <summary>
 	/// The text of the SQL statement.
@@ -34,7 +34,7 @@ public class SqlCommand(string text) {
 	/// </summary>
 	/// <param name="text">The text providing the SQL statement.</param>
 	/// <returns>The command corresponding to the specified text.</returns>
-	public static implicit operator SqlCommand(string text) => new(text);
+	public static implicit operator Command(string text) => new(text);
 
 	/// <summary>
 	/// Converts this command into an <see cref="IDbCommand"/> object.
@@ -42,7 +42,7 @@ public class SqlCommand(string text) {
 	/// <param name="connection">The connection to associate with the created command.</param>
 	/// <param name="parameters">The parameters of the SQL statement.</param>
 	/// <returns>The <see cref="IDbCommand"/> object corresponding to this command.</returns>
-	public IDbCommand ToDbCommand(IDbConnection connection, SqlParameterCollection? parameters = null) {
+	public IDbCommand ToDbCommand(IDbConnection connection, ParameterCollection? parameters = null) {
 		var command = connection.CreateCommand();
 		command.CommandText = Text;
 		command.CommandTimeout = Timeout;
@@ -56,7 +56,7 @@ public class SqlCommand(string text) {
 /// <summary>
 /// Automatically generates single-table commands.
 /// </summary>
-public class SqlCommandBuilder {
+public class CommandBuilder {
 
 	/// <summary>
 	/// The list of data types corresponding to a string.
@@ -119,7 +119,7 @@ public class SqlCommandBuilder {
 	/// <param name="connection">The connection to the data source.</param>
 	/// <returns>The newly created command builder.</returns>
 	/// <exception cref="NotSupportedException">The specified connection type is not supported.</exception>
-	public static SqlCommandBuilder Create(IDbConnection connection) => connection.GetType().FullName switch {
+	public static CommandBuilder Create(IDbConnection connection) => connection.GetType().FullName switch {
 		"FirebirdSql.Data.FirebirdClient.FbConnection" => new() {
 			QuotePrefix = "\"",
 			QuoteSuffix = "\"",
@@ -166,7 +166,7 @@ public class SqlCommandBuilder {
 	/// </summary>
 	/// <typeparam name="T">The entity type.</typeparam>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
-	public (SqlCommand Command, SqlParameterCollection Parameters) GetCountAllCommand<T>() where T: new() =>
+	public (Command Command, ParameterCollection Parameters) GetCountAllCommand<T>() where T: new() =>
 		GetCountAllCommand(typeof(T));
 
 	/// <summary>
@@ -174,7 +174,7 @@ public class SqlCommandBuilder {
 	/// </summary>
 	/// <param name="type">The entity type.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
-	public (SqlCommand Command, SqlParameterCollection Parameters) GetCountAllCommand(Type type) {
+	public (Command Command, ParameterCollection Parameters) GetCountAllCommand(Type type) {
 		var tableName = GetTableName(Mapper.Instance.GetTable(type));
 		return ($"SELECT COUNT(*) FROM {tableName}", []);
 	}
@@ -185,11 +185,11 @@ public class SqlCommandBuilder {
 	/// <param name="entity">The entity to delete.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
-	public (SqlCommand Command, SqlParameterCollection Parameters) GetDeleteCommand(object entity) {
+	public (Command Command, ParameterCollection Parameters) GetDeleteCommand(object entity) {
 		var table = Mapper.Instance.GetTable(entity.GetType());
 		var idColumn = table.IdentityColumn ?? throw new InvalidOperationException("The identity column could not be found.");
 
-		var parameter = new SqlParameter(UsePositionalParameters ? "?1" : GetParameterName(idColumn), GetParameterValue(idColumn, entity));
+		var parameter = new Parameter(UsePositionalParameters ? "?1" : GetParameterName(idColumn), GetParameterValue(idColumn, entity));
 		var text = $"""
 			DELETE FROM {GetTableName(table)}
 			WHERE {QuoteIdentifier(idColumn.Name)} = {(UsePositionalParameters ? "?" : parameter.Name)}
@@ -204,7 +204,7 @@ public class SqlCommandBuilder {
 	/// <typeparam name="T">The entity type.</typeparam>
 	/// <param name="truncate">Value indicating whether to truncate the underlying table.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
-	public (SqlCommand Command, SqlParameterCollection Parameters) GetDeleteAllCommand<T>(bool truncate = false) where T: new() =>
+	public (Command Command, ParameterCollection Parameters) GetDeleteAllCommand<T>(bool truncate = false) where T: new() =>
 		GetDeleteAllCommand(typeof(T), truncate);
 
 	/// <summary>
@@ -213,7 +213,7 @@ public class SqlCommandBuilder {
 	/// <param name="type">The entity type.</param>
 	/// <param name="truncate">Value indicating whether to truncate the underlying table.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
-	public (SqlCommand Command, SqlParameterCollection Parameters) GetDeleteAllCommand(Type type, bool truncate = false) {
+	public (Command Command, ParameterCollection Parameters) GetDeleteAllCommand(Type type, bool truncate = false) {
 		var tableName = GetTableName(Mapper.Instance.GetTable(type));
 		return (truncate && SupportsTruncateTable ? $"TRUNCATE TABLE {tableName}" : $"DELETE FROM {tableName}", []);
 	}
@@ -225,7 +225,7 @@ public class SqlCommandBuilder {
 	/// <param name="id">The value of the entity's primary key.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
-	public (SqlCommand Command, SqlParameterCollection Parameters) GetExistsCommand<T>(object id) where T: new() =>
+	public (Command Command, ParameterCollection Parameters) GetExistsCommand<T>(object id) where T: new() =>
 		GetExistsCommand(typeof(T), id);
 
 	/// <summary>
@@ -235,11 +235,11 @@ public class SqlCommandBuilder {
 	/// <param name="id">The value of the entity's primary key.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
-	public (SqlCommand Command, SqlParameterCollection Parameters) GetExistsCommand(Type type, object id) {
+	public (Command Command, ParameterCollection Parameters) GetExistsCommand(Type type, object id) {
 		var table = Mapper.Instance.GetTable(type);
 		var idColumn = table.IdentityColumn ?? throw new InvalidOperationException("The identity column could not be found.");
 
-		var parameter = new SqlParameter(UsePositionalParameters ? "?1" : GetParameterName(idColumn), id);
+		var parameter = new Parameter(UsePositionalParameters ? "?1" : GetParameterName(idColumn), id);
 		var text = $"""
 			SELECT 1
 			FROM {GetTableName(table)}
@@ -257,7 +257,7 @@ public class SqlCommandBuilder {
 	/// <param name="columns">The list of columns to select. By default, all columns.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
-	public (SqlCommand Command, SqlParameterCollection Parameters) GetFindCommand<T>(object id, params string[] columns) where T: new() =>
+	public (Command Command, ParameterCollection Parameters) GetFindCommand<T>(object id, params string[] columns) where T: new() =>
 		GetFindCommand(typeof(T), id, columns);
 
 	/// <summary>
@@ -268,7 +268,7 @@ public class SqlCommandBuilder {
 	/// <param name="columns">The list of columns to select. By default, all columns.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
-	public (SqlCommand Command, SqlParameterCollection Parameters) GetFindCommand(Type type, object id, params string[] columns) {
+	public (Command Command, ParameterCollection Parameters) GetFindCommand(Type type, object id, params string[] columns) {
 		var table = Mapper.Instance.GetTable(type);
 		var idColumn = table.IdentityColumn ?? throw new InvalidOperationException("The identity column could not be found.");
 
@@ -279,7 +279,7 @@ public class SqlCommandBuilder {
 
 		if (!fields.Contains(idColumn.Name)) fields.Add(idColumn.Name);
 
-		var parameter = new SqlParameter(UsePositionalParameters ? "?1" : GetParameterName(idColumn), id);
+		var parameter = new Parameter(UsePositionalParameters ? "?1" : GetParameterName(idColumn), id);
 		var text = $"""
 			SELECT {string.Join(", ", fields.Select(QuoteIdentifier))}
 			FROM {GetTableName(table)}
@@ -296,7 +296,7 @@ public class SqlCommandBuilder {
 	/// <param name="columns">The list of columns to select. By default, all columns.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
-	public (SqlCommand Command, SqlParameterCollection Parameters) GetFindAllCommand<T>(params string[] columns) where T: new() =>
+	public (Command Command, ParameterCollection Parameters) GetFindAllCommand<T>(params string[] columns) where T: new() =>
 		GetFindAllCommand<T>(new(), columns);
 
 	/// <summary>
@@ -307,7 +307,7 @@ public class SqlCommandBuilder {
 	/// <param name="columns">The list of columns to select. By default, all columns.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
-	public (SqlCommand Command, SqlParameterCollection Parameters) GetFindAllCommand<T>(SqlOrderHintCollection orderHints, params string[] columns) where T: new() =>
+	public (Command Command, ParameterCollection Parameters) GetFindAllCommand<T>(OrderHintCollection orderHints, params string[] columns) where T: new() =>
 		GetFindAllCommand(typeof(T), orderHints, columns);
 
 	/// <summary>
@@ -317,7 +317,7 @@ public class SqlCommandBuilder {
 	/// <param name="columns">The list of columns to select. By default, all columns.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
-	public (SqlCommand Command, SqlParameterCollection Parameters) GetFindAllCommand(Type type, params string[] columns) =>
+	public (Command Command, ParameterCollection Parameters) GetFindAllCommand(Type type, params string[] columns) =>
 		GetFindAllCommand(type, new(), columns);
 
 	/// <summary>
@@ -328,7 +328,7 @@ public class SqlCommandBuilder {
 	/// <param name="columns">The list of columns to select. By default, all columns.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
-	public (SqlCommand Command, SqlParameterCollection Parameters) GetFindAllCommand(Type type, SqlOrderHintCollection orderHints, params string[] columns) {
+	public (Command Command, ParameterCollection Parameters) GetFindAllCommand(Type type, OrderHintCollection orderHints, params string[] columns) {
 		var table = Mapper.Instance.GetTable(type);
 		var idColumn = table.IdentityColumn ?? throw new InvalidOperationException("The identity column could not be found.");
 
@@ -352,7 +352,7 @@ public class SqlCommandBuilder {
 	/// <param name="entity">The entity to insert.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
-	public (SqlCommand Command, SqlParameterCollection Parameters) GetInsertCommand(object entity) {
+	public (Command Command, ParameterCollection Parameters) GetInsertCommand(object entity) {
 		var table = Mapper.Instance.GetTable(entity.GetType());
 		var idColumn = table.IdentityColumn ?? throw new InvalidOperationException("The identity column could not be found.");
 
@@ -373,7 +373,7 @@ public class SqlCommandBuilder {
 	/// <param name="columns">The list of columns to update. By default, all columns.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
-	public (SqlCommand Command, SqlParameterCollection Parameters) GetUpdateCommand(object entity, params string[] columns) {
+	public (Command Command, ParameterCollection Parameters) GetUpdateCommand(object entity, params string[] columns) {
 		var table = Mapper.Instance.GetTable(entity.GetType());
 		var idColumn = table.IdentityColumn ?? throw new InvalidOperationException("The identity column could not be found.");
 
