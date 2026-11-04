@@ -360,8 +360,9 @@ public class SqlMapper {
 	/// <param name="fields">The fields from which to split and read the next objects.</param>
 	/// <returns>A list of dictionaries representing the objects extracted from the data record.</returns>
 	internal static List<Dictionary<string, object?>> SplitOn(List<KeyValuePair<string, object?>> record, params string[] fields) {
-		var properties = new Dictionary<string, object?>(record.Count);
+		Dictionary<string, object?> properties;
 		if (fields.Length == 0) {
+			properties = new(record.Count);
 			foreach (var (key, value) in record) properties.TryAdd(key, value);
 			return [properties];
 		}
@@ -370,10 +371,11 @@ public class SqlMapper {
 		var records = new List<Dictionary<string, object?>>(fields.Length + 1);
 		var splitOn = fieldQueue.Dequeue();
 
+		properties = new(record.Count);
 		foreach (var (index, (key, value)) in record.Index()) {
 			if (index > 0 && key.Equals(splitOn, StringComparison.OrdinalIgnoreCase)) {
 				records.Add(properties);
-				properties = new Dictionary<string, object?>(record.Count - index);
+				properties = new(record.Count - index);
 				if (fieldQueue.TryDequeue(out var field)) splitOn = field;
 			}
 
