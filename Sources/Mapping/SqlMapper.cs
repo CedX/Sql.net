@@ -157,29 +157,29 @@ public class SqlMapper {
 	/// <summary>
 	/// Creates a new dynamic object from the specified hash table.
 	/// </summary>
-	/// <param name="properties">A hash table providing the properties to be set on the created object.</param>
+	/// <param name="record">A hash table providing the properties to be set on the created object.</param>
 	/// <returns>The newly created object.</returns>
-	public ExpandoObject CreateInstance(Hashtable properties) => CreateInstance<ExpandoObject>(
-		properties.Cast<DictionaryEntry>().ToDictionary(entry => Convert.ToString(entry.Key, CultureInfo.InvariantCulture) ?? "",
+	public ExpandoObject CreateInstance(Hashtable record) => CreateInstance<ExpandoObject>(
+		record.Cast<DictionaryEntry>().ToDictionary(entry => Convert.ToString(entry.Key, CultureInfo.InvariantCulture) ?? "",
 		entry => entry.Value
 	));
 
 	/// <summary>
 	/// Creates a new dynamic object from the specified dictionary.
 	/// </summary>
-	/// <param name="properties">A dictionary providing the properties to be set on the created object.</param>
+	/// <param name="record">A dictionary providing the properties to be set on the created object.</param>
 	/// <returns>The newly created object.</returns>
-	public ExpandoObject CreateInstance(IDictionary<string, object?> properties) =>
-		CreateInstance<ExpandoObject>(properties);
+	public ExpandoObject CreateInstance(IDictionary<string, object?> record) =>
+		CreateInstance<ExpandoObject>(record);
 
 	/// <summary>
 	/// Creates a new object of a given type from the specified hash table.
 	/// </summary>
 	/// <typeparam name="T">The object type.</typeparam>
-	/// <param name="properties">A hash table providing the properties to be set on the created object.</param>
+	/// <param name="record">A hash table providing the properties to be set on the created object.</param>
 	/// <returns>The newly created object.</returns>
-	public T CreateInstance<T>(Hashtable properties) where T: new() => CreateInstance<T>(
-		properties.Cast<DictionaryEntry>().ToDictionary(entry => Convert.ToString(entry.Key, CultureInfo.InvariantCulture) ?? "",
+	public T CreateInstance<T>(Hashtable record) where T: new() => CreateInstance<T>(
+		record.Cast<DictionaryEntry>().ToDictionary(entry => Convert.ToString(entry.Key, CultureInfo.InvariantCulture) ?? "",
 		entry => entry.Value
 	));
 
@@ -187,18 +187,18 @@ public class SqlMapper {
 	/// Creates a new object of a given type from the specified dictionary.
 	/// </summary>
 	/// <typeparam name="T">The object type.</typeparam>
-	/// <param name="properties">A dictionary providing the properties to be set on the created object.</param>
+	/// <param name="record">A dictionary providing the properties to be set on the created object.</param>
 	/// <returns>The newly created object.</returns>
-	public T CreateInstance<T>(IDictionary<string, object?> properties) where T: new() =>
-		(T) CreateInstance(typeof(T), properties);
+	public T CreateInstance<T>(IDictionary<string, object?> record) where T: new() =>
+		(T) CreateInstance(typeof(T), record);
 
 	/// <summary>
 	/// Creates a new object of a given type from the specified hash table.
 	/// </summary>
 	/// <param name="type">The object type.</param>
-	/// <param name="properties">A hash table providing the properties to be set on the created object.</param>
+	/// <param name="record">A hash table providing the properties to be set on the created object.</param>
 	/// <returns>The newly created object.</returns>
-	public object CreateInstance(Type type, Hashtable properties) => CreateInstance(type, properties.Cast<DictionaryEntry>().ToDictionary(
+	public object CreateInstance(Type type, Hashtable record) => CreateInstance(type, record.Cast<DictionaryEntry>().ToDictionary(
 		entry => Convert.ToString(entry.Key, CultureInfo.InvariantCulture) ?? "",
 		entry => entry.Value
 	));
@@ -207,27 +207,27 @@ public class SqlMapper {
 	/// Creates a new object of a given type from the specified dictionary.
 	/// </summary>
 	/// <param name="type">The object type.</param>
-	/// <param name="properties">A dictionary providing the properties to be set on the created object.</param>
+	/// <param name="record">A dictionary providing the properties to be set on the created object.</param>
 	/// <returns>The newly created object.</returns>
-	public object CreateInstance(Type type, IDictionary<string, object?> properties) {
+	public object CreateInstance(Type type, IDictionary<string, object?> record) {
 		if (type == typeof(ExpandoObject)) {
 			var expandoObject = (IDictionary<string, object?>) new ExpandoObject();
-			foreach (var (key, value) in properties) expandoObject.Add(key, value);
+			foreach (var (key, value) in record) expandoObject.Add(key, value);
 			return expandoObject;
 		}
 
 		if (PowerShell.PSObject is not null && PowerShell.PSNoteProperty is not null && type == PowerShell.PSObject) {
 			var psCustomObject = Activator.CreateInstance(PowerShell.PSObject)!;
 			dynamic psProperties = PowerShell.PSObject.GetProperty("Properties")!.GetValue(psCustomObject)!;
-			foreach (var (key, value) in properties) psProperties.Add((dynamic) Activator.CreateInstance(PowerShell.PSNoteProperty, [key, value])!);
+			foreach (var (key, value) in record) psProperties.Add((dynamic) Activator.CreateInstance(PowerShell.PSNoteProperty, [key, value])!);
 			return psCustomObject;
 		}
 
 		var instance = Activator.CreateInstance(type)!;
 		var table = GetTable(type);
-		foreach (var name in properties.Keys.Where(table.Columns.ContainsKey)) {
+		foreach (var name in record.Keys.Where(table.Columns.ContainsKey)) {
 			var column = table.Columns[name];
-			if (column.CanWrite) column.SetValue(instance, ChangeType(properties[name], column));
+			if (column.CanWrite) column.SetValue(instance, ChangeType(record[name], column));
 		}
 
 		return instance;
