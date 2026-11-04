@@ -1,13 +1,12 @@
 namespace Belin.Sql;
 
 using System.Dynamic;
-using System.Management.Automation;
 
 /// <summary>
-/// Tests the features of the <see cref="SqlMapper"/> class.
+/// Tests the features of the <see cref="Mapper"/> class.
 /// </summary>
 [TestClass]
-public class SqlMapperTests {
+public class MapperTests {
 
 	/// <summary>
 	/// The test data used by the <see cref="ChangeType"/> method.
@@ -93,7 +92,7 @@ public class SqlMapperTests {
 
 	[TestMethod, DynamicData(nameof(changeTypeData))]
 	public void ChangeType(object? value, Type conversionType, bool isNullable, object? expected) =>
-		SqlMapper.Instance.ChangeType(value, conversionType, isNullable).ShouldBe(expected);
+		Mapper.Instance.ChangeType(value, conversionType, isNullable).ShouldBe(expected);
 
 	[TestMethod]
 	public void CreateInstance() {
@@ -105,7 +104,7 @@ public class SqlMapperTests {
 		};
 
 		// It should create an `ExpandoObject` by default.
-		var expandoObject = SqlMapper.Instance.CreateInstance(properties);
+		var expandoObject = Mapper.Instance.CreateInstance(properties);
 		expandoObject.ShouldBeOfType<ExpandoObject>();
 
 		var expandoDictionary = new Dictionary<string, object?>(expandoObject);
@@ -115,7 +114,7 @@ public class SqlMapperTests {
 		expandoDictionary.ShouldContainKeyAndValue("lastName", null);
 
 		// It should support creating an object of type `PSObject`.
-		var psObject = SqlMapper.Instance.CreateInstance<PSObject>(properties);
+		var psObject = Mapper.Instance.CreateInstance<PSObject>(properties);
 		psObject.ShouldBeOfType<PSObject>();
 
 		var psDictionary = psObject.Properties.ToDictionary(entry => entry.Name, entry => (object?) entry.Value);
@@ -125,7 +124,7 @@ public class SqlMapperTests {
 		psDictionary.ShouldContainKeyAndValue("lastName", null);
 
 		// It should create an object of the specified type.
-		var character = SqlMapper.Instance.CreateInstance<Character>(properties);
+		var character = Mapper.Instance.CreateInstance<Character>(properties);
 		character.ShouldBeOfType<Character>();
 		character.FirstName.ShouldBe("Cédric");
 		character.Gender.ShouldBe(CharacterGender.Balrog);
@@ -134,7 +133,7 @@ public class SqlMapperTests {
 
 	[TestMethod]
 	public void GetTable() {
-		var table = SqlMapper.Instance.GetTable<Character>();
+		var table = Mapper.Instance.GetTable<Character>();
 		table.Name.ShouldBe("Characters");
 		table.Schema.ShouldBe("main");
 		table.Type.ShouldBe(typeof(Character));
@@ -152,11 +151,11 @@ public class SqlMapperTests {
 	[TestMethod]
 	public void IsNullRecord() {
 		// It should return `true` if all values of the specified dictionary are `null`.
-		SqlMapper.IsNullRecord(new Dictionary<string, object?>()).ShouldBeTrue();
-		SqlMapper.IsNullRecord(new Dictionary<string, object?> { ["Foo"] = null, ["Bar"] = null }).ShouldBeTrue();
+		Mapper.IsNullRecord(new Dictionary<string, object?>()).ShouldBeTrue();
+		Mapper.IsNullRecord(new Dictionary<string, object?> { ["Foo"] = null, ["Bar"] = null }).ShouldBeTrue();
 
 		// It should return `false` if at least one value of the specified dictionary is not `null`.
-		SqlMapper.IsNullRecord(new Dictionary<string, object?> { ["Foo"] = "Bar", ["Baz"] = null }).ShouldBeFalse();
+		Mapper.IsNullRecord(new Dictionary<string, object?> { ["Foo"] = "Bar", ["Baz"] = null }).ShouldBeFalse();
 	}
 
 	[TestMethod]
@@ -181,22 +180,22 @@ public class SqlMapperTests {
 		};
 
 		// It should return a dictionary equivalent to the specified data row.
-		var records = SqlMapper.SplitOn(record);
+		var records = Mapper.SplitOn(record);
 		records.Count.ShouldBe(1);
 		records[0].ShouldBe(properties);
 
 		// It should not split the data row if the specified field does not exist.
-		records = SqlMapper.SplitOn(record, "_NonExistent_");
+		records = Mapper.SplitOn(record, "_NonExistent_");
 		records.Count.ShouldBe(1);
 		records[0].ShouldBe(properties);
 
 		// It should split the data row according to the specified fields.
-		records = SqlMapper.SplitOn(record, "id");
+		records = Mapper.SplitOn(record, "id");
 		records.Count.ShouldBe(2);
 		records[0].ShouldBe(new Dictionary<string, object?> { ["Id"] = 123, ["LongLabel"] = "Hello World!", ["ShortLabel"] = null });
 		records[1].ShouldBe(new Dictionary<string, object?> { ["Id"] = 456, ["FirstName"] = "Cédric", ["LastName"] = "Belin", ["RowID"] = 789 });
 
-		records = SqlMapper.SplitOn(record, "id", "rowid", "_Unused_");
+		records = Mapper.SplitOn(record, "id", "rowid", "_Unused_");
 		records.Count.ShouldBe(3);
 		records[0].ShouldBe(new Dictionary<string, object?> { ["Id"] = 123, ["LongLabel"] = "Hello World!", ["ShortLabel"] = null });
 		records[1].ShouldBe(new Dictionary<string, object?> { ["Id"] = 456, ["FirstName"] = "Cédric", ["LastName"] = "Belin" });

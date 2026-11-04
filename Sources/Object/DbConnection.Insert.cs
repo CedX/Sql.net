@@ -22,7 +22,7 @@ public static partial class DbConnectionExtensions {
 			command.Transaction = transaction;
 
 			var id = connection.ExecuteScalar<long>(command, parameters);
-			if (SqlMapper.Instance.GetTable(entity.GetType()).IdentityColumn is DbColumnInfo column) column.SetValue(entity, SqlMapper.Instance.ChangeType(id, column));
+			if (Mapper.Instance.GetTable(entity.GetType()).IdentityColumn is ColumnInfo column) column.SetValue(entity, Mapper.Instance.ChangeType(id, column));
 			return id;
 		}
 
@@ -41,7 +41,7 @@ public static partial class DbConnectionExtensions {
 			command.Transaction = transaction;
 
 			var id = await connection.ExecuteScalarAsync<long>(command, parameters, cancellationToken);
-			if (SqlMapper.Instance.GetTable(entity.GetType()).IdentityColumn is DbColumnInfo column) column.SetValue(entity, SqlMapper.Instance.ChangeType(id, column));
+			if (Mapper.Instance.GetTable(entity.GetType()).IdentityColumn is ColumnInfo column) column.SetValue(entity, Mapper.Instance.ChangeType(id, column));
 			return id;
 		}
 	}

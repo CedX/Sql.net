@@ -53,7 +53,7 @@ public static partial class DbConnectionExtensions {
 			if (connection.State == ConnectionState.Closed) connection.Open();
 			using var dbCommand = command.ToDbCommand(connection, parameters);
 			using var reader = dbCommand.ExecuteReader();
-			return [.. SqlMapper.Instance.CreateInstances(type, reader)];
+			return [.. Mapper.Instance.CreateInstances(type, reader)];
 		}
 
 		/// <summary>
@@ -68,7 +68,7 @@ public static partial class DbConnectionExtensions {
 			if (connection.State == ConnectionState.Closed) connection.Open();
 			using var dbCommand = command.ToDbCommand(connection, parameters);
 			using var reader = dbCommand.ExecuteReader();
-			return [.. SqlMapper.Instance.CreateInstances(types, reader, splitOn ?? [])];
+			return [.. Mapper.Instance.CreateInstances(types, reader, splitOn ?? [])];
 		}
 
 		/// <summary>
@@ -83,7 +83,7 @@ public static partial class DbConnectionExtensions {
 			if (connection.State == ConnectionState.Closed) await ((DbConnection) connection).OpenAsync(cancellationToken);
 			using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
 			await using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
-			return [.. SqlMapper.Instance.CreateInstances<T>(reader)];
+			return [.. Mapper.Instance.CreateInstances<T>(reader)];
 		}
 
 		/// <summary>
@@ -99,7 +99,7 @@ public static partial class DbConnectionExtensions {
 			if (connection.State == ConnectionState.Closed) connection.Open();
 			using var dbCommand = command.ToDbCommand(connection, parameters);
 			using var reader = dbCommand.ExecuteReader();
-			return [.. SqlMapper.Instance.CreateInstances<TItem1, TItem2>(reader, splitOn)];
+			return [.. Mapper.Instance.CreateInstances<TItem1, TItem2>(reader, splitOn)];
 		}
 
 		/// <summary>
@@ -116,7 +116,7 @@ public static partial class DbConnectionExtensions {
 			if (connection.State == ConnectionState.Closed) await ((DbConnection) connection).OpenAsync(cancellationToken);
 			using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
 			await using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
-			return [.. SqlMapper.Instance.CreateInstances<TItem1, TItem2>(reader, splitOn)];
+			return [.. Mapper.Instance.CreateInstances<TItem1, TItem2>(reader, splitOn)];
 		}
 
 		/// <summary>
@@ -133,7 +133,7 @@ public static partial class DbConnectionExtensions {
 			if (connection.State == ConnectionState.Closed) connection.Open();
 			using var dbCommand = command.ToDbCommand(connection, parameters);
 			using var reader = dbCommand.ExecuteReader();
-			return [.. SqlMapper.Instance.CreateInstances<TItem1, TItem2, TItem3>(reader, splitOn)];
+			return [.. Mapper.Instance.CreateInstances<TItem1, TItem2, TItem3>(reader, splitOn)];
 		}
 
 		/// <summary>
@@ -151,7 +151,7 @@ public static partial class DbConnectionExtensions {
 			if (connection.State == ConnectionState.Closed) await ((DbConnection) connection).OpenAsync(cancellationToken);
 			using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
 			await using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
-			return [.. SqlMapper.Instance.CreateInstances<TItem1, TItem2, TItem3>(reader, splitOn)];
+			return [.. Mapper.Instance.CreateInstances<TItem1, TItem2, TItem3>(reader, splitOn)];
 		}
 
 		/// <summary>
@@ -169,7 +169,7 @@ public static partial class DbConnectionExtensions {
 			if (connection.State == ConnectionState.Closed) connection.Open();
 			using var dbCommand = command.ToDbCommand(connection, parameters);
 			using var reader = dbCommand.ExecuteReader();
-			return [.. SqlMapper.Instance.CreateInstances<TItem1, TItem2, TItem3, TItem4>(reader, splitOn)];
+			return [.. Mapper.Instance.CreateInstances<TItem1, TItem2, TItem3, TItem4>(reader, splitOn)];
 		}
 
 		/// <summary>
@@ -188,7 +188,7 @@ public static partial class DbConnectionExtensions {
 			if (connection.State == ConnectionState.Closed) await ((DbConnection) connection).OpenAsync(cancellationToken);
 			using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
 			await using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
-			return [.. SqlMapper.Instance.CreateInstances<TItem1, TItem2, TItem3, TItem4>(reader, splitOn)];
+			return [.. Mapper.Instance.CreateInstances<TItem1, TItem2, TItem3, TItem4>(reader, splitOn)];
 		}
 	}
 }

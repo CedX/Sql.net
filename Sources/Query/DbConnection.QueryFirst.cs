@@ -56,7 +56,7 @@ public static partial class DbConnectionExtensions {
 			if (connection.State == ConnectionState.Closed) connection.Open();
 			using var dbCommand = command.ToDbCommand(connection, parameters);
 			using var reader = dbCommand.ExecuteReader();
-			return reader.Read() ? SqlMapper.Instance.CreateInstance(type, reader) : throw new InvalidOperationException("The result set is empty.");
+			return reader.Read() ? Mapper.Instance.CreateInstance(type, reader) : throw new InvalidOperationException("The result set is empty.");
 		}
 
 		/// <summary>
@@ -72,7 +72,7 @@ public static partial class DbConnectionExtensions {
 			if (connection.State == ConnectionState.Closed) await ((DbConnection) connection).OpenAsync(cancellationToken);
 			using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
 			await using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
-			return await reader.ReadAsync(cancellationToken) ? SqlMapper.Instance.CreateInstance<T>(reader) : throw new InvalidOperationException("The result set is empty.");
+			return await reader.ReadAsync(cancellationToken) ? Mapper.Instance.CreateInstance<T>(reader) : throw new InvalidOperationException("The result set is empty.");
 		}
 
 		/// <summary>
@@ -117,7 +117,7 @@ public static partial class DbConnectionExtensions {
 			if (connection.State == ConnectionState.Closed) connection.Open();
 			using var dbCommand = command.ToDbCommand(connection, parameters);
 			using var reader = dbCommand.ExecuteReader();
-			return reader.Read() ? SqlMapper.Instance.CreateInstance(type, reader) : default;
+			return reader.Read() ? Mapper.Instance.CreateInstance(type, reader) : default;
 		}
 
 		/// <summary>
@@ -132,7 +132,7 @@ public static partial class DbConnectionExtensions {
 			if (connection.State == ConnectionState.Closed) await ((DbConnection) connection).OpenAsync(cancellationToken);
 			using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
 			await using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
-			return await reader.ReadAsync(cancellationToken) ? SqlMapper.Instance.CreateInstance<T>(reader) : default;
+			return await reader.ReadAsync(cancellationToken) ? Mapper.Instance.CreateInstance<T>(reader) : default;
 		}
 	}
 }

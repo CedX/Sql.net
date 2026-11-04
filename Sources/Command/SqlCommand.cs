@@ -175,7 +175,7 @@ public class SqlCommandBuilder {
 	/// <param name="type">The entity type.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	public (SqlCommand Command, SqlParameterCollection Parameters) GetCountAllCommand(Type type) {
-		var tableName = GetTableName(SqlMapper.Instance.GetTable(type));
+		var tableName = GetTableName(Mapper.Instance.GetTable(type));
 		return ($"SELECT COUNT(*) FROM {tableName}", []);
 	}
 
@@ -186,7 +186,7 @@ public class SqlCommandBuilder {
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
 	public (SqlCommand Command, SqlParameterCollection Parameters) GetDeleteCommand(object entity) {
-		var table = SqlMapper.Instance.GetTable(entity.GetType());
+		var table = Mapper.Instance.GetTable(entity.GetType());
 		var idColumn = table.IdentityColumn ?? throw new InvalidOperationException("The identity column could not be found.");
 
 		var parameter = new SqlParameter(UsePositionalParameters ? "?1" : GetParameterName(idColumn), GetParameterValue(idColumn, entity));
@@ -214,7 +214,7 @@ public class SqlCommandBuilder {
 	/// <param name="truncate">Value indicating whether to truncate the underlying table.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	public (SqlCommand Command, SqlParameterCollection Parameters) GetDeleteAllCommand(Type type, bool truncate = false) {
-		var tableName = GetTableName(SqlMapper.Instance.GetTable(type));
+		var tableName = GetTableName(Mapper.Instance.GetTable(type));
 		return (truncate && SupportsTruncateTable ? $"TRUNCATE TABLE {tableName}" : $"DELETE FROM {tableName}", []);
 	}
 
@@ -236,7 +236,7 @@ public class SqlCommandBuilder {
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
 	public (SqlCommand Command, SqlParameterCollection Parameters) GetExistsCommand(Type type, object id) {
-		var table = SqlMapper.Instance.GetTable(type);
+		var table = Mapper.Instance.GetTable(type);
 		var idColumn = table.IdentityColumn ?? throw new InvalidOperationException("The identity column could not be found.");
 
 		var parameter = new SqlParameter(UsePositionalParameters ? "?1" : GetParameterName(idColumn), id);
@@ -269,7 +269,7 @@ public class SqlCommandBuilder {
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
 	public (SqlCommand Command, SqlParameterCollection Parameters) GetFindCommand(Type type, object id, params string[] columns) {
-		var table = SqlMapper.Instance.GetTable(type);
+		var table = Mapper.Instance.GetTable(type);
 		var idColumn = table.IdentityColumn ?? throw new InvalidOperationException("The identity column could not be found.");
 
 		var fields = (columns.Length == 0 ? table.Columns.Values : table.Columns.Values.Where(column => columns.Contains(column.Name)))
@@ -329,7 +329,7 @@ public class SqlCommandBuilder {
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
 	public (SqlCommand Command, SqlParameterCollection Parameters) GetFindAllCommand(Type type, SqlOrderHintCollection orderHints, params string[] columns) {
-		var table = SqlMapper.Instance.GetTable(type);
+		var table = Mapper.Instance.GetTable(type);
 		var idColumn = table.IdentityColumn ?? throw new InvalidOperationException("The identity column could not be found.");
 
 		var fields = (columns.Length == 0 ? table.Columns.Values : table.Columns.Values.Where(column => columns.Contains(column.Name)))
@@ -353,7 +353,7 @@ public class SqlCommandBuilder {
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
 	public (SqlCommand Command, SqlParameterCollection Parameters) GetInsertCommand(object entity) {
-		var table = SqlMapper.Instance.GetTable(entity.GetType());
+		var table = Mapper.Instance.GetTable(entity.GetType());
 		var idColumn = table.IdentityColumn ?? throw new InvalidOperationException("The identity column could not be found.");
 
 		var fields = table.Columns.Values.Where(column => column.CanRead && !column.IsComputed).ToArray();
@@ -374,7 +374,7 @@ public class SqlCommandBuilder {
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
 	public (SqlCommand Command, SqlParameterCollection Parameters) GetUpdateCommand(object entity, params string[] columns) {
-		var table = SqlMapper.Instance.GetTable(entity.GetType());
+		var table = Mapper.Instance.GetTable(entity.GetType());
 		var idColumn = table.IdentityColumn ?? throw new InvalidOperationException("The identity column could not be found.");
 
 		var fields = (columns.Length == 0 ? table.Columns.Values : table.Columns.Values.Where(column => columns.Contains(column.Name)))
@@ -417,7 +417,7 @@ public class SqlCommandBuilder {
 	/// </summary>
 	/// <param name="column">The column providing the parameter name.</param>
 	/// <returns>The parameter name corresponding to the specified column.</returns>
-	private string GetParameterName(DbColumnInfo column) => $"{ParameterPrefix}{column.Name}";
+	private string GetParameterName(ColumnInfo column) => $"{ParameterPrefix}{column.Name}";
 
 	/// <summary>
 	/// Returns the parameter value corresponding to the specified column.
@@ -425,7 +425,7 @@ public class SqlCommandBuilder {
 	/// <param name="column">The column providing the parameter data type.</param>
 	/// <param name="entity">The entity providing the parameter value.</param>
 	/// <returns>The parameter value corresponding to the specified column.</returns>
-	private object? GetParameterValue(DbColumnInfo column, object entity) {
+	private object? GetParameterValue(ColumnInfo column, object entity) {
 		var value = column.GetValue(entity);
 		return column.PropertyType.IsEnum && stringTypes.Contains(column.DbType) ? value?.ToString() : value;
 	}
@@ -435,6 +435,6 @@ public class SqlCommandBuilder {
 	/// </summary>
 	/// <param name="table">The table.</param>
 	/// <returns>The fully qualified name corresponding to the specified table.</returns>
-	private string GetTableName(DbTableInfo table) =>
+	private string GetTableName(TableInfo table) =>
 		string.IsNullOrEmpty(table.Schema) ? QuoteIdentifier(table.Name) : $"{QuoteIdentifier(table.Schema)}{SchemaSeparator}{QuoteIdentifier(table.Name)}";
 }

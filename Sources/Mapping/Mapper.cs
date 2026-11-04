@@ -10,22 +10,22 @@ using System.Runtime.CompilerServices;
 /// <summary>
 /// Maps data records to entity objects.
 /// </summary>
-public class SqlMapper {
+public class Mapper {
 
 	/// <summary>
 	/// The singleton instance of the data mapper.
 	/// </summary>
-	public static SqlMapper Instance { get; } = new();
+	public static Mapper Instance { get; } = new();
 
 	/// <summary>
 	/// The mapping between the entity types and their associated database tables.
 	/// </summary>
-	private static readonly ConcurrentDictionary<Type, DbTableInfo> mapping = [];
+	private static readonly ConcurrentDictionary<Type, TableInfo> mapping = [];
 
 	/// <summary>
 	/// Creates a new data mapper.
 	/// </summary>
-	private SqlMapper() {}
+	private Mapper() {}
 
 	/// <summary>
 	/// Converts the specified object into an equivalent value of the specified column type.
@@ -33,7 +33,7 @@ public class SqlMapper {
 	/// <param name="value">The object to convert.</param>
 	/// <param name="column">The column providing the type of object to return.</param>
 	/// <returns>The value of the given type corresponding to the specified object.</returns>
-	public object? ChangeType(object? value, DbColumnInfo column) => ChangeType(value, column.PropertyType, column.IsNullable);
+	public object? ChangeType(object? value, ColumnInfo column) => ChangeType(value, column.PropertyType, column.IsNullable);
 
 	/// <summary>
 	/// Converts the specified object into an equivalent value of the specified type.
@@ -321,14 +321,14 @@ public class SqlMapper {
 	/// </summary>
 	/// <typeparam name="T">The type to inspect.</typeparam>
 	/// <returns>The table information associated with the specified type.</returns>
-	public DbTableInfo GetTable<T>() where T: new() => GetTable(typeof(T));
+	public TableInfo GetTable<T>() where T: new() => GetTable(typeof(T));
 
 	/// <summary>
 	/// Gets the table information associated with the specified type.
 	/// </summary>
 	/// <param name="type">The type to inspect.</param>
 	/// <returns>The table information associated with the specified type.</returns>
-	public DbTableInfo GetTable(Type type) => mapping.GetOrAdd(type, type => new DbTableInfo(type));
+	public TableInfo GetTable(Type type) => mapping.GetOrAdd(type, type => new TableInfo(type));
 
 	/// <summary>
 	/// Returns a value indicating whether all values of the specified dictionary are <see langword="null"/>.

@@ -61,7 +61,7 @@ public static partial class DbConnectionExtensions {
 			var rowCount = 0;
 			while (reader.Read()) {
 				if (++rowCount > 1) break;
-				record = SqlMapper.Instance.CreateInstance(type, reader);
+				record = Mapper.Instance.CreateInstance(type, reader);
 			}
 
 			return rowCount == 1 ? record! : throw new InvalidOperationException("The result set is empty or contains more than one record.");
@@ -85,7 +85,7 @@ public static partial class DbConnectionExtensions {
 			var rowCount = 0;
 			while (await reader.ReadAsync(cancellationToken)) {
 				if (++rowCount > 1) break;
-				record = SqlMapper.Instance.CreateInstance<T>(reader);
+				record = Mapper.Instance.CreateInstance<T>(reader);
 			}
 
 			return rowCount == 1 ? record! : throw new InvalidOperationException("The result set is empty or contains more than one record.");
@@ -138,7 +138,7 @@ public static partial class DbConnectionExtensions {
 			var rowCount = 0;
 			while (reader.Read()) {
 				if (++rowCount > 1) break;
-				record = SqlMapper.Instance.CreateInstance(type, reader);
+				record = Mapper.Instance.CreateInstance(type, reader);
 			}
 
 			return rowCount == 1 ? record : null;
@@ -162,7 +162,7 @@ public static partial class DbConnectionExtensions {
 			var rowCount = 0;
 			while (await reader.ReadAsync(cancellationToken)) {
 				if (++rowCount > 1) break;
-				record = SqlMapper.Instance.CreateInstance<T>(reader);
+				record = Mapper.Instance.CreateInstance<T>(reader);
 			}
 
 			return rowCount == 1 ? record : default;
