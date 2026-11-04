@@ -1,6 +1,5 @@
 namespace Belin.Sql;
 
-
 /// <summary>
 /// Tests the features of the <see cref="DbTableInfo"/> class.
 /// </summary>
