@@ -117,11 +117,10 @@ public class DbColumnInfo {
 
 		var column = property.GetCustomAttribute<ColumnAttribute>() ?? new ColumnAttribute();
 		Name = column.Name ?? property.Name;
-		DbType = true switch {
-			true when string.IsNullOrWhiteSpace(column.TypeName) => typeMap.TryGetValue(property.PropertyType, out var dbType) ? dbType : DataType.Object,
-			true when Enum.TryParse<DataType>(column.TypeName, ignoreCase: true, out var dbType) => dbType,
-			_ => DataType.Object
-		};
+
+		if (string.IsNullOrWhiteSpace(column.TypeName)) DbType = typeMap.TryGetValue(property.PropertyType, out var dbType) ? dbType : DataType.Object;
+		else if (Enum.TryParse<DataType>(column.TypeName, ignoreCase: true, out var dbType)) DbType = dbType;
+		else DbType = DataType.Object;
 
 		var databaseGeneratedOption = property.GetCustomAttribute<DatabaseGeneratedAttribute>()?.DatabaseGeneratedOption ?? DatabaseGeneratedOption.None;
 		IsComputed = databaseGeneratedOption != DatabaseGeneratedOption.None;

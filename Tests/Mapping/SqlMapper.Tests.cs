@@ -77,7 +77,18 @@ public class SqlMapperTests {
 		[123, typeof(int), false, 123],
 		[-123.456, typeof(int?), true, -123],
 		["123", typeof(int), false, 123],
-		["-123", typeof(int?), true, -123]
+		["-123", typeof(int?), true, -123],
+
+		[null, typeof(string), false, ""],
+		[null, typeof(string), true, null],
+		[DBNull.Value, typeof(string), false, ""],
+		[DBNull.Value, typeof(string), true, null],
+		[0, typeof(string), false, "0"],
+		[0, typeof(string), true, "0"],
+		[123, typeof(string), false, "123"],
+		[-123.456, typeof(string), true, "-123.456"],
+		["123", typeof(string), false, "123"],
+		["-123.456", typeof(string), true, "-123.456"]
 	];
 
 	[TestMethod, DynamicData(nameof(changeTypeData))]
