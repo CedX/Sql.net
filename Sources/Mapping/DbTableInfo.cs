@@ -42,7 +42,7 @@ public class DbTableInfo {
 		var table = type.GetCustomAttribute<TableAttribute>();
 		var columns =
 			from property in type.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
-			where !property.IsDefined(typeof(NotMappedAttribute)) && ((property.CanRead && property.CanWrite) || property.IsDefined(typeof(ColumnAttribute)))
+			where !property.IsDefined(typeof(NotMappedAttribute)) && (property.IsDefined(typeof(ColumnAttribute)) || (property.CanRead && property.CanWrite))
 			select new DbColumnInfo(property);
 
 		Columns = columns.ToFrozenDictionary(column => column.Name, StringComparer.OrdinalIgnoreCase);
