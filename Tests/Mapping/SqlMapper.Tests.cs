@@ -150,13 +150,13 @@ public class SqlMapperTests {
 	}
 
 	[TestMethod]
-	public void IsNullObject() {
+	public void IsNullRecord() {
 		// It should return `true` if all values of the specified dictionary are `null`.
-		SqlMapper.IsNullObject([]).ShouldBeTrue();
-		SqlMapper.IsNullObject(new Dictionary<string, object?> { ["Foo"] = null, ["Bar"] = null }).ShouldBeTrue();
+		SqlMapper.IsNullRecord(new Dictionary<string, object?>()).ShouldBeTrue();
+		SqlMapper.IsNullRecord(new Dictionary<string, object?> { ["Foo"] = null, ["Bar"] = null }).ShouldBeTrue();
 
 		// It should return `false` if at least one value of the specified dictionary is not `null`.
-		SqlMapper.IsNullObject(new Dictionary<string, object?> { ["Foo"] = "Bar", ["Baz"] = null }).ShouldBeFalse();
+		SqlMapper.IsNullRecord(new Dictionary<string, object?> { ["Foo"] = "Bar", ["Baz"] = null }).ShouldBeFalse();
 	}
 
 	[TestMethod]

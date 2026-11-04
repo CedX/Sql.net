@@ -28,7 +28,7 @@ public class SqlMapper {
 	private SqlMapper() {}
 
 	/// <summary>
-	/// Converts the specified object into an equivalent value of the specified type.
+	/// Converts the specified object into an equivalent value of the specified column type.
 	/// </summary>
 	/// <param name="value">The object to convert.</param>
 	/// <param name="column">The column providing the type of object to return.</param>
@@ -42,23 +42,11 @@ public class SqlMapper {
 	/// <param name="conversionType">The type of object to return.</param>
 	/// <param name="isNullable">Value indicating whether the specified conversion type is nullable.</param>
 	/// <returns>The value of the given type corresponding to the specified object.</returns>
-	public object? ChangeType(object? value, Type conversionType, bool isNullable = false) {
-		var nullableType = Nullable.GetUnderlyingType(conversionType);
-		var targetType = nullableType ?? conversionType;
-
-		if (value is not null && !Convert.IsDBNull(value)) return true switch {
-			true when targetType.IsEnum && value is string stringValue => Enum.Parse(targetType, stringValue, ignoreCase: true),
-			true when targetType.IsEnum => Enum.ToObject(targetType, Convert.ChangeType(value, Enum.GetUnderlyingType(targetType), CultureInfo.InvariantCulture)),
-			_ => targetType.IsInstanceOfType(value) ? value : Convert.ChangeType(value, targetType, CultureInfo.InvariantCulture),
-		};
-
-		return true switch {
-			true when nullableType is not null => null,
-			true when targetType.IsValueType => RuntimeHelpers.GetUninitializedObject(targetType),
-			true when targetType == typeof(string) => isNullable ? null : string.Empty,
-			_ => isNullable ? null : Activator.CreateInstance(targetType)
-		};
-	}
+	public object? ChangeType(object? value, Type conversionType, bool isNullable = false) => value switch {
+		null => GetNullEquivalent(conversionType, isNullable),
+		var nullValue when Convert.IsDBNull(nullValue) => GetNullEquivalent(conversionType, isNullable),
+		var nonNullValue => GetNonNullEquivalent(nonNullValue, conversionType)
+	};
 
 	/// <summary>
 	/// Creates a new dyamic object from the specified data record.
@@ -98,7 +86,7 @@ public class SqlMapper {
 		var records = SplitOn(record, splitOn);
 		var objects = new List<object?>(records.Count);
 		for (var index = 0; index < types.Length; index++)
-			objects.Add(records.Count <= index || IsNullObject(records[index]) ? null : CreateInstance(types[index], records[index]));
+			objects.Add(records.Count <= index || IsNullRecord(records[index]) ? null : CreateInstance(types[index], records[index]));
 
 		return objects.Count switch {
 			2 => (objects[0], objects[1]),
@@ -121,8 +109,8 @@ public class SqlMapper {
 	public (TItem1, TItem2) CreateInstance<TItem1, TItem2>(IDataRecord record, string splitOn = "Id") where TItem1: new() where TItem2: new() {
 		var records = SplitOn(record, splitOn);
 		return (
-			IsNullObject(records[0]) ? default! : CreateInstance<TItem1>(records[0]),
-			records.Count <= 1 || IsNullObject(records[1]) ? default! : CreateInstance<TItem2>(records[1])
+			IsNullRecord(records[0]) ? default! : CreateInstance<TItem1>(records[0]),
+			records.Count <= 1 || IsNullRecord(records[1]) ? default! : CreateInstance<TItem2>(records[1])
 		);
 	}
 
@@ -139,9 +127,9 @@ public class SqlMapper {
 		var (firstField, secondField) = splitOn ?? ("Id", "Id");
 		var records = SplitOn(record, firstField, secondField);
 		return (
-			IsNullObject(records[0]) ? default! : CreateInstance<TItem1>(records[0]),
-			records.Count <= 1 || IsNullObject(records[1]) ? default! : CreateInstance<TItem2>(records[1]),
-			records.Count <= 2 || IsNullObject(records[2]) ? default! : CreateInstance<TItem3>(records[2])
+			IsNullRecord(records[0]) ? default! : CreateInstance<TItem1>(records[0]),
+			records.Count <= 1 || IsNullRecord(records[1]) ? default! : CreateInstance<TItem2>(records[1]),
+			records.Count <= 2 || IsNullRecord(records[2]) ? default! : CreateInstance<TItem3>(records[2])
 		);
 	}
 
@@ -159,10 +147,10 @@ public class SqlMapper {
 		var (firstField, secondField, thirdField) = splitOn ?? ("Id", "Id", "Id");
 		var records = SplitOn(record, firstField, secondField, thirdField);
 		return (
-			IsNullObject(records[0]) ? default! : CreateInstance<TItem1>(records[0]),
-			records.Count <= 1 || IsNullObject(records[1]) ? default! : CreateInstance<TItem2>(records[1]),
-			records.Count <= 2 || IsNullObject(records[2]) ? default! : CreateInstance<TItem3>(records[2]),
-			records.Count <= 3 || IsNullObject(records[3]) ? default! : CreateInstance<TItem4>(records[3])
+			IsNullRecord(records[0]) ? default! : CreateInstance<TItem1>(records[0]),
+			records.Count <= 1 || IsNullRecord(records[1]) ? default! : CreateInstance<TItem2>(records[1]),
+			records.Count <= 2 || IsNullRecord(records[2]) ? default! : CreateInstance<TItem3>(records[2]),
+			records.Count <= 3 || IsNullRecord(records[3]) ? default! : CreateInstance<TItem4>(records[3])
 		);
 	}
 
@@ -347,7 +335,7 @@ public class SqlMapper {
 	/// </summary>
 	/// <param name="dictionary">The dictionary to inspect.</param>
 	/// <returns><see langword="true"/> if all values of the specified dictionary are <see langword="null"/>, otherwise <see langword="false"/>.</returns>
-	internal static bool IsNullObject(Dictionary<string, object?> dictionary) => dictionary.Values.All(value => value is null);
+	internal static bool IsNullRecord(IDictionary<string, object?> dictionary) => dictionary.Values.All(value => value is null);
 
 	/// <summary>
 	/// Splits the specified data record according to the specified fields.
@@ -394,5 +382,37 @@ public class SqlMapper {
 
 		records.Add(properties);
 		return records;
+	}
+
+	/// <summary>
+	/// Gets the equivalent value of the specified type corresponding to a given non-`NULL` value.
+	/// </summary>
+	/// <param name="value">The non-null object to convert.</param>
+	/// <param name="conversionType">The type of object to return.</param>
+	/// <returns>The equivalent value of the specified type corresponding to a given non-`NULL` value.</returns>
+	private static object GetNonNullEquivalent(object value, Type conversionType) {
+		var targetType = Nullable.GetUnderlyingType(conversionType) ?? conversionType;
+
+		if (targetType.IsEnum) return value is string stringValue
+			? Enum.Parse(targetType, stringValue, ignoreCase: true)
+			: Enum.ToObject(targetType, Convert.ChangeType(value, Enum.GetUnderlyingType(targetType), CultureInfo.InvariantCulture));
+
+		return targetType.IsInstanceOfType(value) ? value : Convert.ChangeType(value, targetType, CultureInfo.InvariantCulture);
+	}
+
+	/// <summary>
+	/// Gets the equivalent value of the specified type corresponding to a `NULL` value.
+	/// </summary>
+	/// <param name="conversionType">The type of object to return.</param>
+	/// <param name="isNullable">Value indicating whether the specified conversion type is nullable.</param>
+	/// <returns>The equivalent value of the specified type corresponding to a `NULL` value.</returns>
+	private static object? GetNullEquivalent(Type conversionType, bool isNullable = false) {
+		var nullableType = Nullable.GetUnderlyingType(conversionType);
+		var targetType = nullableType ?? conversionType;
+
+		if (nullableType is not null) return null;
+		if (targetType.IsValueType) return RuntimeHelpers.GetUninitializedObject(targetType);
+		if (targetType == typeof(string)) return isNullable ? null : "";
+		return isNullable ? null : Activator.CreateInstance(targetType);
 	}
 }
