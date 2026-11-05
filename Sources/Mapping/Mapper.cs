@@ -33,7 +33,8 @@ public class Mapper {
 	/// <param name="value">The object to convert.</param>
 	/// <param name="column">The column providing the type of object to return.</param>
 	/// <returns>The value of the given type corresponding to the specified object.</returns>
-	public object? ChangeType(object? value, ColumnInfo column) => ChangeType(value, column.PropertyType, column.IsNullable);
+	public object? ChangeType(object? value, ColumnInfo column) =>
+		ChangeType(value, column.PropertyType, column.IsNullable);
 
 	/// <summary>
 	/// Converts the specified object into an equivalent value of the specified type.
@@ -101,7 +102,8 @@ public class Mapper {
 	/// <param name="type">The object type.</param>
 	/// <param name="record">A data record providing the properties to be set on the created object.</param>
 	/// <returns>The newly created object.</returns>
-	public object CreateInstance(Type type, IDataRecord record) => CreateInstance(type, SplitOn(record).First());
+	public object CreateInstance(Type type, IDataRecord record) =>
+		CreateInstance(type, SplitOn(record).First());
 
 	/// <summary>
 	/// Creates a new object of the given type from the specified data record.
@@ -109,14 +111,16 @@ public class Mapper {
 	/// <typeparam name="T">The object type.</typeparam>
 	/// <param name="record">A data record providing the properties to be set on the created object.</param>
 	/// <returns>The newly created object.</returns>
-	public T CreateInstance<T>(IDataRecord record) => CreateInstance<T>(SplitOn(record).First());
+	public T CreateInstance<T>(IDataRecord record) =>
+		CreateInstance<T>(SplitOn(record).First());
 
 	/// <summary>
 	/// Creates a new dyamic object from the specified data record.
 	/// </summary>
 	/// <param name="record">A data record providing the properties to be set on the created object.</param>
 	/// <returns>The newly created object.</returns>
-	public ExpandoObject CreateInstance(IDataRecord record) => CreateInstance<ExpandoObject>(SplitOn(record).First());
+	public ExpandoObject CreateInstance(IDataRecord record) =>
+		CreateInstance<ExpandoObject>(SplitOn(record).First());
 
 	/// <summary>
 	/// Creates a new object of a given type from the specified hash table.
@@ -234,11 +238,15 @@ public class Mapper {
 	}
 
 	/// <summary>
-	/// Creates new dynamic objects from the specified data reader.
+	/// Creates new objects of the given type from the specified data reader.
 	/// </summary>
+	/// <param name="type">The object type.</param>
 	/// <param name="reader">A data reader providing the properties to be set on the created objects.</param>
 	/// <returns>An enumerable of newly created objects.</returns>
-	public IEnumerable<ExpandoObject> CreateInstances(IDataReader reader) => CreateInstances<ExpandoObject>(reader);
+	public IEnumerable<object> CreateInstances(Type type, IDataReader reader) {
+		using var record = reader;
+		while (record.Read()) yield return CreateInstance(type, record);
+	}
 
 	/// <summary>
 	/// Creates new objects of the given type from the specified data reader.
@@ -247,20 +255,17 @@ public class Mapper {
 	/// <param name="reader">A data reader providing the properties to be set on the created objects.</param>
 	/// <returns>An enumerable of newly created objects.</returns>
 	public IEnumerable<T> CreateInstances<T>(IDataReader reader) {
-		while (reader.Read()) yield return CreateInstance<T>(reader);
-		reader.Close();
+		using var record = reader;
+		while (record.Read()) yield return CreateInstance<T>(record);
 	}
 
 	/// <summary>
-	/// Creates new objects of the given type from the specified data reader.
+	/// Creates new dynamic objects from the specified data reader.
 	/// </summary>
-	/// <param name="type">The object type.</param>
 	/// <param name="reader">A data reader providing the properties to be set on the created objects.</param>
 	/// <returns>An enumerable of newly created objects.</returns>
-	public IEnumerable<object> CreateInstances(Type type, IDataReader reader) {
-		while (reader.Read()) yield return CreateInstance(type, reader);
-		reader.Close();
-	}
+	public IEnumerable<ExpandoObject> CreateInstances(IDataReader reader) =>
+		CreateInstances<ExpandoObject>(reader);
 
 	/// <summary>
 	/// Creates new object tuples of the given types from the specified data reader.
@@ -270,8 +275,8 @@ public class Mapper {
 	/// <param name="splitOn">The fields from which to split and read the next objects.</param>
 	/// <returns>An enumerable of newly created object tuples.</returns>
 	public IEnumerable<ITuple> CreateInstances(Type[] types, IDataReader reader, params string[] splitOn) {
-		while (reader.Read()) yield return CreateInstance(types, reader, splitOn);
-		reader.Close();
+		using var record = reader;
+		while (record.Read()) yield return CreateInstance(types, record, splitOn);
 	}
 
 	/// <summary>
@@ -283,8 +288,8 @@ public class Mapper {
 	/// <param name="splitOn">The field from which to split and read the next object.</param>
 	/// <returns>An enumerable of newly created object pairs.</returns>
 	public IEnumerable<(TItem1, TItem2)> CreateInstances<TItem1, TItem2>(IDataReader reader, string splitOn = "Id") {
-		while (reader.Read()) yield return CreateInstance<TItem1, TItem2>(reader, splitOn);
-		reader.Close();
+		using var record = reader;
+		while (record.Read()) yield return CreateInstance<TItem1, TItem2>(record, splitOn);
 	}
 
 	/// <summary>
@@ -297,8 +302,8 @@ public class Mapper {
 	/// <param name="splitOn">The fields from which to split and read the next objects.</param>
 	/// <returns>An enumerable of newly created object tuples.</returns>
 	public IEnumerable<(TItem1, TItem2, TItem3)> CreateInstances<TItem1, TItem2, TItem3>(IDataReader reader, (string, string)? splitOn = null) {
-		while (reader.Read()) yield return CreateInstance<TItem1, TItem2, TItem3>(reader, splitOn);
-		reader.Close();
+		using var record = reader;
+		while (record.Read()) yield return CreateInstance<TItem1, TItem2, TItem3>(record, splitOn);
 	}
 
 	/// <summary>
@@ -312,8 +317,8 @@ public class Mapper {
 	/// <param name="splitOn">The fields from which to split and read the next objects.</param>
 	/// <returns>An enumerable of newly created object tuples.</returns>
 	public IEnumerable<(TItem1, TItem2, TItem3, TItem4)> CreateInstances<TItem1, TItem2, TItem3, TItem4>(IDataReader reader, (string, string, string)? splitOn = null) {
-		while (reader.Read()) yield return CreateInstance<TItem1, TItem2, TItem3, TItem4>(reader, splitOn);
-		reader.Close();
+		using var record = reader;
+		while (record.Read()) yield return CreateInstance<TItem1, TItem2, TItem3, TItem4>(record, splitOn);
 	}
 
 	/// <summary>
