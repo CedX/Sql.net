@@ -1,9 +1,20 @@
 namespace Belin.Sql;
 
+using System.Data.Common;
+
 /// <summary>
-/// Tests the features of the <see cref="ConnectionExtensions"/> class.
+/// Tests the features of the <see cref="QueryFirstExtensions"/> class.
 /// </summary>
-public partial class ConnectionExtensionsTests {
+/// <param name="testContext">The test context.</param>
+[TestClass]
+public class QueryFirstExtensionsTests(TestContext testContext) {
+
+	/// <summary>
+	/// The connection to the data source.
+	/// </summary>
+	private DbConnection connection = null!;
+	[TestInitialize] public void Initialize() => connection = Connection.Open();
+	[TestCleanup] public void Cleanup() => connection.Dispose();
 
 	[TestMethod]
 	public void QueryFirst() {
