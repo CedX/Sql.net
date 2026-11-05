@@ -17,7 +17,7 @@ public partial class ConnectionExtensionsTests {
 
 		sauron.LastName = "The big bad guy";
 		sauron.Gender = CharacterGender.Istari;
-		ConnectionExtensions.Update(connection, sauron).ShouldBe(1);
+		ObjectUpdateExtensions.Update(connection, sauron).ShouldBe(1); // SQLite already defines an `Update` method.
 
 		sauron = connection.QuerySingle<Character>(sql);
 		sauron.FullName.ShouldBe("Sauron The big bad guy");
@@ -32,7 +32,7 @@ public partial class ConnectionExtensionsTests {
 
 		saruman.LastName = "The traitor";
 		saruman.Gender = CharacterGender.DarkLord;
-		ConnectionExtensions.Update(connection, saruman, ["gender"]).ShouldBe(1);
+		ObjectUpdateExtensions.Update(connection, saruman, ["gender"]).ShouldBe(1); // SQLite already defines an `Update` method.
 
 		saruman = connection.QuerySingle<Character>(sql);
 		saruman.FullName.ShouldBe("Saruman");

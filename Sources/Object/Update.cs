@@ -6,7 +6,7 @@ using System.Data.Common;
 /// <summary>
 /// Provides extension members for database connections.
 /// </summary>
-public static partial class ConnectionExtensions {
+public static class ObjectUpdateExtensions {
 
 	extension(IDbConnection connection) {
 		/// <summary>

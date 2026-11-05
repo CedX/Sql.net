@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 /// <summary>
 /// Provides extension members for database connections.
 /// </summary>
-public static partial class ConnectionExtensions {
+public static class QueryExtensions {
 
 	extension(IDbConnection connection) {
 		/// <summary>
