@@ -39,7 +39,7 @@ public static partial class ConnectionExtensions {
 		/// <param name="command">The command to be executed.</param>
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The sequence of objects whose properties correspond to the columns.</returns>
-		public List<T> Query<T>(Command command, ParameterCollection? parameters = null) where T: new() =>
+		public List<T> Query<T>(Command command, ParameterCollection? parameters = null) =>
 			[.. connection.Query(typeof(T), command, parameters).Cast<T>()];
 
 		/// <summary>
@@ -79,7 +79,7 @@ public static partial class ConnectionExtensions {
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <param name="cancellationToken">The token to cancel the operation.</param>
 		/// <returns>The sequence of objects whose properties correspond to the columns.</returns>
-		public async Task<List<T>> QueryAsync<T>(Command command, ParameterCollection? parameters = null, CancellationToken cancellationToken = default) where T: new() {
+		public async Task<List<T>> QueryAsync<T>(Command command, ParameterCollection? parameters = null, CancellationToken cancellationToken = default) {
 			if (connection.State == ConnectionState.Closed) await ((DbConnection) connection).OpenAsync(cancellationToken);
 			using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
 			await using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
@@ -95,7 +95,7 @@ public static partial class ConnectionExtensions {
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <param name="splitOn">The field from which to split and read the next object.</param>
 		/// <returns>The sequence of object pairs whose properties correspond to the columns.</returns>
-		public List<(TItem1, TItem2)> Query<TItem1, TItem2>(Command command, ParameterCollection? parameters = null, string splitOn = "Id") where TItem1: new() where TItem2: new() {
+		public List<(TItem1, TItem2)> Query<TItem1, TItem2>(Command command, ParameterCollection? parameters = null, string splitOn = "Id") {
 			if (connection.State == ConnectionState.Closed) connection.Open();
 			using var dbCommand = command.ToDbCommand(connection, parameters);
 			using var reader = dbCommand.ExecuteReader();
@@ -112,7 +112,7 @@ public static partial class ConnectionExtensions {
 		/// <param name="splitOn">The field from which to split and read the next object.</param>
 		/// <param name="cancellationToken">The token to cancel the operation.</param>
 		/// <returns>The sequence of object pairs whose properties correspond to the columns.</returns>
-		public async Task<List<(TItem1, TItem2)>> QueryAsync<TItem1, TItem2>(Command command, ParameterCollection? parameters = null, string splitOn = "Id", CancellationToken cancellationToken = default) where TItem1: new() where TItem2: new() {
+		public async Task<List<(TItem1, TItem2)>> QueryAsync<TItem1, TItem2>(Command command, ParameterCollection? parameters = null, string splitOn = "Id", CancellationToken cancellationToken = default) {
 			if (connection.State == ConnectionState.Closed) await ((DbConnection) connection).OpenAsync(cancellationToken);
 			using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
 			await using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
@@ -129,7 +129,7 @@ public static partial class ConnectionExtensions {
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <param name="splitOn">The fields from which to split and read the next objects.</param>
 		/// <returns>The sequence of object tuples whose properties correspond to the columns.</returns>
-		public List<(TItem1, TItem2, TItem3)> Query<TItem1, TItem2, TItem3>(Command command, ParameterCollection? parameters = null, (string, string)? splitOn = null) where TItem1: new() where TItem2: new() where TItem3: new() {
+		public List<(TItem1, TItem2, TItem3)> Query<TItem1, TItem2, TItem3>(Command command, ParameterCollection? parameters = null, (string, string)? splitOn = null) {
 			if (connection.State == ConnectionState.Closed) connection.Open();
 			using var dbCommand = command.ToDbCommand(connection, parameters);
 			using var reader = dbCommand.ExecuteReader();
@@ -147,7 +147,7 @@ public static partial class ConnectionExtensions {
 		/// <param name="splitOn">The fields from which to split and read the next objects.</param>
 		/// <param name="cancellationToken">The token to cancel the operation.</param>
 		/// <returns>The sequence of object tuples whose properties correspond to the columns.</returns>
-		public async Task<List<(TItem1, TItem2, TItem3)>> QueryAsync<TItem1, TItem2, TItem3>(Command command, ParameterCollection? parameters = null, (string, string)? splitOn = null, CancellationToken cancellationToken = default) where TItem1: new() where TItem2: new() where TItem3: new() {
+		public async Task<List<(TItem1, TItem2, TItem3)>> QueryAsync<TItem1, TItem2, TItem3>(Command command, ParameterCollection? parameters = null, (string, string)? splitOn = null, CancellationToken cancellationToken = default) {
 			if (connection.State == ConnectionState.Closed) await ((DbConnection) connection).OpenAsync(cancellationToken);
 			using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
 			await using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
@@ -165,7 +165,7 @@ public static partial class ConnectionExtensions {
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <param name="splitOn">The fields from which to split and read the next objects.</param>
 		/// <returns>The sequence of object tuples whose properties correspond to the columns.</returns>
-		public List<(TItem1, TItem2, TItem3, TItem4)> Query<TItem1, TItem2, TItem3, TItem4>(Command command, ParameterCollection? parameters = null, (string, string, string)? splitOn = null) where TItem1: new() where TItem2: new() where TItem3: new() where TItem4: new() {
+		public List<(TItem1, TItem2, TItem3, TItem4)> Query<TItem1, TItem2, TItem3, TItem4>(Command command, ParameterCollection? parameters = null, (string, string, string)? splitOn = null) {
 			if (connection.State == ConnectionState.Closed) connection.Open();
 			using var dbCommand = command.ToDbCommand(connection, parameters);
 			using var reader = dbCommand.ExecuteReader();
@@ -184,7 +184,7 @@ public static partial class ConnectionExtensions {
 		/// <param name="splitOn">The fields from which to split and read the next objects.</param>
 		/// <param name="cancellationToken">The token to cancel the operation.</param>
 		/// <returns>The sequence of object tuples whose properties correspond to the columns.</returns>
-		public async Task<List<(TItem1, TItem2, TItem3, TItem4)>> QueryAsync<TItem1, TItem2, TItem3, TItem4>(Command command, ParameterCollection? parameters = null, (string, string, string)? splitOn = null, CancellationToken cancellationToken = default) where TItem1: new() where TItem2: new() where TItem3: new() where TItem4: new() {
+		public async Task<List<(TItem1, TItem2, TItem3, TItem4)>> QueryAsync<TItem1, TItem2, TItem3, TItem4>(Command command, ParameterCollection? parameters = null, (string, string, string)? splitOn = null, CancellationToken cancellationToken = default) {
 			if (connection.State == ConnectionState.Closed) await ((DbConnection) connection).OpenAsync(cancellationToken);
 			using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
 			await using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);

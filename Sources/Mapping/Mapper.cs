@@ -49,19 +49,51 @@ public class Mapper {
 	};
 
 	/// <summary>
-	/// Creates a new dyamic object from the specified data record.
+	/// Creates a new object of a given type from the specified dictionary.
 	/// </summary>
-	/// <param name="record">A data record providing the properties to be set on the created object.</param>
+	/// <param name="type">The object type.</param>
+	/// <param name="record">A dictionary providing the properties to be set on the created object.</param>
 	/// <returns>The newly created object.</returns>
-	public ExpandoObject CreateInstance(IDataRecord record) => CreateInstance<ExpandoObject>(record);
+	public object CreateInstance(Type type, IDictionary<string, object?> record) {
+		if (type == typeof(ExpandoObject)) {
+			var expandoObject = (IDictionary<string, object?>) new ExpandoObject();
+			foreach (var (key, value) in record) expandoObject.Add(key, value);
+			return expandoObject;
+		}
+
+		if (PowerShell.PSObject is not null && PowerShell.PSNoteProperty is not null && type == PowerShell.PSObject) {
+			var psCustomObject = Activator.CreateInstance(PowerShell.PSObject)!;
+			dynamic psProperties = PowerShell.PSObject.GetProperty("Properties")!.GetValue(psCustomObject)!;
+			foreach (var (key, value) in record) psProperties.Add((dynamic) Activator.CreateInstance(PowerShell.PSNoteProperty, [key, value])!);
+			return psCustomObject;
+		}
+
+		var instance = Activator.CreateInstance(type)!;
+		var table = GetTable(type);
+		foreach (var name in record.Keys.Where(table.Columns.ContainsKey)) {
+			var column = table.Columns[name];
+			if (column.CanWrite) column.SetValue(instance, ChangeType(record[name], column));
+		}
+
+		return instance;
+	}
 
 	/// <summary>
-	/// Creates a new object of the given type from the specified data record.
+	/// Creates a new object of a given type from the specified dictionary.
 	/// </summary>
 	/// <typeparam name="T">The object type.</typeparam>
-	/// <param name="record">A data record providing the properties to be set on the created object.</param>
+	/// <param name="record">A dictionary providing the properties to be set on the created object.</param>
 	/// <returns>The newly created object.</returns>
-	public T CreateInstance<T>(IDataRecord record) where T: new() => CreateInstance<T>(SplitOn(record).First());
+	public T CreateInstance<T>(IDictionary<string, object?> record) =>
+		(T) CreateInstance(typeof(T), record);
+
+	/// <summary>
+	/// Creates a new dynamic object from the specified dictionary.
+	/// </summary>
+	/// <param name="record">A dictionary providing the properties to be set on the created object.</param>
+	/// <returns>The newly created object.</returns>
+	public ExpandoObject CreateInstance(IDictionary<string, object?> record) =>
+		CreateInstance<ExpandoObject>(record);
 
 	/// <summary>
 	/// Creates a new object of the given type from the specified data record.
@@ -70,6 +102,53 @@ public class Mapper {
 	/// <param name="record">A data record providing the properties to be set on the created object.</param>
 	/// <returns>The newly created object.</returns>
 	public object CreateInstance(Type type, IDataRecord record) => CreateInstance(type, SplitOn(record).First());
+
+	/// <summary>
+	/// Creates a new object of the given type from the specified data record.
+	/// </summary>
+	/// <typeparam name="T">The object type.</typeparam>
+	/// <param name="record">A data record providing the properties to be set on the created object.</param>
+	/// <returns>The newly created object.</returns>
+	public T CreateInstance<T>(IDataRecord record) => CreateInstance<T>(SplitOn(record).First());
+
+	/// <summary>
+	/// Creates a new dyamic object from the specified data record.
+	/// </summary>
+	/// <param name="record">A data record providing the properties to be set on the created object.</param>
+	/// <returns>The newly created object.</returns>
+	public ExpandoObject CreateInstance(IDataRecord record) => CreateInstance<ExpandoObject>(SplitOn(record).First());
+
+	/// <summary>
+	/// Creates a new object of a given type from the specified hash table.
+	/// </summary>
+	/// <param name="type">The object type.</param>
+	/// <param name="record">A hash table providing the properties to be set on the created object.</param>
+	/// <returns>The newly created object.</returns>
+	public object CreateInstance(Type type, Hashtable record) => CreateInstance(type, record.Cast<DictionaryEntry>().ToDictionary(
+		entry => Convert.ToString(entry.Key, CultureInfo.InvariantCulture) ?? "",
+		entry => entry.Value
+	));
+
+	/// <summary>
+	/// Creates a new object of a given type from the specified hash table.
+	/// </summary>
+	/// <typeparam name="T">The object type.</typeparam>
+	/// <param name="record">A hash table providing the properties to be set on the created object.</param>
+	/// <returns>The newly created object.</returns>
+	public T CreateInstance<T>(Hashtable record) => CreateInstance<T>(
+		record.Cast<DictionaryEntry>().ToDictionary(entry => Convert.ToString(entry.Key, CultureInfo.InvariantCulture) ?? "",
+		entry => entry.Value
+	));
+
+	/// <summary>
+	/// Creates a new dynamic object from the specified hash table.
+	/// </summary>
+	/// <param name="record">A hash table providing the properties to be set on the created object.</param>
+	/// <returns>The newly created object.</returns>
+	public ExpandoObject CreateInstance(Hashtable record) => CreateInstance<ExpandoObject>(
+		record.Cast<DictionaryEntry>().ToDictionary(entry => Convert.ToString(entry.Key, CultureInfo.InvariantCulture) ?? "",
+		entry => entry.Value
+	));
 
 	/// <summary>
 	/// Creates a new object tuple of the given types from the specified data record.
@@ -106,7 +185,7 @@ public class Mapper {
 	/// <param name="record">A data record providing the properties to be set on the created objects.</param>
 	/// <param name="splitOn">The field from which to split and read the next object.</param>
 	/// <returns>The newly created object pair.</returns>
-	public (TItem1, TItem2) CreateInstance<TItem1, TItem2>(IDataRecord record, string splitOn = "Id") where TItem1: new() where TItem2: new() {
+	public (TItem1, TItem2) CreateInstance<TItem1, TItem2>(IDataRecord record, string splitOn = "Id") {
 		var records = SplitOn(record, splitOn);
 		return (
 			IsNullRecord(records[0]) ? default! : CreateInstance<TItem1>(records[0]),
@@ -123,7 +202,7 @@ public class Mapper {
 	/// <param name="record">A data record providing the properties to be set on the created objects.</param>
 	/// <param name="splitOn">The fields from which to split and read the next objects.</param>
 	/// <returns>The newly created object tuple.</returns>
-	public (TItem1, TItem2, TItem3) CreateInstance<TItem1, TItem2, TItem3>(IDataRecord record, (string, string)? splitOn = null) where TItem1: new() where TItem2: new() where TItem3: new() {
+	public (TItem1, TItem2, TItem3) CreateInstance<TItem1, TItem2, TItem3>(IDataRecord record, (string, string)? splitOn = null) {
 		var (firstField, secondField) = splitOn ?? ("Id", "Id");
 		var records = SplitOn(record, firstField, secondField);
 		return (
@@ -143,7 +222,7 @@ public class Mapper {
 	/// <param name="record">A data record providing the properties to be set on the created objects.</param>
 	/// <param name="splitOn">The fields from which to split and read the next objects.</param>
 	/// <returns>The newly created object tuple.</returns>
-	public (TItem1, TItem2, TItem3, TItem4) CreateInstance<TItem1, TItem2, TItem3, TItem4>(IDataRecord record, (string, string, string)? splitOn = null) where TItem1: new() where TItem2: new() where TItem3: new() where TItem4: new() {
+	public (TItem1, TItem2, TItem3, TItem4) CreateInstance<TItem1, TItem2, TItem3, TItem4>(IDataRecord record, (string, string, string)? splitOn = null) {
 		var (firstField, secondField, thirdField) = splitOn ?? ("Id", "Id", "Id");
 		var records = SplitOn(record, firstField, secondField, thirdField);
 		return (
@@ -152,85 +231,6 @@ public class Mapper {
 			records.Count <= 2 || IsNullRecord(records[2]) ? default! : CreateInstance<TItem3>(records[2]),
 			records.Count <= 3 || IsNullRecord(records[3]) ? default! : CreateInstance<TItem4>(records[3])
 		);
-	}
-
-	/// <summary>
-	/// Creates a new dynamic object from the specified hash table.
-	/// </summary>
-	/// <param name="record">A hash table providing the properties to be set on the created object.</param>
-	/// <returns>The newly created object.</returns>
-	public ExpandoObject CreateInstance(Hashtable record) => CreateInstance<ExpandoObject>(
-		record.Cast<DictionaryEntry>().ToDictionary(entry => Convert.ToString(entry.Key, CultureInfo.InvariantCulture) ?? "",
-		entry => entry.Value
-	));
-
-	/// <summary>
-	/// Creates a new dynamic object from the specified dictionary.
-	/// </summary>
-	/// <param name="record">A dictionary providing the properties to be set on the created object.</param>
-	/// <returns>The newly created object.</returns>
-	public ExpandoObject CreateInstance(IDictionary<string, object?> record) =>
-		CreateInstance<ExpandoObject>(record);
-
-	/// <summary>
-	/// Creates a new object of a given type from the specified hash table.
-	/// </summary>
-	/// <typeparam name="T">The object type.</typeparam>
-	/// <param name="record">A hash table providing the properties to be set on the created object.</param>
-	/// <returns>The newly created object.</returns>
-	public T CreateInstance<T>(Hashtable record) where T: new() => CreateInstance<T>(
-		record.Cast<DictionaryEntry>().ToDictionary(entry => Convert.ToString(entry.Key, CultureInfo.InvariantCulture) ?? "",
-		entry => entry.Value
-	));
-
-	/// <summary>
-	/// Creates a new object of a given type from the specified dictionary.
-	/// </summary>
-	/// <typeparam name="T">The object type.</typeparam>
-	/// <param name="record">A dictionary providing the properties to be set on the created object.</param>
-	/// <returns>The newly created object.</returns>
-	public T CreateInstance<T>(IDictionary<string, object?> record) where T: new() =>
-		(T) CreateInstance(typeof(T), record);
-
-	/// <summary>
-	/// Creates a new object of a given type from the specified hash table.
-	/// </summary>
-	/// <param name="type">The object type.</param>
-	/// <param name="record">A hash table providing the properties to be set on the created object.</param>
-	/// <returns>The newly created object.</returns>
-	public object CreateInstance(Type type, Hashtable record) => CreateInstance(type, record.Cast<DictionaryEntry>().ToDictionary(
-		entry => Convert.ToString(entry.Key, CultureInfo.InvariantCulture) ?? "",
-		entry => entry.Value
-	));
-
-	/// <summary>
-	/// Creates a new object of a given type from the specified dictionary.
-	/// </summary>
-	/// <param name="type">The object type.</param>
-	/// <param name="record">A dictionary providing the properties to be set on the created object.</param>
-	/// <returns>The newly created object.</returns>
-	public object CreateInstance(Type type, IDictionary<string, object?> record) {
-		if (type == typeof(ExpandoObject)) {
-			var expandoObject = (IDictionary<string, object?>) new ExpandoObject();
-			foreach (var (key, value) in record) expandoObject.Add(key, value);
-			return expandoObject;
-		}
-
-		if (PowerShell.PSObject is not null && PowerShell.PSNoteProperty is not null && type == PowerShell.PSObject) {
-			var psCustomObject = Activator.CreateInstance(PowerShell.PSObject)!;
-			dynamic psProperties = PowerShell.PSObject.GetProperty("Properties")!.GetValue(psCustomObject)!;
-			foreach (var (key, value) in record) psProperties.Add((dynamic) Activator.CreateInstance(PowerShell.PSNoteProperty, [key, value])!);
-			return psCustomObject;
-		}
-
-		var instance = Activator.CreateInstance(type)!;
-		var table = GetTable(type);
-		foreach (var name in record.Keys.Where(table.Columns.ContainsKey)) {
-			var column = table.Columns[name];
-			if (column.CanWrite) column.SetValue(instance, ChangeType(record[name], column));
-		}
-
-		return instance;
 	}
 
 	/// <summary>
@@ -246,7 +246,7 @@ public class Mapper {
 	/// <typeparam name="T">The object type.</typeparam>
 	/// <param name="reader">A data reader providing the properties to be set on the created objects.</param>
 	/// <returns>An enumerable of newly created objects.</returns>
-	public IEnumerable<T> CreateInstances<T>(IDataReader reader) where T: new() {
+	public IEnumerable<T> CreateInstances<T>(IDataReader reader) {
 		while (reader.Read()) yield return CreateInstance<T>(reader);
 		reader.Close();
 	}
@@ -282,7 +282,7 @@ public class Mapper {
 	/// <param name="reader">A data reader providing the properties to be set on the created objects.</param>
 	/// <param name="splitOn">The field from which to split and read the next object.</param>
 	/// <returns>An enumerable of newly created object pairs.</returns>
-	public IEnumerable<(TItem1, TItem2)> CreateInstances<TItem1, TItem2>(IDataReader reader, string splitOn = "Id") where TItem1: new() where TItem2: new() {
+	public IEnumerable<(TItem1, TItem2)> CreateInstances<TItem1, TItem2>(IDataReader reader, string splitOn = "Id") {
 		while (reader.Read()) yield return CreateInstance<TItem1, TItem2>(reader, splitOn);
 		reader.Close();
 	}
@@ -296,7 +296,7 @@ public class Mapper {
 	/// <param name="reader">A data reader providing the properties to be set on the created objects.</param>
 	/// <param name="splitOn">The fields from which to split and read the next objects.</param>
 	/// <returns>An enumerable of newly created object tuples.</returns>
-	public IEnumerable<(TItem1, TItem2, TItem3)> CreateInstances<TItem1, TItem2, TItem3>(IDataReader reader, (string, string)? splitOn = null) where TItem1: new() where TItem2: new() where TItem3: new() {
+	public IEnumerable<(TItem1, TItem2, TItem3)> CreateInstances<TItem1, TItem2, TItem3>(IDataReader reader, (string, string)? splitOn = null) {
 		while (reader.Read()) yield return CreateInstance<TItem1, TItem2, TItem3>(reader, splitOn);
 		reader.Close();
 	}
@@ -311,7 +311,7 @@ public class Mapper {
 	/// <param name="reader">A data reader providing the properties to be set on the created objects.</param>
 	/// <param name="splitOn">The fields from which to split and read the next objects.</param>
 	/// <returns>An enumerable of newly created object tuples.</returns>
-	public IEnumerable<(TItem1, TItem2, TItem3, TItem4)> CreateInstances<TItem1, TItem2, TItem3, TItem4>(IDataReader reader, (string, string, string)? splitOn = null) where TItem1: new() where TItem2: new() where TItem3: new() where TItem4: new() {
+	public IEnumerable<(TItem1, TItem2, TItem3, TItem4)> CreateInstances<TItem1, TItem2, TItem3, TItem4>(IDataReader reader, (string, string, string)? splitOn = null) {
 		while (reader.Read()) yield return CreateInstance<TItem1, TItem2, TItem3, TItem4>(reader, splitOn);
 		reader.Close();
 	}
@@ -321,7 +321,7 @@ public class Mapper {
 	/// </summary>
 	/// <typeparam name="T">The type to inspect.</typeparam>
 	/// <returns>The table information associated with the specified type.</returns>
-	public TableInfo GetTable<T>() where T: new() => GetTable(typeof(T));
+	public TableInfo GetTable<T>() => GetTable(typeof(T));
 
 	/// <summary>
 	/// Gets the table information associated with the specified type.

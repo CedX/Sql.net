@@ -166,7 +166,7 @@ public class CommandBuilder {
 	/// </summary>
 	/// <typeparam name="T">The entity type.</typeparam>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
-	public (Command Command, ParameterCollection Parameters) GetCountAllCommand<T>() where T: new() =>
+	public (Command Command, ParameterCollection Parameters) GetCountAllCommand<T>() =>
 		GetCountAllCommand(typeof(T));
 
 	/// <summary>
@@ -204,7 +204,7 @@ public class CommandBuilder {
 	/// <typeparam name="T">The entity type.</typeparam>
 	/// <param name="truncate">Value indicating whether to truncate the underlying table.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
-	public (Command Command, ParameterCollection Parameters) GetDeleteAllCommand<T>(bool truncate = false) where T: new() =>
+	public (Command Command, ParameterCollection Parameters) GetDeleteAllCommand<T>(bool truncate = false) =>
 		GetDeleteAllCommand(typeof(T), truncate);
 
 	/// <summary>
@@ -225,7 +225,7 @@ public class CommandBuilder {
 	/// <param name="id">The value of the entity's primary key.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
-	public (Command Command, ParameterCollection Parameters) GetExistsCommand<T>(object id) where T: new() =>
+	public (Command Command, ParameterCollection Parameters) GetExistsCommand<T>(object id) =>
 		GetExistsCommand(typeof(T), id);
 
 	/// <summary>
@@ -257,7 +257,7 @@ public class CommandBuilder {
 	/// <param name="columns">The list of columns to select. By default, all columns.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
-	public (Command Command, ParameterCollection Parameters) GetFindCommand<T>(object id, params string[] columns) where T: new() =>
+	public (Command Command, ParameterCollection Parameters) GetFindCommand<T>(object id, params string[] columns) =>
 		GetFindCommand(typeof(T), id, columns);
 
 	/// <summary>
@@ -296,7 +296,7 @@ public class CommandBuilder {
 	/// <param name="columns">The list of columns to select. By default, all columns.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
-	public (Command Command, ParameterCollection Parameters) GetFindAllCommand<T>(params string[] columns) where T: new() =>
+	public (Command Command, ParameterCollection Parameters) GetFindAllCommand<T>(params string[] columns) =>
 		GetFindAllCommand<T>(new(), columns);
 
 	/// <summary>
@@ -307,7 +307,7 @@ public class CommandBuilder {
 	/// <param name="columns">The list of columns to select. By default, all columns.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
-	public (Command Command, ParameterCollection Parameters) GetFindAllCommand<T>(OrderHintCollection orderHints, params string[] columns) where T: new() =>
+	public (Command Command, ParameterCollection Parameters) GetFindAllCommand<T>(OrderHintCollection orderHints, params string[] columns) =>
 		GetFindAllCommand(typeof(T), orderHints, columns);
 
 	/// <summary>

@@ -47,7 +47,7 @@ public static partial class ConnectionExtensions {
 		/// <param name="timeout">The wait time, in seconds, before terminating the attempt to execute the command and generating an error.</param>
 		/// <param name="transaction">The transaction within which the command executes.</param>
 		/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
-		public void DeleteAll<T>(bool truncate = false, int timeout = 30, IDbTransaction? transaction = null, CommandBuilder? builder = null) where T: new() =>
+		public void DeleteAll<T>(bool truncate = false, int timeout = 30, IDbTransaction? transaction = null, CommandBuilder? builder = null) =>
 			connection.DeleteAll(typeof(T), truncate, timeout, transaction, builder);
 
 		/// <summary>
@@ -75,7 +75,7 @@ public static partial class ConnectionExtensions {
 		/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 		/// <param name="cancellationToken">The token to cancel the operation.</param>
 		/// <returns><see langword="true"/> if the specified entity has been deleted, otherwise <see langword="false"/>.</returns>
-		public async Task DeleteAllAsync<T>(bool truncate = false, int timeout = 30, IDbTransaction? transaction = null, CommandBuilder? builder = null, CancellationToken cancellationToken = default) where T: new() {
+		public async Task DeleteAllAsync<T>(bool truncate = false, int timeout = 30, IDbTransaction? transaction = null, CommandBuilder? builder = null, CancellationToken cancellationToken = default) {
 			var (command, parameters) = (builder ?? CommandBuilder.Create(connection)).GetDeleteAllCommand<T>(truncate);
 			command.Timeout = timeout;
 			command.Transaction = transaction;

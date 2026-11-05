@@ -41,7 +41,7 @@ public static partial class ConnectionExtensions {
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The single row.</returns>
 		/// <exception cref="InvalidOperationException">The result set is empty or contains more than one record.</exception>
-		public T QuerySingle<T>(Command command, ParameterCollection? parameters = null) where T: new() =>
+		public T QuerySingle<T>(Command command, ParameterCollection? parameters = null) =>
 			(T) connection.QuerySingle(typeof(T), command, parameters);
 
 		/// <summary>
@@ -76,7 +76,7 @@ public static partial class ConnectionExtensions {
 		/// <param name="cancellationToken">The token to cancel the operation.</param>
 		/// <returns>The single row.</returns>
 		/// <exception cref="InvalidOperationException">The result set is empty or contains more than one record.</exception>
-		public async Task<T> QuerySingleAsync<T>(Command command, ParameterCollection? parameters = null, CancellationToken cancellationToken = default) where T: new() {
+		public async Task<T> QuerySingleAsync<T>(Command command, ParameterCollection? parameters = null, CancellationToken cancellationToken = default) {
 			if (connection.State == ConnectionState.Closed) await ((DbConnection) connection).OpenAsync(cancellationToken);
 			using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
 			await using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
@@ -119,7 +119,7 @@ public static partial class ConnectionExtensions {
 		/// <param name="command">The command to be executed.</param>
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The single row, or <see langword="null"/> if not found.</returns>
-		public T? QuerySingleOrDefault<T>(Command command, ParameterCollection? parameters = null) where T: new() =>
+		public T? QuerySingleOrDefault<T>(Command command, ParameterCollection? parameters = null) =>
 			(T?) connection.QuerySingleOrDefault(typeof(T), command, parameters);
 
 		/// <summary>
@@ -153,7 +153,7 @@ public static partial class ConnectionExtensions {
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <param name="cancellationToken">The token to cancel the operation.</param>
 		/// <returns>The single row, or <see langword="null"/> if not found.</returns>
-		public async Task<T?> QuerySingleOrDefaultAsync<T>(Command command, ParameterCollection? parameters = null, CancellationToken cancellationToken = default) where T: new() {
+		public async Task<T?> QuerySingleOrDefaultAsync<T>(Command command, ParameterCollection? parameters = null, CancellationToken cancellationToken = default) {
 			if (connection.State == ConnectionState.Closed) await ((DbConnection) connection).OpenAsync(cancellationToken);
 			using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
 			await using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);

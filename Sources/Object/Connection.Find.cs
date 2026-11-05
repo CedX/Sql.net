@@ -18,7 +18,7 @@ public static partial class ConnectionExtensions {
 		/// <param name="transaction">The transaction within which the command executes.</param>
 		/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 		/// <returns>The entity with the specified primary key, or <see langword="null"/> if not found.</returns>
-		public T? Find<T>(object id, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, CommandBuilder? builder = null) where T: new() =>
+		public T? Find<T>(object id, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, CommandBuilder? builder = null) =>
 			(T?) connection.Find(typeof(T), id, columns, timeout, transaction, builder);
 
 		/// <summary>
@@ -49,7 +49,7 @@ public static partial class ConnectionExtensions {
 		/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 		/// <param name="cancellationToken">The token to cancel the operation.</param>
 		/// <returns>The entity with the specified primary key, or <see langword="null"/> if not found.</returns>
-		public async Task<T?> FindAsync<T>(object id, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, CommandBuilder? builder = null, CancellationToken cancellationToken = default) where T: new() {
+		public async Task<T?> FindAsync<T>(object id, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, CommandBuilder? builder = null, CancellationToken cancellationToken = default) {
 			var (command, parameters) = (builder ?? CommandBuilder.Create(connection)).GetFindCommand<T>(id, columns ?? []);
 			command.Timeout = timeout;
 			command.Transaction = transaction;
@@ -66,7 +66,7 @@ public static partial class ConnectionExtensions {
 		/// <param name="transaction">The transaction within which the command executes.</param>
 		/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 		/// <returns>The list of all entities of the specified type.</returns>
-		public List<T> FindAll<T>(OrderHintCollection? orderHints = null, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, CommandBuilder? builder = null) where T: new() =>
+		public List<T> FindAll<T>(OrderHintCollection? orderHints = null, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, CommandBuilder? builder = null) =>
 			[.. connection.FindAll(typeof(T), orderHints, columns, timeout, transaction, builder).Cast<T>()];
 
 		/// <summary>
@@ -97,7 +97,7 @@ public static partial class ConnectionExtensions {
 		/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 		/// <param name="cancellationToken">The token to cancel the operation.</param>
 		/// <returns>The list of all entities of the specified type.</returns>
-		public async Task<List<T>> FindAllAsync<T>(OrderHintCollection? orderHints = null, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, CommandBuilder? builder = null, CancellationToken cancellationToken = default) where T: new() {
+		public async Task<List<T>> FindAllAsync<T>(OrderHintCollection? orderHints = null, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, CommandBuilder? builder = null, CancellationToken cancellationToken = default) {
 			var (command, parameters) = (builder ?? CommandBuilder.Create(connection)).GetFindAllCommand<T>(orderHints ?? [], columns ?? []);
 			command.Timeout = timeout;
 			command.Transaction = transaction;
