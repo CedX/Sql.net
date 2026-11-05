@@ -84,22 +84,6 @@ public class ParameterTests {
 public class ParameterCollectionTests {
 
 	[TestMethod]
-	public void AddWithValue() {
-		var collection = new ParameterCollection();
-		collection.ShouldBeEmpty();
-
-		var parameter = collection.AddWithValue("Name", "Value1");
-		collection.Count.ShouldBe(1);
-		parameter.Name.ShouldBe("@Name");
-		parameter.Value.ShouldBe("Value1");
-
-		parameter = collection.AddWithValue("Value2");
-		collection.Count.ShouldBe(2);
-		parameter.Name.ShouldBe("?2");
-		parameter.Value.ShouldBe("Value2");
-	}
-
-	[TestMethod]
 	public void Constructor() {
 		// It should create an empty collection by default.
 		var collection = new ParameterCollection();
@@ -122,15 +106,6 @@ public class ParameterCollectionTests {
 		parameter.Name.ShouldBe("@Key");
 		parameter.Value.ShouldBe("Unique");
 		parameter.DbType.ShouldBe(DbType.AnsiString);
-	}
-
-	[TestMethod]
-	public void Contains() {
-		var collection = new ParameterCollection(("@Key", null));
-		collection.Contains("Key").ShouldBeTrue();
-		collection.Contains("@Key").ShouldBeTrue();
-		collection.Contains("Foo").ShouldBeFalse();
-		collection.Contains("@Foo").ShouldBeFalse();
 	}
 
 	[TestMethod]
@@ -168,6 +143,31 @@ public class ParameterCollectionTests {
 
 		// It should throw an error if the specified name does not exist.
 		Should.Throw<KeyNotFoundException>(() => collection["@Foo"]);
+	}
+
+	[TestMethod]
+	public void AddWithValue() {
+		var collection = new ParameterCollection();
+		collection.ShouldBeEmpty();
+
+		var parameter = collection.AddWithValue("Name", "Value1");
+		collection.Count.ShouldBe(1);
+		parameter.Name.ShouldBe("@Name");
+		parameter.Value.ShouldBe("Value1");
+
+		parameter = collection.AddWithValue("Value2");
+		collection.Count.ShouldBe(2);
+		parameter.Name.ShouldBe("?2");
+		parameter.Value.ShouldBe("Value2");
+	}
+
+	[TestMethod]
+	public void Contains() {
+		var collection = new ParameterCollection(("@Key", null));
+		collection.Contains("Key").ShouldBeTrue();
+		collection.Contains("@Key").ShouldBeTrue();
+		collection.Contains("Foo").ShouldBeFalse();
+		collection.Contains("@Foo").ShouldBeFalse();
 	}
 
 	[TestMethod]

@@ -8,7 +8,7 @@ using System.Globalization;
 /// <summary>
 /// Represents a parameter of a parameterized SQL statement.
 /// </summary>
-public class Parameter(string name = "?", object? value = null) {
+public class Parameter(string name, object? value = null) {
 
 	/// <summary>
 	/// The prefixes used for parameter placeholders.
