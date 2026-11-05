@@ -161,14 +161,14 @@ public class MapperTests {
 
 	[TestMethod]
 	public void SplitOn() {
-		var record = new List<KeyValuePair<string, object?>> {
-			new("Id", 123),
-			new("LongLabel", "Hello World!"),
-			new("ShortLabel", null),
-			new("Id", 456),
-			new("FirstName", "Cédric"),
-			new("LastName", "Belin"),
-			new("RowID", 789)
+		var record = new List<(string, object?)> {
+			("Id", 123),
+			("LongLabel", "Hello World!"),
+			("ShortLabel", null),
+			("Id", 456),
+			("FirstName", "Cédric"),
+			("LastName", "Belin"),
+			("RowID", 789)
 		};
 
 		var properties = new Dictionary<string, object?> {

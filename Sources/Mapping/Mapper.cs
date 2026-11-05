@@ -344,10 +344,10 @@ public class Mapper {
 	/// <param name="fields">The fields from which to split and read the next objects.</param>
 	/// <returns>A list of dictionaries representing the objects extracted from the data record.</returns>
 	internal static List<Dictionary<string, object?>> SplitOn(IDataRecord record, params string[] fields) {
-		var properties = new List<KeyValuePair<string, object?>>(record.FieldCount);
+		var properties = new List<(string, object?)>(record.FieldCount);
 		for (var index = 0; index < record.FieldCount; index++) {
 			var value = record[index];
-			properties.Add(new(record.GetName(index), Convert.IsDBNull(value) ? null : value));
+			properties.Add((record.GetName(index), Convert.IsDBNull(value) ? null : value));
 		}
 
 		return SplitOn(properties, fields);
@@ -359,7 +359,7 @@ public class Mapper {
 	/// <param name="record">The data record to split.</param>
 	/// <param name="fields">The fields from which to split and read the next objects.</param>
 	/// <returns>A list of dictionaries representing the objects extracted from the data record.</returns>
-	internal static List<Dictionary<string, object?>> SplitOn(List<KeyValuePair<string, object?>> record, params string[] fields) {
+	internal static List<Dictionary<string, object?>> SplitOn(IList<(string, object?)> record, params string[] fields) {
 		Dictionary<string, object?> properties;
 		if (fields.Length == 0) {
 			properties = new(record.Count);
