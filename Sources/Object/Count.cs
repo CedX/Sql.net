@@ -1,24 +1,14 @@
 namespace Belin.Sql;
 
 using System.Data;
+using System.Data.Common;
 
 /// <summary>
 /// Provides extension members for database connections.
 /// </summary>
 public static partial class ConnectionExtensions {
+
 	extension(IDbConnection connection) {
-
-		/// <summary>
-		/// Counts all entities.
-		/// </summary>
-		/// <typeparam name="T">The entity type.</typeparam>
-		/// <param name="timeout">The wait time, in seconds, before terminating the attempt to execute the command and generating an error.</param>
-		/// <param name="transaction">The transaction within which the command executes.</param>
-		/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
-		/// <returns>The total number of entities.</returns>
-		public int CountAll<T>(int timeout = 30, IDbTransaction? transaction = null, CommandBuilder? builder = null) =>
-			connection.CountAll(typeof(T), timeout, transaction, builder);
-
 		/// <summary>
 		/// Counts all entities.
 		/// </summary>
@@ -34,6 +24,19 @@ public static partial class ConnectionExtensions {
 			return connection.ExecuteScalar<int>(command, parameters);
 		}
 
+		/// <summary>
+		/// Counts all entities.
+		/// </summary>
+		/// <typeparam name="T">The entity type.</typeparam>
+		/// <param name="timeout">The wait time, in seconds, before terminating the attempt to execute the command and generating an error.</param>
+		/// <param name="transaction">The transaction within which the command executes.</param>
+		/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
+		/// <returns>The total number of entities.</returns>
+		public int CountAll<T>(int timeout = 30, IDbTransaction? transaction = null, CommandBuilder? builder = null) =>
+			connection.CountAll(typeof(T), timeout, transaction, builder);
+	}
+
+	extension(DbConnection connection) {
 		/// <summary>
 		/// Counts all entities.
 		/// </summary>

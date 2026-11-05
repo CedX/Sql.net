@@ -1,25 +1,14 @@
 namespace Belin.Sql;
 
 using System.Data;
+using System.Data.Common;
 
 /// <summary>
 /// Provides extension members for database connections.
 /// </summary>
 public static partial class ConnectionExtensions {
+
 	extension(IDbConnection connection) {
-
-		/// <summary>
-		/// Checks whether an entity with the specified primary key exists.
-		/// </summary>
-		/// <typeparam name="T">The entity type.</typeparam>
-		/// <param name="id">The primary key value.</param>
-		/// <param name="timeout">The wait time, in seconds, before terminating the attempt to execute the command and generating an error.</param>
-		/// <param name="transaction">The transaction within which the command executes.</param>
-		/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
-		/// <returns><see langword="true"/> if an entity with the specified primary key exists, otherwise <see langword="false"/>.</returns>
-		public bool Exists<T>(object id, int timeout = 30, IDbTransaction? transaction = null, CommandBuilder? builder = null) =>
-			connection.Exists(typeof(T), id, timeout, transaction, builder);
-
 		/// <summary>
 		/// Checks whether an entity with the specified primary key exists.
 		/// </summary>
@@ -36,6 +25,20 @@ public static partial class ConnectionExtensions {
 			return connection.ExecuteScalar<bool>(command, parameters);
 		}
 
+		/// <summary>
+		/// Checks whether an entity with the specified primary key exists.
+		/// </summary>
+		/// <typeparam name="T">The entity type.</typeparam>
+		/// <param name="id">The primary key value.</param>
+		/// <param name="timeout">The wait time, in seconds, before terminating the attempt to execute the command and generating an error.</param>
+		/// <param name="transaction">The transaction within which the command executes.</param>
+		/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
+		/// <returns><see langword="true"/> if an entity with the specified primary key exists, otherwise <see langword="false"/>.</returns>
+		public bool Exists<T>(object id, int timeout = 30, IDbTransaction? transaction = null, CommandBuilder? builder = null) =>
+			connection.Exists(typeof(T), id, timeout, transaction, builder);
+	}
+
+	extension(DbConnection connection) {
 		/// <summary>
 		/// Checks whether an entity with the specified primary key exists.
 		/// </summary>

@@ -1,13 +1,14 @@
 namespace Belin.Sql;
 
 using System.Data;
+using System.Data.Common;
 
 /// <summary>
 /// Provides extension members for database connections.
 /// </summary>
 public static partial class ConnectionExtensions {
-	extension(IDbConnection connection) {
 
+	extension(IDbConnection connection) {
 		/// <summary>
 		/// Updates the specified entity.
 		/// </summary>
@@ -23,7 +24,9 @@ public static partial class ConnectionExtensions {
 			command.Transaction = transaction;
 			return connection.Execute(command, parameters);
 		}
+	}
 
+	extension(DbConnection connection) {
 		/// <summary>
 		/// Updates the specified entity.
 		/// </summary>

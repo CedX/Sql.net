@@ -324,16 +324,16 @@ public class Mapper {
 	/// <summary>
 	/// Gets the table information associated with the specified type.
 	/// </summary>
-	/// <typeparam name="T">The type to inspect.</typeparam>
+	/// <param name="type">The type to inspect.</param>
 	/// <returns>The table information associated with the specified type.</returns>
-	public TableInfo GetTable<T>() => GetTable(typeof(T));
+	public TableInfo GetTable(Type type) => mapping.GetOrAdd(type, type => new TableInfo(type));
 
 	/// <summary>
 	/// Gets the table information associated with the specified type.
 	/// </summary>
-	/// <param name="type">The type to inspect.</param>
+	/// <typeparam name="T">The type to inspect.</typeparam>
 	/// <returns>The table information associated with the specified type.</returns>
-	public TableInfo GetTable(Type type) => mapping.GetOrAdd(type, type => new TableInfo(type));
+	public TableInfo GetTable<T>() => GetTable(typeof(T));
 
 	/// <summary>
 	/// Returns a value indicating whether all values of the specified dictionary are <see langword="null"/>.
@@ -341,22 +341,6 @@ public class Mapper {
 	/// <param name="dictionary">The dictionary to inspect.</param>
 	/// <returns><see langword="true"/> if all values of the specified dictionary are <see langword="null"/>, otherwise <see langword="false"/>.</returns>
 	internal static bool IsNullRecord(IDictionary<string, object?> dictionary) => dictionary.Values.All(value => value is null);
-
-	/// <summary>
-	/// Splits the specified data record according to the specified fields.
-	/// </summary>
-	/// <param name="record">The data record to split.</param>
-	/// <param name="fields">The fields from which to split and read the next objects.</param>
-	/// <returns>A list of dictionaries representing the objects extracted from the data record.</returns>
-	internal static List<Dictionary<string, object?>> SplitOn(IDataRecord record, params string[] fields) {
-		var properties = new List<(string, object?)>(record.FieldCount);
-		for (var index = 0; index < record.FieldCount; index++) {
-			var value = record[index];
-			properties.Add((record.GetName(index), Convert.IsDBNull(value) ? null : value));
-		}
-
-		return SplitOn(properties, fields);
-	}
 
 	/// <summary>
 	/// Splits the specified data record according to the specified fields.
@@ -389,6 +373,22 @@ public class Mapper {
 
 		records.Add(properties);
 		return records;
+	}
+
+	/// <summary>
+	/// Splits the specified data record according to the specified fields.
+	/// </summary>
+	/// <param name="record">The data record to split.</param>
+	/// <param name="fields">The fields from which to split and read the next objects.</param>
+	/// <returns>A list of dictionaries representing the objects extracted from the data record.</returns>
+	internal static List<Dictionary<string, object?>> SplitOn(IDataRecord record, params string[] fields) {
+		var properties = new List<(string, object?)>(record.FieldCount);
+		for (var index = 0; index < record.FieldCount; index++) {
+			var value = record[index];
+			properties.Add((record.GetName(index), Convert.IsDBNull(value) ? null : value));
+		}
+
+		return SplitOn(properties, fields);
 	}
 
 	/// <summary>

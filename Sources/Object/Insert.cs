@@ -1,13 +1,14 @@
 namespace Belin.Sql;
 
 using System.Data;
+using System.Data.Common;
 
 /// <summary>
 /// Provides extension members for database connections.
 /// </summary>
 public static partial class ConnectionExtensions {
-	extension(IDbConnection connection) {
 
+	extension(IDbConnection connection) {
 		/// <summary>
 		/// Inserts the specified entity.
 		/// </summary>
@@ -25,7 +26,9 @@ public static partial class ConnectionExtensions {
 			if (Mapper.Instance.GetTable(entity.GetType()).IdentityColumn is ColumnInfo column) column.SetValue(entity, Mapper.Instance.ChangeType(id, column));
 			return id;
 		}
+	}
 
+	extension(DbConnection connection) {
 		/// <summary>
 		/// Inserts the specified entity.
 		/// </summary>

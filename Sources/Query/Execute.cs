@@ -7,8 +7,8 @@ using System.Data.Common;
 /// Provides extension members for database connections.
 /// </summary>
 public static partial class ConnectionExtensions {
-	extension(IDbConnection connection) {
 
+	extension(IDbConnection connection) {
 		/// <summary>
 		/// Executes a parameterized SQL statement.
 		/// </summary>
@@ -20,7 +20,9 @@ public static partial class ConnectionExtensions {
 			using var dbCommand = command.ToDbCommand(connection, parameters);
 			return dbCommand.ExecuteNonQuery();
 		}
+	}
 
+	extension(DbConnection connection) {
 		/// <summary>
 		/// Executes a parameterized SQL statement.
 		/// </summary>
@@ -29,7 +31,7 @@ public static partial class ConnectionExtensions {
 		/// <param name="cancellationToken">The token to cancel the operation.</param>
 		/// <returns>The number of rows affected.</returns>
 		public async Task<int> ExecuteAsync(Command command, ParameterCollection? parameters = null, CancellationToken cancellationToken = default) {
-			if (connection.State == ConnectionState.Closed) await ((DbConnection) connection).OpenAsync(cancellationToken);
+			if (connection.State == ConnectionState.Closed) await connection.OpenAsync(cancellationToken);
 			using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
 			return await dbCommand.ExecuteNonQueryAsync(cancellationToken);
 		}
