@@ -103,7 +103,7 @@ public class Mapper {
 	/// <param name="record">A data record providing the properties to be set on the created object.</param>
 	/// <returns>The newly created object.</returns>
 	public object CreateInstance(Type type, IDataRecord record) =>
-		CreateInstance(type, SplitOn(record).First());
+		CreateInstance(type, SplitOn(record).Single());
 
 	/// <summary>
 	/// Creates a new object of the given type from the specified data record.
@@ -112,7 +112,7 @@ public class Mapper {
 	/// <param name="record">A data record providing the properties to be set on the created object.</param>
 	/// <returns>The newly created object.</returns>
 	public T CreateInstance<T>(IDataRecord record) =>
-		CreateInstance<T>(SplitOn(record).First());
+		(T) CreateInstance(typeof(T), record);
 
 	/// <summary>
 	/// Creates a new dyamic object from the specified data record.
@@ -120,7 +120,7 @@ public class Mapper {
 	/// <param name="record">A data record providing the properties to be set on the created object.</param>
 	/// <returns>The newly created object.</returns>
 	public ExpandoObject CreateInstance(IDataRecord record) =>
-		CreateInstance<ExpandoObject>(SplitOn(record).First());
+		CreateInstance<ExpandoObject>(record);
 
 	/// <summary>
 	/// Creates a new object of a given type from the specified hash table.
@@ -139,20 +139,16 @@ public class Mapper {
 	/// <typeparam name="T">The object type.</typeparam>
 	/// <param name="record">A hash table providing the properties to be set on the created object.</param>
 	/// <returns>The newly created object.</returns>
-	public T CreateInstance<T>(Hashtable record) => CreateInstance<T>(
-		record.Cast<DictionaryEntry>().ToDictionary(entry => Convert.ToString(entry.Key, CultureInfo.InvariantCulture) ?? "",
-		entry => entry.Value
-	));
+	public T CreateInstance<T>(Hashtable record) =>
+		(T) CreateInstance(typeof(T), record);
 
 	/// <summary>
 	/// Creates a new dynamic object from the specified hash table.
 	/// </summary>
 	/// <param name="record">A hash table providing the properties to be set on the created object.</param>
 	/// <returns>The newly created object.</returns>
-	public ExpandoObject CreateInstance(Hashtable record) => CreateInstance<ExpandoObject>(
-		record.Cast<DictionaryEntry>().ToDictionary(entry => Convert.ToString(entry.Key, CultureInfo.InvariantCulture) ?? "",
-		entry => entry.Value
-	));
+	public ExpandoObject CreateInstance(Hashtable record) =>
+		CreateInstance<ExpandoObject>(record);
 
 	/// <summary>
 	/// Creates a new object tuple of the given types from the specified data record.
@@ -254,10 +250,8 @@ public class Mapper {
 	/// <typeparam name="T">The object type.</typeparam>
 	/// <param name="reader">A data reader providing the properties to be set on the created objects.</param>
 	/// <returns>An enumerable of newly created objects.</returns>
-	public IEnumerable<T> CreateInstances<T>(IDataReader reader) {
-		using var record = reader;
-		while (record.Read()) yield return CreateInstance<T>(record);
-	}
+	public IEnumerable<T> CreateInstances<T>(IDataReader reader) =>
+		CreateInstances(typeof(T), reader).Cast<T>();
 
 	/// <summary>
 	/// Creates new dynamic objects from the specified data reader.
