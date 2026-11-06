@@ -52,18 +52,8 @@ public static class QuerySingleExtensions {
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The single row, or <see langword="null"/> if not found.</returns>
 		public object? QuerySingleOrDefault(Type type, Command command, ParameterCollection? parameters = null) {
-			if (connection.State == ConnectionState.Closed) connection.Open();
-			using var dbCommand = command.ToDbCommand(connection, parameters);
-			using var reader = dbCommand.ExecuteReader();
-
-			object? record = null;
-			var rowCount = 0;
-			while (reader.Read()) {
-				if (++rowCount > 1) break;
-				record = Mapper.Instance.CreateInstance(type, reader);
-			}
-
-			return rowCount == 1 ? record : null;
+			try { return connection.QuerySingle(type, command, parameters); }
+			catch (InvalidOperationException) { return default; }
 		}
 
 		/// <summary>
@@ -111,18 +101,8 @@ public static class QuerySingleExtensions {
 		/// <param name="cancellationToken">The token to cancel the operation.</param>
 		/// <returns>The single row, or <see langword="null"/> if not found.</returns>
 		public async Task<T?> QuerySingleOrDefaultAsync<T>(Command command, ParameterCollection? parameters = null, CancellationToken cancellationToken = default) {
-			if (connection.State == ConnectionState.Closed) await connection.OpenAsync(cancellationToken);
-			using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
-			await using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
-
-			T? record = default;
-			var rowCount = 0;
-			while (await reader.ReadAsync(cancellationToken)) {
-				if (++rowCount > 1) break;
-				record = Mapper.Instance.CreateInstance<T>(reader);
-			}
-
-			return rowCount == 1 ? record : default;
+			try { return await connection.QuerySingleAsync<T>(command, parameters, cancellationToken); }
+			catch (InvalidOperationException) { return default; }
 		}
 	}
 }

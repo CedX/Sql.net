@@ -44,10 +44,8 @@ public static class QueryFirstExtensions {
 		/// <param name="parameters">The parameters of the SQL statement.</param>
 		/// <returns>The first row, or <see langword="null"/> if not found.</returns>
 		public object? QueryFirstOrDefault(Type type, Command command, ParameterCollection? parameters = null) {
-			if (connection.State == ConnectionState.Closed) connection.Open();
-			using var dbCommand = command.ToDbCommand(connection, parameters);
-			using var reader = dbCommand.ExecuteReader();
-			return reader.Read() ? Mapper.Instance.CreateInstance(type, reader) : default;
+			try { return connection.QueryFirst(type, command, parameters); }
+			catch (InvalidOperationException) { return default; }
 		}
 
 		/// <summary>
@@ -87,10 +85,8 @@ public static class QueryFirstExtensions {
 		/// <param name="cancellationToken">The token to cancel the operation.</param>
 		/// <returns>The first row, or <see langword="null"/> if not found.</returns>
 		public async Task<T?> QueryFirstOrDefaultAsync<T>(Command command, ParameterCollection? parameters = null, CancellationToken cancellationToken = default) {
-			if (connection.State == ConnectionState.Closed) await connection.OpenAsync(cancellationToken);
-			using var dbCommand = (DbCommand) command.ToDbCommand(connection, parameters);
-			await using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
-			return await reader.ReadAsync(cancellationToken) ? Mapper.Instance.CreateInstance<T>(reader) : default;
+			try { return await connection.QueryFirstAsync<T>(command, parameters, cancellationToken); }
+			catch (InvalidOperationException) { return default; }
 		}
 	}
 }
