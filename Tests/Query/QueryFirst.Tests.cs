@@ -1,6 +1,7 @@
 namespace Belin.Sql;
 
 using System.Data.Common;
+using System.Dynamic;
 
 /// <summary>
 /// Tests the features of the <see cref="QueryFirstExtensions"/> class.
@@ -25,7 +26,7 @@ public class QueryFirstExtensionsTests(TestContext testContext) {
 		record.Gender.ShouldBe(CharacterGender.DarkLord);
 
 		// It should throw an error if the query produces no results.
-		Should.Throw<InvalidOperationException>(() => connection.QueryFirst(sql, [("FullName", "Cédric")]));
+		Should.Throw<InvalidOperationException>(() => connection.QueryFirst<ExpandoObject>(sql, [("FullName", "Cédric")]));
 	}
 
 	[TestMethod]
@@ -37,6 +38,6 @@ public class QueryFirstExtensionsTests(TestContext testContext) {
 		record.Gender.ShouldBe(CharacterGender.DarkLord);
 
 		// It should throw an error if the query produces no results.
-		await Should.ThrowAsync<InvalidOperationException>(() => connection.QueryFirstAsync(sql, [("FullName", "Cédric")], testContext.CancellationToken));
+		await Should.ThrowAsync<InvalidOperationException>(() => connection.QueryFirstAsync<ExpandoObject>(sql, [("FullName", "Cédric")], testContext.CancellationToken));
 	}
 }

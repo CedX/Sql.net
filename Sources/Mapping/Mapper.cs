@@ -89,14 +89,6 @@ public class Mapper {
 		(T) CreateInstance(typeof(T), record);
 
 	/// <summary>
-	/// Creates a new dynamic object from the specified dictionary.
-	/// </summary>
-	/// <param name="record">A dictionary providing the properties to be set on the created object.</param>
-	/// <returns>The newly created object.</returns>
-	public ExpandoObject CreateInstance(IDictionary<string, object?> record) =>
-		CreateInstance<ExpandoObject>(record);
-
-	/// <summary>
 	/// Creates a new object of the given type from the specified data record.
 	/// </summary>
 	/// <param name="type">The object type.</param>
@@ -113,14 +105,6 @@ public class Mapper {
 	/// <returns>The newly created object.</returns>
 	public T CreateInstance<T>(IDataRecord record) =>
 		(T) CreateInstance(typeof(T), record);
-
-	/// <summary>
-	/// Creates a new dyamic object from the specified data record.
-	/// </summary>
-	/// <param name="record">A data record providing the properties to be set on the created object.</param>
-	/// <returns>The newly created object.</returns>
-	public ExpandoObject CreateInstance(IDataRecord record) =>
-		CreateInstance<ExpandoObject>(record);
 
 	/// <summary>
 	/// Creates a new object of a given type from the specified hash table.
@@ -141,14 +125,6 @@ public class Mapper {
 	/// <returns>The newly created object.</returns>
 	public T CreateInstance<T>(Hashtable record) =>
 		(T) CreateInstance(typeof(T), record);
-
-	/// <summary>
-	/// Creates a new dynamic object from the specified hash table.
-	/// </summary>
-	/// <param name="record">A hash table providing the properties to be set on the created object.</param>
-	/// <returns>The newly created object.</returns>
-	public ExpandoObject CreateInstance(Hashtable record) =>
-		CreateInstance<ExpandoObject>(record);
 
 	/// <summary>
 	/// Creates a new object tuple of the given types from the specified data record.
@@ -252,14 +228,6 @@ public class Mapper {
 	/// <returns>An enumerable of newly created objects.</returns>
 	public IEnumerable<T> CreateInstances<T>(IDataReader reader) =>
 		CreateInstances(typeof(T), reader).Cast<T>();
-
-	/// <summary>
-	/// Creates new dynamic objects from the specified data reader.
-	/// </summary>
-	/// <param name="reader">A data reader providing the properties to be set on the created objects.</param>
-	/// <returns>An enumerable of newly created objects.</returns>
-	public IEnumerable<ExpandoObject> CreateInstances(IDataReader reader) =>
-		CreateInstances<ExpandoObject>(reader);
 
 	/// <summary>
 	/// Creates new object tuples of the given types from the specified data reader.

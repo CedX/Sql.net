@@ -38,16 +38,6 @@ public static class QueryExtensions {
 		/// <summary>
 		/// Executes a parameterized SQL query and returns a sequence of objects whose properties correspond to the columns.
 		/// </summary>
-		/// <param name="command">The command to be executed.</param>
-		/// <param name="parameters">The parameters of the SQL statement.</param>
-		/// <returns>The sequence of objects whose properties correspond to the columns.</returns>
-		/// <remarks>Each row can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{TKey, TValue}"/>.</remarks>
-		public List<ExpandoObject> Query(Command command, ParameterCollection? parameters = null) =>
-			connection.Query<ExpandoObject>(command, parameters);
-
-		/// <summary>
-		/// Executes a parameterized SQL query and returns a sequence of objects whose properties correspond to the columns.
-		/// </summary>
 		/// <param name="types">The type of objects to return.</param>
 		/// <param name="command">The command to be executed.</param>
 		/// <param name="parameters">The parameters of the SQL statement.</param>
@@ -127,17 +117,6 @@ public static class QueryExtensions {
 			await using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
 			return [.. Mapper.Instance.CreateInstances<T>(reader)];
 		}
-
-		/// <summary>
-		/// Executes a parameterized SQL query and returns a sequence of objects whose properties correspond to the columns.
-		/// </summary>
-		/// <param name="command">The command to be executed.</param>
-		/// <param name="parameters">The parameters of the SQL statement.</param>
-		/// <param name="cancellationToken">The token to cancel the operation.</param>
-		/// <returns>The sequence of objects whose properties correspond to the columns.</returns>
-		/// <remarks>Each row can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{TKey, TValue}"/>.</remarks>
-		public async Task<List<ExpandoObject>> QueryAsync(Command command, ParameterCollection? parameters = null, CancellationToken cancellationToken = default) =>
-			await connection.QueryAsync<ExpandoObject>(command, parameters, cancellationToken);
 
 		/// <summary>
 		/// Executes a parameterized SQL query and returns a sequence of object pairs whose properties correspond to the columns.

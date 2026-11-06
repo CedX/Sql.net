@@ -47,17 +47,6 @@ public static class QuerySingleExtensions {
 		/// <summary>
 		/// Executes a parameterized SQL query and returns the single row.
 		/// </summary>
-		/// <param name="command">The command to be executed.</param>
-		/// <param name="parameters">The parameters of the SQL statement.</param>
-		/// <returns>The single row.</returns>
-		/// <exception cref="InvalidOperationException">The result set is empty or contains more than one record.</exception>
-		/// <remarks>The row values can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{TKey, TValue}"/>.</remarks>
-		public ExpandoObject QuerySingle(Command command, ParameterCollection? parameters = null) =>
-			connection.QuerySingle<ExpandoObject>(command, parameters);
-
-		/// <summary>
-		/// Executes a parameterized SQL query and returns the single row.
-		/// </summary>
 		/// <param name="type">The type of objects to return.</param>
 		/// <param name="command">The command to be executed.</param>
 		/// <param name="parameters">The parameters of the SQL statement.</param>
@@ -86,16 +75,6 @@ public static class QuerySingleExtensions {
 		/// <returns>The single row, or <see langword="null"/> if not found.</returns>
 		public T? QuerySingleOrDefault<T>(Command command, ParameterCollection? parameters = null) =>
 			(T?) connection.QuerySingleOrDefault(typeof(T), command, parameters);
-
-		/// <summary>
-		/// Executes a parameterized SQL query and returns the single row.
-		/// </summary>
-		/// <param name="command">The command to be executed.</param>
-		/// <param name="parameters">The parameters of the SQL statement.</param>
-		/// <returns>The single row, or <see langword="null"/> if not found.</returns>
-		/// <remarks>The row values can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{TKey, TValue}"/>.</remarks>
-		public ExpandoObject? QuerySingleOrDefault(Command command, ParameterCollection? parameters = null) =>
-			connection.QuerySingleOrDefault<ExpandoObject>(command, parameters);
 	}
 
 	extension(DbConnection connection) {
@@ -126,18 +105,6 @@ public static class QuerySingleExtensions {
 		/// <summary>
 		/// Executes a parameterized SQL query and returns the single row.
 		/// </summary>
-		/// <param name="command">The command to be executed.</param>
-		/// <param name="parameters">The parameters of the SQL statement.</param>
-		/// <param name="cancellationToken">The token to cancel the operation.</param>
-		/// <returns>The single row.</returns>
-		/// <exception cref="InvalidOperationException">The result set is empty or contains more than one record.</exception>
-		/// <remarks>The row values can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{TKey, TValue}"/>.</remarks>
-		public async Task<ExpandoObject> QuerySingleAsync(Command command, ParameterCollection? parameters = null, CancellationToken cancellationToken = default) =>
-			await connection.QuerySingleAsync<ExpandoObject>(command, parameters, cancellationToken);
-
-		/// <summary>
-		/// Executes a parameterized SQL query and returns the single row.
-		/// </summary>
 		/// <typeparam name="T">The type of objects to return.</typeparam>
 		/// <param name="command">The command to be executed.</param>
 		/// <param name="parameters">The parameters of the SQL statement.</param>
@@ -157,16 +124,5 @@ public static class QuerySingleExtensions {
 
 			return rowCount == 1 ? record : default;
 		}
-
-		/// <summary>
-		/// Executes a parameterized SQL query and returns the single row.
-		/// </summary>
-		/// <param name="command">The command to be executed.</param>
-		/// <param name="parameters">The parameters of the SQL statement.</param>
-		/// <param name="cancellationToken">The token to cancel the operation.</param>
-		/// <returns>The single row, or <see langword="null"/> if not found.</returns>
-		/// <remarks>The row values can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{TKey, TValue}"/>.</remarks>
-		public async Task<ExpandoObject?> QuerySingleOrDefaultAsync(Command command, ParameterCollection? parameters = null, CancellationToken cancellationToken = default) =>
-			await connection.QuerySingleOrDefaultAsync<ExpandoObject>(command, parameters, cancellationToken);
 	}
 }

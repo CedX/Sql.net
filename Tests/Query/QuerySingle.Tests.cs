@@ -1,6 +1,7 @@
 namespace Belin.Sql;
 
 using System.Data.Common;
+using System.Dynamic;
 
 /// <summary>
 /// Tests the features of the <see cref="QuerySingleExtensions"/> class.
@@ -29,7 +30,7 @@ public class QuerySingleExtensionsTests(TestContext testContext) {
 
 		// It should throw an error if the query produces more than one result.
 		sql = "SELECT * FROM Characters WHERE gender = @Gender";
-		Should.Throw<InvalidOperationException>(() => connection.QuerySingle(sql, [("Gender", nameof(CharacterGender.Human))]));
+		Should.Throw<InvalidOperationException>(() => connection.QuerySingle<ExpandoObject>(sql, [("Gender", nameof(CharacterGender.Human))]));
 	}
 
 	[TestMethod]
@@ -41,10 +42,10 @@ public class QuerySingleExtensionsTests(TestContext testContext) {
 		record.Gender.ShouldBe(CharacterGender.Istari);
 
 		// It should throw an error if the query produces no results.
-		await Should.ThrowAsync<InvalidOperationException>(() => connection.QuerySingleAsync(sql, [("FullName", "Cédric")], testContext.CancellationToken));
+		await Should.ThrowAsync<InvalidOperationException>(() => connection.QuerySingleAsync<ExpandoObject>(sql, [("FullName", "Cédric")], testContext.CancellationToken));
 
 		// It should throw an error if the query produces more than one result.
 		sql = "SELECT * FROM Characters WHERE gender = @Gender";
-		await Should.ThrowAsync<InvalidOperationException>(() => connection.QuerySingleAsync(sql, [("Gender", nameof(CharacterGender.Human))], testContext.CancellationToken));
+		await Should.ThrowAsync<InvalidOperationException>(() => connection.QuerySingleAsync<ExpandoObject>(sql, [("Gender", nameof(CharacterGender.Human))], testContext.CancellationToken));
 	}
 }

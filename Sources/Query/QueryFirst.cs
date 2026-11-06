@@ -39,17 +39,6 @@ public static class QueryFirstExtensions {
 		/// <summary>
 		/// Executes a parameterized SQL query and returns the first row.
 		/// </summary>
-		/// <param name="command">The command to be executed.</param>
-		/// <param name="parameters">The parameters of the SQL statement.</param>
-		/// <returns>The first row.</returns>
-		/// <exception cref="InvalidOperationException">The result set is empty.</exception>
-		/// <remarks>The row values can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{TKey, TValue}"/>.</remarks>
-		public ExpandoObject QueryFirst(Command command, ParameterCollection? parameters = null) =>
-			connection.QueryFirst<ExpandoObject>(command, parameters);
-
-		/// <summary>
-		/// Executes a parameterized SQL query and returns the first row.
-		/// </summary>
 		/// <param name="type">The type of objects to return.</param>
 		/// <param name="command">The command to be executed.</param>
 		/// <param name="parameters">The parameters of the SQL statement.</param>
@@ -70,16 +59,6 @@ public static class QueryFirstExtensions {
 		/// <returns>The first row, or <see langword="null"/> if not found.</returns>
 		public T? QueryFirstOrDefault<T>(Command command, ParameterCollection? parameters = null) =>
 			(T?) connection.QueryFirstOrDefault(typeof(T), command, parameters);
-
-		/// <summary>
-		/// Executes a parameterized SQL query and returns the first row.
-		/// </summary>
-		/// <param name="command">The command to be executed.</param>
-		/// <param name="parameters">The parameters of the SQL statement.</param>
-		/// <returns>The first row, or <see langword="null"/> if not found.</returns>
-		/// <remarks>The row values can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{TKey, TValue}"/>.</remarks>
-		public ExpandoObject? QueryFirstOrDefault(Command command, ParameterCollection? parameters = null) =>
-			connection.QueryFirstOrDefault<ExpandoObject>(command, parameters);
 	}
 
 	extension(DbConnection connection) {
@@ -102,18 +81,6 @@ public static class QueryFirstExtensions {
 		/// <summary>
 		/// Executes a parameterized SQL query and returns the first row.
 		/// </summary>
-		/// <param name="command">The command to be executed.</param>
-		/// <param name="parameters">The parameters of the SQL statement.</param>
-		/// <param name="cancellationToken">The token to cancel the operation.</param>
-		/// <returns>The first row.</returns>
-		/// <exception cref="InvalidOperationException">The result set is empty.</exception>
-		/// <remarks>The row values can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{TKey, TValue}"/>.</remarks>
-		public async Task<ExpandoObject> QueryFirstAsync(Command command, ParameterCollection? parameters = null, CancellationToken cancellationToken = default) =>
-			await connection.QueryFirstAsync<ExpandoObject>(command, parameters, cancellationToken);
-
-		/// <summary>
-		/// Executes a parameterized SQL query and returns the first row.
-		/// </summary>
 		/// <typeparam name="T">The type of objects to return.</typeparam>
 		/// <param name="command">The command to be executed.</param>
 		/// <param name="parameters">The parameters of the SQL statement.</param>
@@ -125,16 +92,5 @@ public static class QueryFirstExtensions {
 			await using var reader = await dbCommand.ExecuteReaderAsync(cancellationToken);
 			return await reader.ReadAsync(cancellationToken) ? Mapper.Instance.CreateInstance<T>(reader) : default;
 		}
-
-		/// <summary>
-		/// Executes a parameterized SQL query and returns the first row.
-		/// </summary>
-		/// <param name="command">The command to be executed.</param>
-		/// <param name="parameters">The parameters of the SQL statement.</param>
-		/// <param name="cancellationToken">The token to cancel the operation.</param>
-		/// <returns>The first row, or <see langword="null"/> if not found.</returns>
-		/// <remarks>The row values can be accessed via <c>dynamic</c> or by casting to a <see cref="IDictionary{TKey, TValue}"/>.</remarks>
-		public async Task<ExpandoObject?> QueryFirstOrDefaultAsync(Command command, ParameterCollection? parameters = null, CancellationToken cancellationToken = default) =>
-			await connection.QueryFirstOrDefaultAsync<ExpandoObject>(command, parameters, cancellationToken);
 	}
 }

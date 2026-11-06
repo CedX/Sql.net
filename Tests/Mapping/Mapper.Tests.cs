@@ -105,7 +105,7 @@ public class MapperTests {
 		};
 
 		// It should create an `ExpandoObject` by default.
-		var expandoObject = Mapper.Instance.CreateInstance(properties);
+		var expandoObject = Mapper.Instance.CreateInstance<ExpandoObject>(properties);
 		expandoObject.ShouldBeOfType<ExpandoObject>();
 
 		var expandoDictionary = new Dictionary<string, object?>(expandoObject);
