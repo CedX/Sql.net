@@ -68,7 +68,7 @@ public class QueryExtensionsTests(TestContext testContext) {
 
 		// It should allow the data rows to be split into distinct objects.
 		sql = "SELECT ID, firstName, lastName, ID, fullName, gender FROM Characters WHERE firstName = @FirstName";
-		var objects = await connection.QueryAsync<ExpandoObject, ExpandoObject>(sql, [("FirstName", "Frodo")], "id", testContext.CancellationToken);
+		var objects = await connection.QueryAsync<ExpandoObject, ExpandoObject>(sql, [("FirstName", "Frodo")], cancellationToken: testContext.CancellationToken);
 		objects.Count.ShouldBe(1);
 
 		var item1 = new Dictionary<string, object?>(objects[0].Item1);

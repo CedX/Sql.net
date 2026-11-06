@@ -104,7 +104,7 @@ public class MapperTests {
 			["lastName"] = null
 		};
 
-		// It should create an `ExpandoObject` by default.
+		// It should support creating a dynamic object of type `ExpandoObject`.
 		var expandoObject = Mapper.Instance.CreateInstance<ExpandoObject>(properties);
 		expandoObject.ShouldBeOfType<ExpandoObject>();
 
