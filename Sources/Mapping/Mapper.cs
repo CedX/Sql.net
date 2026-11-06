@@ -28,15 +28,6 @@ public class Mapper {
 	private Mapper() {}
 
 	/// <summary>
-	/// Converts the specified object into an equivalent value of the specified column type.
-	/// </summary>
-	/// <param name="value">The object to convert.</param>
-	/// <param name="column">The column providing the type of object to return.</param>
-	/// <returns>The value of the given type corresponding to the specified object.</returns>
-	public object? ChangeType(object? value, ColumnInfo column) =>
-		ChangeType(value, column.PropertyType, column.IsNullable);
-
-	/// <summary>
 	/// Converts the specified object into an equivalent value of the specified type.
 	/// </summary>
 	/// <param name="value">The object to convert.</param>
@@ -48,6 +39,15 @@ public class Mapper {
 		var nullValue when Convert.IsDBNull(nullValue) => GetNullEquivalent(conversionType, isNullable),
 		var nonNullValue => GetNonNullEquivalent(nonNullValue, conversionType)
 	};
+
+	/// <summary>
+	/// Converts the specified object into an equivalent value of the specified column type.
+	/// </summary>
+	/// <param name="value">The object to convert.</param>
+	/// <param name="column">The column providing the type of object to return.</param>
+	/// <returns>The value of the given type corresponding to the specified object.</returns>
+	public object? ChangeType(object? value, ColumnInfo column) =>
+		ChangeType(value, column.PropertyType, column.IsNullable);
 
 	/// <summary>
 	/// Creates a new object of a given type from the specified dictionary.
