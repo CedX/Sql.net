@@ -394,11 +394,12 @@ public class Mapper {
 	private static object GetNonNullEquivalent(object value, Type conversionType) {
 		var targetType = Nullable.GetUnderlyingType(conversionType) ?? conversionType;
 
+		if (targetType.IsInstanceOfType(value)) return value;
 		if (targetType.IsEnum) return value is string stringValue
 			? Enum.Parse(targetType, stringValue, ignoreCase: true)
 			: Enum.ToObject(targetType, Convert.ChangeType(value, Enum.GetUnderlyingType(targetType), CultureInfo.InvariantCulture));
 
-		return targetType.IsInstanceOfType(value) ? value : Convert.ChangeType(value, targetType, CultureInfo.InvariantCulture);
+		return Convert.ChangeType(value, targetType, CultureInfo.InvariantCulture);
 	}
 
 	/// <summary>
