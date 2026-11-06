@@ -56,6 +56,8 @@ public class Mapper {
 	/// <param name="record">A dictionary providing the properties to be set on the created object.</param>
 	/// <returns>The newly created object.</returns>
 	public object CreateInstance(Type type, IDictionary<string, object?> record) {
+		if (type == typeof(IDictionary<string, object?>)) return record;
+
 		if (type == typeof(ExpandoObject)) {
 			var expandoObject = (IDictionary<string, object?>) new ExpandoObject();
 			foreach (var (key, value) in record) expandoObject.Add(key, value);
