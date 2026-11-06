@@ -69,13 +69,6 @@ public class Parameter(string name, object? value = null) {
 	public static implicit operator Parameter((string Name, object? Value) parameter) => new(parameter.Name, parameter.Value);
 
 	/// <summary>
-	/// Creates a new parameter from the specified key/value pair.
-	/// </summary>
-	/// <param name="parameter">The key/value pair providing the parameter name and value.</param>
-	/// <returns>The parameter corresponding to the specified key/value pair.</returns>
-	public static implicit operator Parameter(KeyValuePair<string, object?> parameter) => new(parameter.Key, parameter.Value);
-
-	/// <summary>
 	/// Converts this parameter into an <see cref="IDbDataParameter"/> object.
 	/// </summary>
 	/// <param name="command">The command to associate with the created parameter.</param>

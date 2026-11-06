@@ -44,13 +44,6 @@ public class OrderHint(string column, SortOrder sortOrder = SortOrder.Ascending)
 	/// <param name="orderHint">The tuple providing the column name and its sort order.</param>
 	/// <returns>The order hint corresponding to the specified tuple.</returns>
 	public static implicit operator OrderHint((string Column, SortOrder SortOrder) orderHint) => new(orderHint.Column, orderHint.SortOrder);
-
-	/// <summary>
-	/// Creates a new order hint from the specified key/value pair.
-	/// </summary>
-	/// <param name="orderHint">The key/value pair providing the column name and its sort order.</param>
-	/// <returns>The order hint corresponding to the specified key/value pair.</returns>
-	public static implicit operator OrderHint(KeyValuePair<string, SortOrder> orderHint) => new(orderHint.Key, orderHint.Value);
 }
 
 /// <summary>

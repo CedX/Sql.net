@@ -37,15 +37,6 @@ public class ParameterTests {
 		parameter = ("baz", 123);
 		parameter.Name.ShouldBe("@baz");
 		parameter.Value.ShouldBe(123);
-
-		// It should create a parameter from the specified key/value pair.
-		parameter = new KeyValuePair<string, object?>("foo", null);
-		parameter.Name.ShouldBe("@foo");
-		parameter.Value.ShouldBe(DBNull.Value);
-
-		parameter = (":bar", "Baz");
-		parameter.Name.ShouldBe(":bar");
-		parameter.Value.ShouldBe("Baz");
 	}
 
 	[TestMethod]

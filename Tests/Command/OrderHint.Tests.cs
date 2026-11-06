@@ -24,11 +24,6 @@ public class OrderHintTests {
 		orderHint = ("ID", SortOrder.Descending);
 		orderHint.Column.ShouldBe("ID");
 		orderHint.SortOrder.ShouldBe(SortOrder.Descending);
-
-		// It should create an order hint from the specified key/value pair.
-		orderHint = new KeyValuePair<string, SortOrder>("Name", SortOrder.Ascending);
-		orderHint.Column.ShouldBe("Name");
-		orderHint.SortOrder.ShouldBe(SortOrder.Ascending);
 	}
 }
 
