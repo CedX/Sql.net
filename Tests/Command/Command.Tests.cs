@@ -38,6 +38,16 @@ public class CommandBuilderTests {
 	public void TestCleanup() => connection.Dispose();
 
 	[TestMethod]
+	public void GetCountAllCommand() {
+		// It should return the SQL command to count all entities.
+		var (command, parameters) = CommandBuilder.Create(connection).GetCountAllCommand<Character>();
+		command.Text.ShouldBe(@"SELECT COUNT(*) FROM ""main"".""Characters""");
+
+		// It should also return an empty parameter collection.
+		parameters.ShouldBeEmpty();
+	}
+
+	[TestMethod]
 	public void GetDeleteCommand() {
 		// It should return the SQL command to delete an entity.
 		var (command, parameters) = CommandBuilder.Create(connection).GetDeleteCommand(character);
