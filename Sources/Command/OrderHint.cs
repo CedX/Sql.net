@@ -14,7 +14,7 @@ public class OrderHint(string column, SortOrder sortOrder = SortOrder.Ascending)
 	/// <summary>
 	/// The name of the column for which the hint is being provided.
 	/// </summary>
-	public string Column { get; } = column;
+	public string Column { get; set; } = column;
 
 	/// <summary>
 	/// The sort order of the column.
