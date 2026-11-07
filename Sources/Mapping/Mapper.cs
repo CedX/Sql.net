@@ -41,15 +41,6 @@ public class Mapper {
 	};
 
 	/// <summary>
-	/// Converts the specified object into an equivalent value of the specified column type.
-	/// </summary>
-	/// <param name="value">The object to convert.</param>
-	/// <param name="column">The column providing the type of object to return.</param>
-	/// <returns>The value of the given type corresponding to the specified object.</returns>
-	public object? ChangeType(object? value, ColumnInfo column) =>
-		ChangeType(value, column.PropertyType, column.IsNullable);
-
-	/// <summary>
 	/// Converts the specified object into an equivalent value of the specified type.
 	/// </summary>
 	/// <typeparam name="T">The type of object to return.</typeparam>
@@ -58,6 +49,15 @@ public class Mapper {
 	/// <returns>The value of the given type corresponding to the specified object.</returns>
 	public T? ChangeType<T>(object? value, bool isNullable = false) =>
 		(T?) ChangeType(value, typeof(T), isNullable);
+
+	/// <summary>
+	/// Converts the specified object into an equivalent value of the specified column type.
+	/// </summary>
+	/// <param name="value">The object to convert.</param>
+	/// <param name="column">The column providing the type of object to return.</param>
+	/// <returns>The value of the given type corresponding to the specified object.</returns>
+	public object? ChangeType(object? value, ColumnInfo column) =>
+		ChangeType(value, column.PropertyType, column.IsNullable);
 
 	/// <summary>
 	/// Creates a new object of a given type from the specified dictionary.
