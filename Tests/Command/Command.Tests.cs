@@ -29,13 +29,9 @@ public class CommandBuilderTests {
 	/// <summary>
 	/// The connection to the data source.
 	/// </summary>
-	private readonly SQLiteConnection connection = new("DataSource=:memory:");
-
-	/// <summary>
-	/// Closes the connection to the data source.
-	/// </summary>
-	[TestCleanup]
-	public void TestCleanup() => connection.Dispose();
+	private SQLiteConnection connection = null!;
+	[TestInitialize] public void Initialize() => connection = new("DataSource=:memory:");
+	[TestCleanup] public void Cleanup() => connection.Dispose();
 
 	[TestMethod]
 	public void GetCountAllCommand() {
