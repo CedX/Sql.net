@@ -50,6 +50,16 @@ public class Mapper {
 		ChangeType(value, column.PropertyType, column.IsNullable);
 
 	/// <summary>
+	/// Converts the specified object into an equivalent value of the specified type.
+	/// </summary>
+	/// <typeparam name="T">The type of object to return.</typeparam>
+	/// <param name="value">The object to convert.</param>
+	/// <param name="isNullable">Value indicating whether the specified conversion type is nullable.</param>
+	/// <returns>The value of the given type corresponding to the specified object.</returns>
+	public T? ChangeType<T>(object? value, bool isNullable = false) =>
+		(T?) ChangeType(value, typeof(T), isNullable);
+
+	/// <summary>
 	/// Creates a new object of a given type from the specified dictionary.
 	/// </summary>
 	/// <param name="type">The object type.</param>
