@@ -97,7 +97,7 @@ public class CommandBuilderTests {
 		parameter.Value.ShouldBe(1000);
 
 		// It should allow selecting a specific set of columns.
-		(command, _) = builder.GetFindCommand<Character>(character.Id, ["firstName"]);
+		(command, _) = builder.GetFindCommand<Character>(character.Id, "firstName");
 		command.Text.ShouldStartWith(@"SELECT ""firstName""");
 		command.Text.ShouldNotContain("gender");
 		command.Text.ShouldNotContain("lastName");
@@ -126,7 +126,7 @@ public class CommandBuilderTests {
 		command.Text.ShouldEndWith(@"ORDER BY ""gender"" ASC, ""fullName"" DESC");
 
 		// It should allow selecting a specific set of columns.
-		(command, _) = builder.GetFindAllCommand<Character>(columns: ["firstName"]);
+		(command, _) = builder.GetFindAllCommand<Character>("firstName");
 		command.Text.ShouldStartWith(@"SELECT ""firstName""");
 		command.Text.ShouldNotContain("gender");
 		command.Text.ShouldNotContain("lastName");
