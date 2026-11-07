@@ -170,4 +170,16 @@ public class CommandBuilderTests {
 		parameters["ID"].Value.ShouldBe(1000);
 		parameters["firstName"].Value.ShouldBe("Cédric");
 	}
+
+	[TestMethod]
+	public void QuoteIdentifier() {
+		var builder = CommandBuilder.Create(connection);
+		builder.QuoteIdentifier("firstName").ShouldBe("\"firstName\"");
+	}
+
+	[TestMethod]
+	public void UnquoteIdentifier() {
+		var builder = CommandBuilder.Create(connection);
+		builder.UnquoteIdentifier("\"firstName\"").ShouldBe("firstName");
+	}
 }
