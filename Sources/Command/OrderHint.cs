@@ -104,6 +104,18 @@ public class OrderHintCollection(params IEnumerable<OrderHint> orderHints): List
 		[.. orderHints.Select(entry => new OrderHint(entry.Key, entry.Value))];
 
 	/// <summary>
+	/// Adds a new order hint to the end of this collection.
+	/// </summary>
+	/// <param name="column">The column name.</param>
+	/// <param name="sortOrder">The sort order.</param>
+	/// <returns>The newly order hint.</returns>
+	public OrderHint AddOrderHint(string column, SortOrder sortOrder = SortOrder.Ascending) {
+		var orderHint = new OrderHint(column, sortOrder);
+		Add(orderHint);
+		return orderHint;
+	}
+
+	/// <summary>
 	/// Gets a value indicating whether an order hint in this collection has the specified column name.
 	/// </summary>
 	/// <param name="column">The column name.</param>

@@ -3,10 +3,11 @@
 ## Version [2027.01.0](https://github.com/CedX/Sql.net/compare/v2026.12.0...v2027.01.0)
 - Breaking change: removed the implicit conversions from `KeyValuePair<TKey, TValue>`.
 - Breaking change: removed the non-generic query methods, the use of the `ExpandoObject` type is now explicit.
-- Breaking change: renamed the `ParameterCollection.AddWithValue` method to `AddValue`.
+- Breaking change: renamed the `ParameterCollection.AddWithValue` method to `AddParameter`.
 - Breaking change: replaced the `ConnectionExtensions` class by classes dedicated to each individual feature.
 - Breaking change: the `name` parameter of the `Parameter` constructor is now required.
 - Breaking change: the asynchronous extension methods are no longer available on the `IDbConnection` interface, only on the `DbConnection` abstract class.
+- Added the `OrderHintCollection.AddOrderHint` method.
 
 ## Version [2026.12.0](https://github.com/CedX/Sql.net/compare/v2026.11.0...v2026.12.0)
 - Breaking change: renamed all types by removing their prefixes (i.e. `Db` and `Sql`).

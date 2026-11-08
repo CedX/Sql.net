@@ -167,7 +167,7 @@ public class ParameterCollection(params IEnumerable<Parameter> parameters): List
 	/// <param name="name">The parameter name.</param>
 	/// <param name="value">The parameter value.</param>
 	/// <returns>The newly added parameter.</returns>
-	public Parameter AddValue(string name, object? value) {
+	public Parameter AddParameter(string name, object? value) {
 		var parameter = new Parameter(name, value);
 		Add(parameter);
 		return parameter;
@@ -178,7 +178,7 @@ public class ParameterCollection(params IEnumerable<Parameter> parameters): List
 	/// </summary>
 	/// <param name="value">The parameter value.</param>
 	/// <returns>The newly added parameter.</returns>
-	public Parameter AddValue(object? value) => AddValue($"?{Count + 1}", value);
+	public Parameter AddParameter(object? value) => AddParameter($"?{Count + 1}", value);
 
 	/// <summary>
 	/// Gets a value indicating whether a parameter in this collection has the specified name.

@@ -57,6 +57,22 @@ public class OrderHintCollectionTests {
 	}
 
 	[TestMethod]
+	public void AddOrderHint() {
+		var collection = new OrderHintCollection();
+		collection.ShouldBeEmpty();
+
+		var orderHint = collection.AddOrderHint("Name1", SortOrder.Descending);
+		collection.Count.ShouldBe(1);
+		orderHint.Column.ShouldBe("Name1");
+		orderHint.SortOrder.ShouldBe(SortOrder.Descending);
+
+		orderHint = collection.AddOrderHint("Name2");
+		collection.Count.ShouldBe(2);
+		orderHint.Column.ShouldBe("Name2");
+		orderHint.SortOrder.ShouldBe(SortOrder.Ascending);
+	}
+
+	[TestMethod]
 	public void Contains() {
 		var collection = new OrderHintCollection(("Key", SortOrder.Ascending));
 		collection.Contains("key").ShouldBeTrue();
