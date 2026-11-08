@@ -137,6 +137,22 @@ public class ParameterCollectionTests {
 	}
 
 	[TestMethod]
+	public void AddWithValue() {
+		var collection = new ParameterCollection();
+		collection.ShouldBeEmpty();
+
+		var parameter = collection.AddWithValue("Name", "Value1");
+		collection.Count.ShouldBe(1);
+		parameter.Name.ShouldBe("@Name");
+		parameter.Value.ShouldBe("Value1");
+
+		parameter = collection.AddWithValue("Value2");
+		collection.Count.ShouldBe(2);
+		parameter.Name.ShouldBe("?2");
+		parameter.Value.ShouldBe("Value2");
+	}
+
+	[TestMethod]
 	public void Contains() {
 		var collection = new ParameterCollection(("@Key", null));
 		collection.Contains("Key").ShouldBeTrue();
