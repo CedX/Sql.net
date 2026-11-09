@@ -17,7 +17,7 @@ public static class ObjectDeleteExtensions {
 		/// <param name="transaction">The transaction within which the command executes.</param>
 		/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 		/// <returns><see langword="true"/> if the specified entity has been deleted, otherwise <see langword="false"/>.</returns>
-		public bool Delete(object entity, int timeout = 30, IDbTransaction? transaction = null, CommandBuilder? builder = null) {
+		public bool Delete<T>(T entity, int timeout = 30, IDbTransaction? transaction = null, CommandBuilder? builder = null) where T: notnull {
 			var (command, parameters) = (builder ?? CommandBuilder.Create(connection)).GetDeleteCommand(entity);
 			command.Timeout = timeout;
 			command.Transaction = transaction;
@@ -61,7 +61,7 @@ public static class ObjectDeleteExtensions {
 		/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 		/// <param name="cancellationToken">The token to cancel the operation.</param>
 		/// <returns><see langword="true"/> if the specified entity has been deleted, otherwise <see langword="false"/>.</returns>
-		public async Task<bool> DeleteAsync(object entity, int timeout = 30, IDbTransaction? transaction = null, CommandBuilder? builder = null, CancellationToken cancellationToken = default) {
+		public async Task<bool> DeleteAsync<T>(T entity, int timeout = 30, IDbTransaction? transaction = null, CommandBuilder? builder = null, CancellationToken cancellationToken = default) where T: notnull {
 			var (command, parameters) = (builder ?? CommandBuilder.Create(connection)).GetDeleteCommand(entity);
 			command.Timeout = timeout;
 			command.Transaction = transaction;

@@ -185,7 +185,7 @@ public class CommandBuilder {
 	/// <param name="entity">The entity to delete.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
-	public (Command Command, ParameterCollection Parameters) GetDeleteCommand(object entity) {
+	public (Command Command, ParameterCollection Parameters) GetDeleteCommand<T>(T entity) where T: notnull {
 		var table = Mapper.Instance.GetTable(entity.GetType());
 		var idColumn = table.IdentityColumn ?? throw new InvalidOperationException("The identity column could not be found.");
 
@@ -352,7 +352,7 @@ public class CommandBuilder {
 	/// <param name="entity">The entity to insert.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
-	public (Command Command, ParameterCollection Parameters) GetInsertCommand(object entity) {
+	public (Command Command, ParameterCollection Parameters) GetInsertCommand<T>(T entity) where T: notnull {
 		var table = Mapper.Instance.GetTable(entity.GetType());
 		var idColumn = table.IdentityColumn ?? throw new InvalidOperationException("The identity column could not be found.");
 
@@ -373,7 +373,7 @@ public class CommandBuilder {
 	/// <param name="columns">The list of columns to update. By default, all columns.</param>
 	/// <returns>A tuple providing the generated command and its parameters.</returns>
 	/// <exception cref="InvalidOperationException">The identity column could not be found.</exception>
-	public (Command Command, ParameterCollection Parameters) GetUpdateCommand(object entity, params string[] columns) {
+	public (Command Command, ParameterCollection Parameters) GetUpdateCommand<T>(T entity, params string[] columns) where T: notnull {
 		var table = Mapper.Instance.GetTable(entity.GetType());
 		var idColumn = table.IdentityColumn ?? throw new InvalidOperationException("The identity column could not be found.");
 
@@ -425,7 +425,7 @@ public class CommandBuilder {
 	/// <param name="column">The column providing the parameter data type.</param>
 	/// <param name="entity">The entity providing the parameter value.</param>
 	/// <returns>The parameter value corresponding to the specified column.</returns>
-	private object? GetParameterValue(ColumnInfo column, object entity) {
+	private object? GetParameterValue<T>(ColumnInfo column, T entity) {
 		var value = column.GetValue(entity);
 		return column.PropertyType.IsEnum && stringTypes.Contains(column.DbType) ? value?.ToString() : value;
 	}

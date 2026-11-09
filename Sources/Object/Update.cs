@@ -18,7 +18,7 @@ public static class ObjectUpdateExtensions {
 		/// <param name="transaction">The transaction within which the command executes.</param>
 		/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 		/// <returns>The number of rows affected.</returns>
-		public int Update(object entity, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, CommandBuilder? builder = null) {
+		public int Update<T>(T entity, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, CommandBuilder? builder = null) where T: notnull {
 			var (command, parameters) = (builder ?? CommandBuilder.Create(connection)).GetUpdateCommand(entity, columns ?? []);
 			command.Timeout = timeout;
 			command.Transaction = transaction;
@@ -37,7 +37,7 @@ public static class ObjectUpdateExtensions {
 		/// <param name="builder">An optional command builder used to build the SQL query to be executed.</param>
 		/// <param name="cancellationToken">The token to cancel the operation.</param>
 		/// <returns>The number of rows affected.</returns>
-		public async Task<int> UpdateAsync(object entity, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, CommandBuilder? builder = null, CancellationToken cancellationToken = default) {
+		public async Task<int> UpdateAsync<T>(T entity, string[]? columns = null, int timeout = 30, IDbTransaction? transaction = null, CommandBuilder? builder = null, CancellationToken cancellationToken = default) where T: notnull {
 			var (command, parameters) = (builder ?? CommandBuilder.Create(connection)).GetUpdateCommand(entity, columns ?? []);
 			command.Timeout = timeout;
 			command.Transaction = transaction;
