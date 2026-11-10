@@ -425,7 +425,7 @@ public class CommandBuilder {
 	/// <param name="column">The column providing the parameter data type.</param>
 	/// <param name="entity">The entity providing the parameter value.</param>
 	/// <returns>The parameter value corresponding to the specified column.</returns>
-	private object? GetParameterValue<T>(ColumnInfo column, T entity) {
+	private object? GetParameterValue(ColumnInfo column, object entity) {
 		var value = column.GetValue(entity);
 		return column.PropertyType.IsEnum && stringTypes.Contains(column.DbType) ? value?.ToString() : value;
 	}
