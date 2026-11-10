@@ -189,7 +189,7 @@ public class CommandBuilder {
 		var table = Mapper.Instance.GetTable(entity.GetType());
 		var idColumn = table.IdentityColumn ?? throw new InvalidOperationException("The identity column could not be found.");
 
-		var parameter = new Parameter(UsePositionalParameters ? "?1" : GetParameterName(idColumn), GetParameterValue(idColumn, entity));
+		var parameter = new Parameter(UsePositionalParameters ? "?1" : GetParameterName(idColumn), GetParameterValue(entity, idColumn));
 		var text = $"""
 			DELETE FROM {GetTableName(table)}
 			WHERE {QuoteIdentifier(idColumn.Name)} = {(UsePositionalParameters ? "?" : parameter.Name)}
@@ -363,7 +363,7 @@ public class CommandBuilder {
 			{(SupportsReturningClause ? $"RETURNING {QuoteIdentifier(idColumn.Name)}" : $"; SELECT {LastInsertIdFunction};")}
 			""";
 
-		return (text, [.. fields.Select((field, index) => (UsePositionalParameters ? $"?{index + 1}" : GetParameterName(field), GetParameterValue(field, entity)))]);
+		return (text, [.. fields.Select((field, index) => (UsePositionalParameters ? $"?{index + 1}" : GetParameterName(field), GetParameterValue(entity, field)))]);
 	}
 
 	/// <summary>
@@ -388,8 +388,8 @@ public class CommandBuilder {
 			""";
 
 		return (text, [
-			.. fields.Select((field, index) => (UsePositionalParameters ? $"?{index + 1}" : GetParameterName(field), GetParameterValue(field, entity))),
-			(UsePositionalParameters ? $"?{fields.Length + 1}" : GetParameterName(idColumn), GetParameterValue(idColumn, entity))
+			.. fields.Select((field, index) => (UsePositionalParameters ? $"?{index + 1}" : GetParameterName(field), GetParameterValue(entity, field))),
+			(UsePositionalParameters ? $"?{fields.Length + 1}" : GetParameterName(idColumn), GetParameterValue(entity, idColumn))
 		]);
 	}
 
@@ -422,10 +422,10 @@ public class CommandBuilder {
 	/// <summary>
 	/// Returns the parameter value corresponding to the specified column.
 	/// </summary>
-	/// <param name="column">The column providing the parameter data type.</param>
 	/// <param name="entity">The entity providing the parameter value.</param>
+	/// <param name="column">The column providing the parameter data type.</param>
 	/// <returns>The parameter value corresponding to the specified column.</returns>
-	private object? GetParameterValue(ColumnInfo column, object entity) {
+	private object? GetParameterValue(object entity, ColumnInfo column) {
 		var value = column.GetValue(entity);
 		return column.PropertyType.IsEnum && stringTypes.Contains(column.DbType) ? value?.ToString() : value;
 	}
