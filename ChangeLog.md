@@ -1,6 +1,6 @@
 # Changelog
 
-## Version [2027.01.0](https://github.com/CedX/Sql.net/compare/v2026.12.0...v2027.01.0)
+## Version [2027.1.0](https://github.com/CedX/Sql.net/compare/v2026.12.0...v2027.1.0)
 - Breaking change: removed the implicit conversions from `KeyValuePair<TKey, TValue>`.
 - Breaking change: removed the non-generic query methods, the use of the `ExpandoObject` type is now explicit.
 - Breaking change: renamed the `ParameterCollection.AddWithValue` method to `AddParameter`.
