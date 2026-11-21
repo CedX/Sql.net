@@ -55,11 +55,21 @@ public class ParameterTests {
 		// It should normalize the parameter value.
 		new Parameter("Name", null).Value.ShouldBe(DBNull.Value);
 		new Parameter("Name", DBNull.Value).Value.ShouldBe(DBNull.Value);
+
+		new Parameter("Name", true).Value.ShouldBe(true);
+		new Parameter("Name", new bool?(true)).Value.ShouldBe(true);
+		new Parameter("Name", new bool?()).Value.ShouldBe(DBNull.Value);
+
 		new Parameter("Name", 123).Value.ShouldBe(123);
-		new Parameter("Name", -123.456).Value.ShouldBe(-123.456);
+		new Parameter("Name", new int?(123)).Value.ShouldBe(123);
+		new Parameter("Name", new int?()).Value.ShouldBe(DBNull.Value);
+
+		new Parameter("Name", DateTime.UnixEpoch).Value.ShouldBe(DateTime.UnixEpoch);
+		new Parameter("Name", new DateTime?(DateTime.UnixEpoch)).Value.ShouldBe(DateTime.UnixEpoch);
+		new Parameter("Name", new DateTime?()).Value.ShouldBe(DBNull.Value);
+
 		new Parameter("Name", "").Value.ShouldBe("");
 		new Parameter("Name", "Foo").Value.ShouldBe("Foo");
-		new Parameter("Name", DateTime.UnixEpoch).Value.ShouldBe(DateTime.UnixEpoch);
 
 		// It should support the values wrapped in a `PSObject` instance.
 		new Parameter("Name", new PSObject(DBNull.Value)).Value.ShouldBe(DBNull.Value);
@@ -168,24 +178,6 @@ public class ParameterCollectionTests {
 		collection.IndexOf("@Key").ShouldBe(1);
 		collection.IndexOf("Foo").ShouldBe(-1);
 		collection.IndexOf("@Foo").ShouldBe(-1);
-	}
-
-	[TestMethod]
-	public void NormalizeValue() {
-		Parameter.NormalizeValue("foo").ShouldBe("foo");
-		Parameter.NormalizeValue(null).ShouldBe(DBNull.Value);
-
-		Parameter.NormalizeValue(true).ShouldBe(true);
-		Parameter.NormalizeValue(new bool?(true)).ShouldBe(true);
-		Parameter.NormalizeValue(new bool?()).ShouldBe(DBNull.Value);
-
-		Parameter.NormalizeValue(123).ShouldBe(123);
-		Parameter.NormalizeValue(new int?(123)).ShouldBe(123);
-		Parameter.NormalizeValue(new int?()).ShouldBe(DBNull.Value);
-
-		Parameter.NormalizeValue(DateTime.Today).ShouldBe(DateTime.Today);
-		Parameter.NormalizeValue(new DateTime?(DateTime.Today)).ShouldBe(DateTime.Today);
-		Parameter.NormalizeValue(new DateTime?()).ShouldBe(DBNull.Value);
 	}
 
 	[TestMethod]
