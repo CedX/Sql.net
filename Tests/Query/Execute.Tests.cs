@@ -33,7 +33,7 @@ public class QueryExecuteExtensionsTests(TestContext testContext) {
 		(await connection.ExecuteAsync("DELETE FROM Characters WHERE gender = @Gender", parameters, testContext.CancellationToken)).ShouldBe(2);
 		(await connection.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM Characters", cancellationToken: testContext.CancellationToken)).ShouldBe(14);
 
-		parameters = new ParameterCollection(("Gender", nameof(CharacterGender.Elf)));
+		parameters = [("Gender", nameof(CharacterGender.Elf))];
 		(await connection.ExecuteAsync("DELETE FROM Characters WHERE gender = @Gender", parameters, testContext.CancellationToken)).ShouldBe(3);
 		(await connection.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM Characters", cancellationToken: testContext.CancellationToken)).ShouldBe(11);
 	}
