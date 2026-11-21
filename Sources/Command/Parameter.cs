@@ -130,37 +130,34 @@ public class ParameterCollection(params IEnumerable<Parameter> parameters): List
 	/// </summary>
 	/// <param name="parameters">The array whose elements are copied to the parameter collection.</param>
 	/// <returns>The parameter collection corresponding to the specified array of positional parameters.</returns>
-	public static implicit operator ParameterCollection(object?[] parameters) => [.. parameters.Select((value, index) =>
-		value is Parameter parameter ? parameter : new Parameter($"?{index + 1}", value)
-	)];
+	public static implicit operator ParameterCollection(object?[] parameters) =>
+		[.. parameters.Select((value, index) => new Parameter($"?{index + 1}", value))];
 
 	/// <summary>
 	/// Creates a new parameter collection from the specified list of positional parameters.
 	/// </summary>
 	/// <param name="parameters">The list whose elements are copied to the parameter collection.</param>
 	/// <returns>The parameter collection corresponding to the specified list of positional parameters.</returns>
-	public static implicit operator ParameterCollection(List<object?> parameters) => [.. parameters.Select((value, index) =>
-		value is Parameter parameter ? parameter : new Parameter($"?{index + 1}", value)
-	)];
+	public static implicit operator ParameterCollection(List<object?> parameters) =>
+		[.. parameters.Select((value, index) => new Parameter($"?{index + 1}", value))];
 
 	/// <summary>
 	/// Creates a new parameter collection from the specified dictionary of named parameters.
 	/// </summary>
 	/// <param name="parameters">The dictionary whose elements are copied to the parameter collection.</param>
 	/// <returns>The parameter collection corresponding to the specified dictionary of named parameters.</returns>
-	public static implicit operator ParameterCollection(Dictionary<string, object?> parameters) => [.. parameters.Select(entry =>
-		entry.Value is Parameter parameter ? parameter : new Parameter(entry.Key, entry.Value)
-	)];
+	public static implicit operator ParameterCollection(Dictionary<string, object?> parameters) =>
+		[.. parameters.Select(entry => new Parameter(entry.Key, entry.Value))];
 
 	/// <summary>
 	/// Creates a new parameter collection from the specified hash table of named parameters.
 	/// </summary>
 	/// <param name="parameters">The hash table whose elements are copied to the parameter collection.</param>
 	/// <returns>The parameter collection corresponding to the specified hash table of named parameters.</returns>
-	public static implicit operator ParameterCollection(Hashtable parameters) => parameters.Cast<DictionaryEntry>().ToDictionary(
-		entry => Convert.ToString(entry.Key, CultureInfo.InvariantCulture) ?? "",
-		entry => entry.Value
-	);
+	public static implicit operator ParameterCollection(Hashtable parameters) =>
+		[.. parameters.Cast<DictionaryEntry>().Select(entry =>
+			new Parameter(Convert.ToString(entry.Key, CultureInfo.InvariantCulture) ?? "", entry.Value)
+		)];
 
 	/// <summary>
 	/// Adds a new named parameter to the end of this collection.
