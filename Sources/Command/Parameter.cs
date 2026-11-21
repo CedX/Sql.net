@@ -4,6 +4,7 @@ using System.Collections;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using static PowerShell;
 
 /// <summary>
 /// Represents a parameter of a parameterized SQL statement.
@@ -98,11 +99,11 @@ public class Parameter(string name, object? value = null) {
 	/// </summary>
 	/// <param name="value">The parameter value.</param>
 	/// <returns>The normalized parameter value.</returns>
-	internal static object NormalizeValue(object? value) {
-		if (value is null) return DBNull.Value;
-		if (PowerShell.PSObject is null || value.GetType() != PowerShell.PSObject) return value;
-		return PowerShell.PSObject.GetProperty("BaseObject")!.GetValue(value) ?? DBNull.Value;
-	}
+	internal static object NormalizeValue(object? value) => value switch {
+		null => DBNull.Value,
+		var psObject when value.GetType() == PSObject => NormalizeValue(PSObject.GetProperty("BaseObject")!.GetValue(psObject)),
+		var baseObject => baseObject
+	};
 }
 
 /// <summary>

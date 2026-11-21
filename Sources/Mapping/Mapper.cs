@@ -6,6 +6,7 @@ using System.Data;
 using System.Dynamic;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using static PowerShell;
 
 /// <summary>
 /// Maps data records to entity objects.
@@ -72,10 +73,10 @@ public class Mapper {
 			return expandoObject;
 		}
 
-		if (PowerShell.PSObject is not null && PowerShell.PSNoteProperty is not null && type == PowerShell.PSObject) {
-			var psCustomObject = Activator.CreateInstance(PowerShell.PSObject)!;
-			dynamic psProperties = PowerShell.PSObject.GetProperty("Properties")!.GetValue(psCustomObject)!;
-			foreach (var (key, value) in record) psProperties.Add((dynamic) Activator.CreateInstance(PowerShell.PSNoteProperty, [key, value])!);
+		if (PSObject is not null && PSNoteProperty is not null && type == PSObject) {
+			var psCustomObject = Activator.CreateInstance(PSObject)!;
+			dynamic psProperties = PSObject.GetProperty("Properties")!.GetValue(psCustomObject)!;
+			foreach (var (key, value) in record) psProperties.Add((dynamic) Activator.CreateInstance(PSNoteProperty, [key, value])!);
 			return psCustomObject;
 		}
 
