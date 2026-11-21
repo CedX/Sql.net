@@ -171,6 +171,24 @@ public class ParameterCollectionTests {
 	}
 
 	[TestMethod]
+	public void NormalizeValue() {
+		Parameter.NormalizeValue("foo").ShouldBe("foo");
+		Parameter.NormalizeValue(null).ShouldBe(DBNull.Value);
+
+		Parameter.NormalizeValue(true).ShouldBe(true);
+		Parameter.NormalizeValue(new bool?(true)).ShouldBe(true);
+		Parameter.NormalizeValue(new bool?()).ShouldBe(DBNull.Value);
+
+		Parameter.NormalizeValue(123).ShouldBe(123);
+		Parameter.NormalizeValue(new int?(123)).ShouldBe(123);
+		Parameter.NormalizeValue(new int?()).ShouldBe(DBNull.Value);
+
+		Parameter.NormalizeValue(DateTime.Today).ShouldBe(DateTime.Today);
+		Parameter.NormalizeValue(new DateTime?(DateTime.Today)).ShouldBe(DateTime.Today);
+		Parameter.NormalizeValue(new DateTime?()).ShouldBe(DBNull.Value);
+	}
+
+	[TestMethod]
 	public void RemoveAt() {
 		// It should remove the parameter with the specified name.
 		var collection = new ParameterCollection(("?1", 123), ("@Key", "Unique"));
