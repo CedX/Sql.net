@@ -91,10 +91,12 @@ public class OrderHintCollection(params IEnumerable<OrderHint> orderHints): List
 	/// <param name="orderHints">The dictionary whose elements are copied to the order hint collection.</param>
 	/// <returns>The order hint collection corresponding to the specified dictionary of column names and sort orders.</returns>
 	public static implicit operator OrderHintCollection(OrderedDictionary orderHints) =>
-		[.. orderHints.Cast<DictionaryEntry>().Select(entry => {
-			var value = entry.Value is SortOrder sortOrder ? sortOrder : Enum.Parse<SortOrder>(Convert.ToString(entry.Value, CultureInfo.InvariantCulture) ?? "", ignoreCase: true);
-			return new OrderHint(Convert.ToString(entry.Key, CultureInfo.InvariantCulture) ?? "", value);
-		})];
+		[.. orderHints.Cast<DictionaryEntry>().Select(entry =>
+			new OrderHint(Convert.ToString(entry.Key, CultureInfo.InvariantCulture) ?? "", entry.Value switch {
+				SortOrder sortOrder => sortOrder,
+				var sortOrder => Enum.Parse<SortOrder>(Convert.ToString(sortOrder, CultureInfo.InvariantCulture) ?? "", ignoreCase: true)
+			})
+		)];
 
 	/// <summary>
 	/// Creates a new order hint collection from the specified dictionary of column names and sort orders.

@@ -102,7 +102,7 @@ public class Parameter(string name, object? value = null) {
 	internal static object NormalizeValue(object? value) => value switch {
 		null => DBNull.Value,
 		var psObject when value.GetType() == PSObject => NormalizeValue(PSObject.GetProperty("BaseObject")!.GetValue(psObject)),
-		var baseObject => baseObject
+		var nonNullValue => nonNullValue
 	};
 }
 
