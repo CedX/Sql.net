@@ -425,10 +425,11 @@ public class CommandBuilder {
 	/// <param name="entity">The entity providing the parameter value.</param>
 	/// <param name="column">The column providing the parameter data type.</param>
 	/// <returns>The parameter value corresponding to the specified column.</returns>
-	private object? GetParameterValue(object entity, ColumnInfo column) {
-		var value = column.GetValue(entity);
-		return column.PropertyType.IsEnum && stringTypes.Contains(column.DbType) ? value?.ToString() : value;
-	}
+	private object? GetParameterValue(object entity, ColumnInfo column) => column.GetValue(entity) switch {
+		null => null,
+		var value when column.PropertyType.IsEnum && stringTypes.Contains(column.DbType) => value.ToString(),
+		var value => value
+	};
 
 	/// <summary>
 	/// Returns the fully qualified name corresponding to the specified table.
