@@ -156,7 +156,7 @@ public class ParameterCollectionTests {
 		parameter.Name.ShouldBe("@Name");
 		parameter.Value.ShouldBe("Value1");
 
-		parameter = collection.Add("Value2");
+		parameter = collection.AddParameter("Value2");
 		collection.Count.ShouldBe(2);
 		parameter.Name.ShouldBe("?2");
 		parameter.Value.ShouldBe("Value2");
