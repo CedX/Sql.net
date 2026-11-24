@@ -112,7 +112,7 @@ public class OrderHintCollection(params IEnumerable<OrderHint> orderHints): List
 	/// <param name="column">The column name.</param>
 	/// <param name="sortOrder">The sort order.</param>
 	/// <returns>The newly order hint.</returns>
-	public OrderHint AddOrderHint(string column, SortOrder sortOrder = SortOrder.Ascending) {
+	public OrderHint Add(string column, SortOrder sortOrder = SortOrder.Ascending) {
 		var orderHint = new OrderHint(column, sortOrder);
 		Add(orderHint);
 		return orderHint;
