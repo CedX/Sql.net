@@ -7,7 +7,7 @@ using System.Data.Common;
 /// Represents an SQL statement that is executed while connected to a data source.
 /// </summary>
 /// <param name="text">The text of the SQL statement.</param>
-public class Command(string text) {
+public class Command(string text = "") {
 
 	/// <summary>
 	/// The text of the SQL statement.

@@ -5,6 +5,7 @@
 - Removed the non-generic query methods, the use of the `ExpandoObject` type is now explicit.
 - Renamed the `ParameterCollection.AddWithValue` method to `Add`.
 - Replaced the `ConnectionExtensions` class by classes dedicated to each individual feature.
+- The `text` parameter of the `Command` constructor is now optional.
 - The `name` parameter of the `Parameter` constructor is now required.
 - The asynchronous extension methods are no longer available on the `IDbConnection` interface, only on the `DbConnection` abstract class.
 - Added the `OrderHintCollection.Add` method.
