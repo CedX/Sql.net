@@ -8,7 +8,7 @@
 - The `text` parameter of the `Command` constructor is now optional.
 - The `name` parameter of the `Parameter` constructor is now required.
 - The asynchronous extension methods are no longer available on the `IDbConnection` interface, only on the `DbConnection` abstract class.
-- Added the `OrderHintCollection.Add` method.
+- Added the `Add`, `Parse` and `ToString` methods to the `OrderHintCollection` class.
 
 ## Version [2026.12.0](https://github.com/CedX/Sql.net/compare/v2026.11.0...v2026.12.0)
 - Breaking change: renamed all types by removing their prefixes (i.e. `Db` and `Sql`).

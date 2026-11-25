@@ -129,6 +129,16 @@ public class OrderHintCollectionTests {
 	}
 
 	[TestMethod]
+	public void Parse() {
+		// It should return an empty sort for an empty string.
+		OrderHintCollection.Parse("").ShouldBeEmpty();
+
+		// It should return an ascending direction for a property without prefix, a descending direction for a property with a "-" prefix.
+		var expected = new OrderHintCollection(("foo", SortOrder.Ascending), ("bar", SortOrder.Descending));
+		OrderHintCollection.Parse("foo,-bar").ShouldBe(expected);
+	}
+
+	[TestMethod]
 	public void RemoveAt() {
 		// It should remove the order hint with the specified column name.
 		var collection = new OrderHintCollection(("ID", SortOrder.Descending), ("Name", SortOrder.Ascending));
@@ -141,5 +151,17 @@ public class OrderHintCollectionTests {
 		// It should throw an error if the specified column does not exist.
 		collection = new OrderHintCollection(("ID", SortOrder.Descending), ("Name", SortOrder.Ascending));
 		Should.Throw<KeyNotFoundException>(() => collection.RemoveAt("Foo"));
+	}
+
+	[TestMethod]
+	public void TestToString() {
+		// It should return an empty string for an empty sort.
+		new OrderHintCollection().ToString().ShouldBeEmpty();
+
+		// It should return the property for an ascending direction.
+		new OrderHintCollection(("foo", SortOrder.Ascending)).ToString().ShouldBe("foo");
+
+		// It should return the property with a "-" prefix for a descending direction.
+		OrderHintCollection.Parse("foo,-bar").ToString().ShouldBe("foo,-bar");
 	}
 }

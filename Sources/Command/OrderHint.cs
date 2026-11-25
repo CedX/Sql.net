@@ -7,19 +7,9 @@ using System.Globalization;
 /// <summary>
 /// Defines the sort order for a database column.
 /// </summary>
-/// <param name="column">The name of the column for which the hint is being provided.</param>
-/// <param name="sortOrder">The sort order of the column.</param>
-public class OrderHint(string column, SortOrder sortOrder = SortOrder.Ascending) {
-
-	/// <summary>
-	/// The name of the column for which the hint is being provided.
-	/// </summary>
-	public string Column { get; set; } = column;
-
-	/// <summary>
-	/// The sort order of the column.
-	/// </summary>
-	public SortOrder SortOrder { get; set; } = sortOrder;
+/// <param name="Column">The name of the column for which the hint is being provided.</param>
+/// <param name="SortOrder">The sort order of the column.</param>
+public record OrderHint(string Column, SortOrder SortOrder = SortOrder.Ascending) {
 
 	/// <summary>
 	/// Creates a new order hint from the specified column name.
@@ -133,6 +123,19 @@ public class OrderHintCollection(params IEnumerable<OrderHint> orderHints): List
 	public int IndexOf(string column) => FindIndex(orderHint => orderHint.Column.Equals(column, StringComparison.OrdinalIgnoreCase));
 
 	/// <summary>
+	/// Creates a new collection from the specified string.
+	/// </summary>
+	/// <param name="value">A string representing a collection of order hints.</param>
+	/// <returns>The collection corresponding to the specified string.</returns>
+	public static OrderHintCollection Parse(string value) {
+		var tokens = value.Length > 0 ? value.Split(',') : [];
+		return [.. tokens.Select(token => {
+			var sortOrder = token.StartsWith('-') ? SortOrder.Descending : SortOrder.Ascending;
+			return new OrderHint(sortOrder == SortOrder.Descending ? token[1..] : token, sortOrder);
+		})];
+	}
+
+	/// <summary>
 	/// Removes the order hint with the specified column name from this collection.
 	/// </summary>
 	/// <param name="column">The column name.</param>
@@ -141,6 +144,13 @@ public class OrderHintCollection(params IEnumerable<OrderHint> orderHints): List
 		try { RemoveAt(IndexOf(column)); }
 		catch (ArgumentOutOfRangeException e) { throw new KeyNotFoundException(column, e); }
 	}
+
+	/// <summary>
+	/// Returns a string representation of this object.
+	/// </summary>
+	/// <returns>The string representation of this object.</returns>
+	public override string ToString() =>
+		string.Join(',', this.Select(orderHint => $"{(orderHint.SortOrder == SortOrder.Descending ? "-" : "")}{orderHint.Column}"));
 }
 
 /// <summary>
