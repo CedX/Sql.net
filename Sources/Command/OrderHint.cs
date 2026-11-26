@@ -44,10 +44,10 @@ public record OrderHint(string Column, SortOrder SortOrder = SortOrder.Ascending
 public partial class OrderHintCollection(params IEnumerable<OrderHint> orderHints): List<OrderHint>(orderHints) {
 
 	/// <summary>
-	/// The regular expression used to remove the order clause.
+	/// The regular expression used to remove the sort order.
 	/// </summary>
 	[GeneratedRegex(@" (ASC|DESC)$", RegexOptions.IgnoreCase)]
-	private static partial Regex OrderClausePattern { get; }
+	private static partial Regex SortOrderPattern { get; }
 
 	/// <summary>
 	/// Gets the order hint with the specified column name.
@@ -136,9 +136,9 @@ public partial class OrderHintCollection(params IEnumerable<OrderHint> orderHint
 	/// <returns>The collection corresponding to the specified string.</returns>
 	public static OrderHintCollection Parse(string value) {
 		var tokens = value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-		return [.. tokens.Select(token => token.Trim()).Where(token => token.Length > 0).Select(token => {
+		return [.. tokens.Select(token => {
+			var column = SortOrderPattern.Replace(token, "");
 			var sortOrder = token.EndsWith(" DESC", StringComparison.OrdinalIgnoreCase) ? SortOrder.Descending : SortOrder.Ascending;
-			var column = OrderClausePattern.Replace(token, "");
 			return new OrderHint(column, sortOrder);
 		})];
 	}

@@ -130,12 +130,8 @@ public class OrderHintCollectionTests {
 
 	[TestMethod]
 	public void Parse() {
-		// It should return an empty sort for an empty string.
 		OrderHintCollection.Parse("").ShouldBeEmpty();
-
-		// It should return an ascending direction for a property without prefix, a descending direction for a property with a "-" prefix.
-		var expected = new OrderHintCollection(("foo", SortOrder.Ascending), ("bar", SortOrder.Descending));
-		OrderHintCollection.Parse("foo, bar desc").ShouldBe(expected);
+		OrderHintCollection.Parse("foo, bar desc").ShouldBe(new OrderHintCollection(("foo", SortOrder.Ascending), ("bar", SortOrder.Descending)));
 	}
 
 	[TestMethod]
@@ -155,13 +151,8 @@ public class OrderHintCollectionTests {
 
 	[TestMethod]
 	public void TestToString() {
-		// It should return an empty string for an empty sort.
 		new OrderHintCollection().ToString().ShouldBeEmpty();
-
-		// It should return the property for an ascending direction.
 		new OrderHintCollection(("foo", SortOrder.Ascending)).ToString().ShouldBe("foo ASC");
-
-		// It should return the property with a "-" prefix for a descending direction.
 		OrderHintCollection.Parse("foo, bar desc").ToString().ShouldBe("foo ASC, bar DESC");
 	}
 }
