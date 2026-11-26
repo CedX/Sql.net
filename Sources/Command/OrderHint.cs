@@ -3,6 +3,7 @@ namespace Belin.Sql;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 /// <summary>
 /// Defines the sort order for a database column.
@@ -40,7 +41,13 @@ public record OrderHint(string Column, SortOrder SortOrder = SortOrder.Ascending
 /// A collection of hints describing the sort order of columns.
 /// </summary>
 /// <param name="orderHints">The collection whose elements are copied to the order hint collection.</param>
-public class OrderHintCollection(params IEnumerable<OrderHint> orderHints): List<OrderHint>(orderHints) {
+public partial class OrderHintCollection(params IEnumerable<OrderHint> orderHints): List<OrderHint>(orderHints) {
+
+	/// <summary>
+	/// The regular expression used to remove the order clause.
+	/// </summary>
+	[GeneratedRegex(@" (ASC|DESC)$", RegexOptions.IgnoreCase)]
+	private static partial Regex OrderClausePattern { get; }
 
 	/// <summary>
 	/// Gets the order hint with the specified column name.
@@ -128,10 +135,11 @@ public class OrderHintCollection(params IEnumerable<OrderHint> orderHints): List
 	/// <param name="value">A string representing a collection of order hints.</param>
 	/// <returns>The collection corresponding to the specified string.</returns>
 	public static OrderHintCollection Parse(string value) {
-		var tokens = value.Length > 0 ? value.Split(',') : [];
-		return [.. tokens.Select(token => {
-			var sortOrder = token.StartsWith('-') ? SortOrder.Descending : SortOrder.Ascending;
-			return new OrderHint(sortOrder == SortOrder.Descending ? token[1..] : token, sortOrder);
+		var tokens = value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+		return [.. tokens.Select(token => token.Trim()).Where(token => token.Length > 0).Select(token => {
+			var sortOrder = token.EndsWith(" DESC", StringComparison.OrdinalIgnoreCase) ? SortOrder.Descending : SortOrder.Ascending;
+			var column = OrderClausePattern.Replace(token, "");
+			return new OrderHint(column, sortOrder);
 		})];
 	}
 
@@ -150,7 +158,7 @@ public class OrderHintCollection(params IEnumerable<OrderHint> orderHints): List
 	/// </summary>
 	/// <returns>The string representation of this object.</returns>
 	public override string ToString() =>
-		string.Join(',', this.Select(orderHint => $"{(orderHint.SortOrder == SortOrder.Descending ? "-" : "")}{orderHint.Column}"));
+		string.Join(", ", this.Select(orderHint => $"{orderHint.Column} {(orderHint.SortOrder == SortOrder.Descending ? "DESC" : "ASC")}"));
 }
 
 /// <summary>
